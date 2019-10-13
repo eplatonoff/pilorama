@@ -42,3 +42,5 @@ target_wrapper.*
 # QtCreator CMake
 CMakeLists.txt.user*
 .idea/
+
+build
