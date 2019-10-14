@@ -9,6 +9,8 @@ Window {
     color: "#f1f1f1"
     title: qsTr("qml timer")
 
+
+
     Canvas {
 
         id: canvas
@@ -22,7 +24,7 @@ Window {
         anchors.bottomMargin: 20
         anchors.topMargin: 20
 
-        rotation: -90
+//        rotation: -90
         antialiasing: true
 
         property color staticDialColor: "#C9C9C9"
@@ -38,6 +40,9 @@ Window {
 
         signal clicked()
 
+        property real centreX : width / 2
+        property real centreY : height / 2
+
         onTimeChanged: requestPaint()
 
         onPaint: {
@@ -46,8 +51,6 @@ Window {
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const centreX = width / 2;
-            const centreY = height / 2;
 
             function dial(diametr, stroke, color, startSec, endSec) {
                 ctx.beginPath();
@@ -60,8 +63,56 @@ Window {
             dial(width, 4, staticDialColor, 0, canvas.time)
             dial(width - 5, 10, pomoDialColor, 0, canvas.time)
 
+            ctx.fillStyle = "black";
+
+            ctx.ellipse(mouseArea.circleStart.x, mouseArea.circleStart.y, 5, 5);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "black";
+            ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+            ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
+            ctx.lineTo(centreX, centreY);
+            ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+            ctx.stroke();
        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            id: mouseArea
+            property point circleStart: Qt.point(0, 0)
+            property point mousePoint: Qt.point(0, 0)
+
+            onPositionChanged: {
+                const {x, y} = mouse;
+
+                mousePoint = Qt.point(x, y);
+
+                const radius = Math.hypot(x - parent.centreX, y - parent.centreY);
+
+                const circleStartY = parent.centreY - radius;
+                const circleStartX = parent.centreX;
+
+                circleStart = Qt.point(circleStartX, circleStartY)
+
+                const horde = Math.hypot(x - circleStartX, y - circleStartY);
+
+                const angle = Math.asin((horde/2) / radius ) * 2 * ( 180 / Math.PI );
+                console.log(angle);
+
+                parent.requestPaint();
+
+            }
+        }
+
+
+
+
     }
+
+
     TextInput {
         id: sec
         width: 46
