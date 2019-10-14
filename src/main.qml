@@ -30,20 +30,17 @@ Window {
         property color staticDialColor: "#C9C9C9"
         property color pomoDialColor: "red"
 
+        property real dialAbsolute: 0
+        property real dialPomo: 1500
+
         property string text: "Text"
-
-        property real hours: 0
-        property real minutes: 0
-        property real seconds: 0
-
-        property real time: 0
 
         signal clicked()
 
         property real centreX : width / 2
         property real centreY : height / 2
 
-        onTimeChanged: requestPaint()
+        onDialAbsoluteChanged: requestPaint()
 
         onPaint: {
             var ctx = getContext("2d");
@@ -56,26 +53,26 @@ Window {
                 ctx.beginPath();
                 ctx.lineWidth = stroke;
                 ctx.strokeStyle = color;
-                ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec / 10 * Math.PI / 180,  endSec / 10 * Math.PI / 180);
+                ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
                 ctx.stroke();
             }
 
-            dial(width, 4, staticDialColor, 0, canvas.time)
-            dial(width - 5, 10, pomoDialColor, 0, canvas.time)
+            dial(width, 4, staticDialColor, 0, canvas.dialAbsolute)
+            dial(width - 5, 10, pomoDialColor, 0, canvas.dialPomo)
 
-            ctx.fillStyle = "black";
+//            ctx.fillStyle = "black";
 
-            ctx.ellipse(mouseArea.circleStart.x, mouseArea.circleStart.y, 5, 5);
-            ctx.fill();
+//            ctx.ellipse(mouseArea.circleStart.x, mouseArea.circleStart.y, 5, 5);
+//            ctx.fill();
 
-            ctx.beginPath();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "black";
-            ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-            ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
-            ctx.lineTo(centreX, centreY);
-            ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-            ctx.stroke();
+//            ctx.beginPath();
+//            ctx.lineWidth = 2;
+//            ctx.strokeStyle = "black";
+//            ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+//            ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
+//            ctx.lineTo(centreX, centreY);
+//            ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+//            ctx.stroke();
        }
 
         MouseArea {
@@ -100,9 +97,20 @@ Window {
                 const horde = Math.hypot(x - circleStartX, y - circleStartY);
 
                 const angle = Math.asin((horde/2) / radius ) * 2 * ( 180 / Math.PI );
-                console.log(angle);
 
-                parent.requestPaint();
+                function mouseAngle(refPointX, mouseX, triAngle){
+                    if (mouseX >= refPointX) {
+                        return triAngle
+                    } else {
+                        return 180 - triAngle + 180
+                    }
+                }
+
+                console.log(mouseAngle(mouseArea.circleStart.x, mouseArea.mousePoint.x, angle));
+
+                canvas.dialAbsolute = Math.trunc(mouseAngle(mouseArea.circleStart.x, mouseArea.mousePoint.x, angle) * 10)
+
+//                parent.requestPaint();
 
             }
         }
@@ -117,16 +125,16 @@ Window {
         id: sec
         width: 46
         height: 34
-        text: canvas.seconds
+        text: canvas.dialAbsolute + " sec"
         anchors.verticalCenterOffset: 0
         anchors.horizontalCenterOffset: 0
         cursorVisible: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 36
+        font.pixelSize: 16
 
-        onTextChanged: canvas.time = sec.text
+        onTextChanged: canvas.dialAbsolute = sec.text
     }
 
 }
