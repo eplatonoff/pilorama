@@ -24,23 +24,25 @@ Window {
         anchors.bottomMargin: 20
         anchors.topMargin: 20
 
-//        rotation: -90
         antialiasing: true
 
         property color staticDialColor: "#C9C9C9"
         property color pomoDialColor: "red"
+
+        property real time: 0
 
         property real dialAbsolute: 0
         property real dialPomo: 1500
 
         property string text: "Text"
 
+
         signal clicked()
 
         property real centreX : width / 2
         property real centreY : height / 2
 
-        onDialAbsoluteChanged: requestPaint()
+        onTimeChanged: requestPaint()
 
         onPaint: {
             var ctx = getContext("2d");
@@ -57,7 +59,7 @@ Window {
                 ctx.stroke();
             }
 
-            dial(width, 4, staticDialColor, 0, canvas.dialAbsolute)
+            dial(width, 4, staticDialColor, 0, canvas.time)
             dial(width - 5, 10, pomoDialColor, 0, canvas.dialPomo)
 
 //            ctx.fillStyle = "black";
@@ -75,57 +77,67 @@ Window {
 //            ctx.stroke();
        }
 
+
         MouseArea {
+            id: mouseArea
             anchors.fill: parent
             hoverEnabled: true
-            id: mouseArea
+            cursorShape: Qt.PointingHandCursor
+            propagateComposedEvents: true
+
             property point circleStart: Qt.point(0, 0)
             property point mousePoint: Qt.point(0, 0)
 
-            onPositionChanged: {
-                const {x, y} = mouse;
+            onPressed: {
+                function mouseAngle(refPointX, refPointY){
 
-                mousePoint = Qt.point(x, y);
+                    const {x, y} = mouse;
 
-                const radius = Math.hypot(x - parent.centreX, y - parent.centreY);
+                    mousePoint = Qt.point(x, y);
+                    const radius = Math.hypot(x - refPointX, y - refPointY);
 
-                const circleStartY = parent.centreY - radius;
-                const circleStartX = parent.centreX;
+                    circleStart = Qt.point(refPointX, refPointY - radius)
+                    const horde = Math.hypot(x - refPointX, y - (refPointY - radius));
+                    const angle = Math.asin((horde/2) / radius ) * 2 * ( 180 / Math.PI );
 
-                circleStart = Qt.point(circleStartX, circleStartY)
-
-                const horde = Math.hypot(x - circleStartX, y - circleStartY);
-
-                const angle = Math.asin((horde/2) / radius ) * 2 * ( 180 / Math.PI );
-
-                function mouseAngle(refPointX, mouseX, triAngle){
-                    if (mouseX >= refPointX) {
-                        return triAngle
+                    if (mousePoint.x >= circleStart.x) {
+                        return angle
                     } else {
-                        return 180 - triAngle + 180
+                        return 180 - angle + 180
                     }
                 }
 
-                console.log(mouseAngle(mouseArea.circleStart.x, mouseArea.mousePoint.x, angle));
-
-                canvas.dialAbsolute = Math.trunc(mouseAngle(mouseArea.circleStart.x, mouseArea.mousePoint.x, angle) * 10)
+                console.log(mouseAngle(canvas.centreX, canvas.centreY));
+                canvas.time = Math.trunc(mouseAngle(canvas.centreX, canvas.centreY) * 10)
 
 //                parent.requestPaint();
 
             }
         }
 
+        MouseArea {
+            id: disableDrag
+            anchors.top: mouseArea.top
+            anchors.right: mouseArea.right
+            anchors.bottom: mouseArea.bottom
+            anchors.left: mouseArea.left
+            enabled: true
+            anchors.rightMargin: 50
+            anchors.leftMargin: 50
+            anchors.bottomMargin: 50
+            anchors.topMargin: 50
+            propagateComposedEvents: true
+        }
+
 
 
 
     }
-
-
     TextInput {
         id: sec
         width: 46
         height: 34
-        text: canvas.dialAbsolute + " sec"
+        text: canvas.time
         anchors.verticalCenterOffset: 0
         anchors.horizontalCenterOffset: 0
         cursorVisible: false
@@ -134,7 +146,7 @@ Window {
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 16
 
-        onTextChanged: canvas.dialAbsolute = sec.text
+        onTextChanged: canvas.time = sec.text
     }
 
 }
