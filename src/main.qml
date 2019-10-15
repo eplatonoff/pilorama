@@ -32,7 +32,9 @@ Window {
         property real time: 0
 
         property real dialAbsolute: 0
-        property real dialPomo: 1500
+
+        property real sectorPomo: 1500
+        property real sectorPomoVisible: 0
 
         property string text: "Text"
 
@@ -60,7 +62,10 @@ Window {
             }
 
             dial(width, 4, staticDialColor, 0, canvas.time)
-            dial(width - 5, 10, pomoDialColor, 0, canvas.dialPomo)
+
+            canvas.time <= canvas.sectorPomo ? canvas.sectorPomoVisible = 0 : canvas.sectorPomoVisible = canvas.time - canvas.sectorPomo
+
+            dial(width - 5, 10, pomoDialColor, canvas.sectorPomoVisible, canvas.time)
 
 //            ctx.fillStyle = "black";
 
@@ -88,7 +93,7 @@ Window {
             property point circleStart: Qt.point(0, 0)
             property point mousePoint: Qt.point(0, 0)
 
-            onPressed: {
+            onPositionChanged: {
                 function mouseAngle(refPointX, refPointY){
 
                     const {x, y} = mouse;
