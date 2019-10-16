@@ -6,10 +6,35 @@ Window {
     visible: true
     width: 300
     height: 300
-    color: "#f1f1f1"
+    color: "white"
     title: qsTr("qml timer")
 
+    property bool darkMode: true
 
+    property color bgDay: "white"
+    property color bgNight: "#282828"
+
+    onDarkModeChanged: {
+        if (darkMode){
+            window.color = window.bgDay
+            bigClock.color = "black"
+            fakeDial.color = fakeDial.colorDay
+            modeSwitch.source = modeSwitch.iconNight
+            timerDial.color = timerDial.colorDay
+            pomodoroDial.color = pomodoroDial.colorDay
+
+            canvas.requestPaint()
+        }else{
+            window.color = window.bgNight
+            bigClock.color = "white"
+            fakeDial.color = fakeDial.colorNight
+            modeSwitch.source = modeSwitch.iconDay
+            timerDial.color = timerDial.colorNight
+            pomodoroDial.color = pomodoroDial.colorNight
+
+            canvas.requestPaint()
+        }
+    }
 
     Canvas {
 
@@ -25,9 +50,6 @@ Window {
         anchors.topMargin: 20
 
         antialiasing: true
-
-        property color staticDialColor: "#C9C9C9"
-        property color pomoDialColor: "red"
 
         property real time: 0
 
@@ -53,34 +75,50 @@ Window {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
-            function dial(diametr, stroke, color, startSec, endSec) {
+            function dial(diametr, stroke, dashed, color, startSec, endSec) {
                 ctx.beginPath();
                 ctx.lineWidth = stroke;
                 ctx.strokeStyle = color;
+                if (dashed) {
+
+                    var clength = Math.PI * (diametr - stroke) / 10;
+                    var devisions = 180;
+                    var dash = clength / devisions / 3;
+                    var space = clength / devisions - dash;
+
+                    console.log(diametr, clength, dash, space);
+
+                    ctx.setLineDash([dash, space]);
+
+                } else {
+                    ctx.setLineDash([1,0]);
+                }
+
                 ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
                 ctx.stroke();
             }
 
-            dial(width, 4, staticDialColor, 0, canvas.time)
+            dial(width - 7, 12, true ,fakeDial.color, 0, 3600)
+            dial(width, 4, false ,timerDial.color, 0, canvas.time)
 
             canvas.time <= canvas.sectorPomo ? canvas.sectorPomoVisible = 0 : canvas.sectorPomoVisible = canvas.time - canvas.sectorPomo
 
-            dial(width - 5, 10, pomoDialColor, canvas.sectorPomoVisible, canvas.time)
+            dial(width - 7, 12, false ,pomodoroDial.color, canvas.sectorPomoVisible, canvas.time)
 
-//            ctx.fillStyle = "black";
+            //            ctx.fillStyle = "black";
 
-//            ctx.ellipse(mouseArea.circleStart.x, mouseArea.circleStart.y, 5, 5);
-//            ctx.fill();
+            //            ctx.ellipse(mouseArea.circleStart.x, mouseArea.circleStart.y, 5, 5);
+            //            ctx.fill();
 
-//            ctx.beginPath();
-//            ctx.lineWidth = 2;
-//            ctx.strokeStyle = "black";
-//            ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-//            ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
-//            ctx.lineTo(centreX, centreY);
-//            ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-//            ctx.stroke();
-       }
+            //            ctx.beginPath();
+            //            ctx.lineWidth = 2;
+            //            ctx.strokeStyle = "black";
+            //            ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+            //            ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
+            //            ctx.lineTo(centreX, centreY);
+            //            ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+            //            ctx.stroke();
+        }
 
 
         MouseArea {
@@ -112,47 +150,151 @@ Window {
                     }
                 }
 
-                console.log(mouseAngle(canvas.centreX, canvas.centreY));
+//                console.log(mouseAngle(canvas.centreX, canvas.centreY));
                 canvas.time = Math.trunc(mouseAngle(canvas.centreX, canvas.centreY) * 10)
 
-//                parent.requestPaint();
+                //                parent.requestPaint();
 
             }
+
         }
-
-        MouseArea {
-            id: disableDrag
-            anchors.top: mouseArea.top
-            anchors.right: mouseArea.right
-            anchors.bottom: mouseArea.bottom
-            anchors.left: mouseArea.left
-            enabled: true
-            anchors.rightMargin: 50
-            anchors.leftMargin: 50
-            anchors.bottomMargin: 50
-            anchors.topMargin: 50
-            propagateComposedEvents: true
-        }
-
-
-
 
     }
     TextInput {
-        id: sec
+        id: bigClock
         width: 46
         height: 34
         text: canvas.time
+        color: "black"
         anchors.verticalCenterOffset: 0
         anchors.horizontalCenterOffset: 0
         cursorVisible: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 16
+        font.pixelSize: 30
 
-        onTextChanged: canvas.time = sec.text
+        onTextChanged: canvas.time = bigClock.text
     }
+
+
+    Image {
+        id: modeSwitch
+        x: 28
+        y: 28
+        width: 24
+        height: 24
+        sourceSize.width: 24
+        sourceSize.height: 24
+        antialiasing: true
+        smooth: true
+        anchors.top: parent.top
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        fillMode: Image.PreserveAspectFit
+        source: "./img/moon.png"
+
+        property string iconDay: "./img/sun.png"
+        property string iconNight: "./img/moon.png"
+
+        MouseArea {
+            id: modeSwitchArea
+            hoverEnabled: true
+            anchors.fill: parent
+            propagateComposedEvents: true
+            cursorShape: Qt.PointingHandCursor
+
+            onReleased: {
+                window.darkMode = !window.darkMode
+            }
+        }
+    }
+
+    Item {
+        id: fakeDial
+
+        property color color: "#EEEDE9"
+
+        property color colorDay: "#EEEDE9"
+        property color colorNight: "#323635"
+
+    }
+
+    Item {
+        id: timerDial
+
+        property color color: "#968F7E"
+
+        property color colorDay: "#968F7E"
+        property color colorNight: "#859391"
+
+        property real duration: 25
+
+        property bool bell: true
+        property bool endSoon: true
+
+        property real endSoonTime: 5
+
+
+    }
+
+    Item {
+        id: pomodoroDial
+
+        property color color: "#E26767"
+
+        property color colorDay: "#E26767"
+        property color colorNight: "#C23E3E"
+
+        property bool fullCircle: true
+
+        property real duration: 25
+        property real timeshift: 0
+
+        property bool bell: true
+        property bool endSoon: true
+
+        property real endSoonTime: 5
+
+    }
+    Item {
+        id: shortBreakDial
+
+        property color color: "#7DCF6F"
+
+        property color colorDay: "#7DCF6F"
+        property color colorNight: "#5BB44C"
+
+        property bool fullCircle: true
+
+        property real duration: 10
+        property real timeshift: 0
+
+        property bool bell: true
+        property bool endSoon: true
+
+        property real endSoonTime: 5
+    }
+    Item {
+        id: longBreakDial
+
+        property color color: "#67C5D1"
+
+        property color colorDay: "#67C5D1"
+        property color colorNight: "#4E919A"
+
+        property bool fullCircle: true
+
+        property real duration: 15
+        property real timeshift: 0
+
+        property bool bell: true
+        property bool endSoon: true
+
+        property real endSoonTime: 5
+    }
+
 
 }
 
