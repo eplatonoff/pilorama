@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Window 2.13
+import QtGraphicalEffects 1.12
 
 Window {
     id: window
@@ -11,29 +12,49 @@ Window {
 
     property bool darkMode: true
 
-    property color bgDay: "#EFEEE9"
-    property color bgNight: "#282828"
-
     onDarkModeChanged: {
         if (darkMode){
-            window.color = window.bgDay
+            window.color = colors.bgLight
             digitalMin.color = "black"
-            fakeDial.color = fakeDial.colorDay
+            fakeDial.color = colors.fakeLight
             modeSwitch.source = modeSwitch.iconNight
-            timerDial.color = timerDial.colorDay
-            pomodoroDial.color = pomodoroDial.colorDay
+            timerDial.color = colors.accentLight
+            pomodoroDial.color = colors.pomodoroLight
+            sound.color = colors.fakeLight
 
             canvas.requestPaint()
         } else {
-            window.color = window.bgNight
+            window.color = colors.bgDark
             digitalMin.color = "white"
-            fakeDial.color = fakeDial.colorNight
+            fakeDial.color = colors.fakeDark
             modeSwitch.source = modeSwitch.iconDay
-            timerDial.color = timerDial.colorNight
-            pomodoroDial.color = pomodoroDial.colorNight
+            timerDial.color = colors.accentDark
+            pomodoroDial.color = colors.pomodoroDark
+            sound.color = colors.fakeDark
 
             canvas.requestPaint()
         }
+    }
+
+    Item {
+        id: colors
+        property color bgLight: "#EFEEE9"
+        property color bgDark: "#282828"
+
+        property color fakeDark: "#4F5655"
+        property color fakeLight: "#CEC9B6"
+
+        property color accentDark: "#859391"
+        property color accentLight: "#968F7E"
+
+        property color pomodoroLight: "#E26767"
+        property color pomodoroDark: "#C23E3E"
+
+        property color shortBreakLight: "#7DCF6F"
+        property color shortBreakDark: "#5BB44C"
+
+        property color longBreakLight: "#6F85CF"
+        property color longBreakDark: "#5069BE"
     }
 
     Rectangle {
@@ -71,7 +92,6 @@ Window {
 
             property string text: "Text"
 
-
             signal clicked()
 
             property real centreX : width / 2
@@ -106,7 +126,7 @@ Window {
                         var dash = clength / devisions / 5;
                         var space = clength / devisions - dash;
 
-                        console.log(diametr, clength, dash, space);
+//                        console.log(diametr, clength, dash, space);
 
                         ctx.setLineDash([dash, space]);
 
@@ -263,8 +283,38 @@ Window {
             sourceSize.height: 23
             sourceSize.width: 23
             source: "./img/sound.svg"
+            antialiasing: true
             fillMode: Image.PreserveAspectFit
+
+            property bool soundOn: true
+            property color color: colors.fakeLight
+
+            onSoundOnChanged: {
+                soundOn ? sound.source = "./img/sound.svg" : sound.source = "./img/nosound.svg"
+            }
+
+            ColorOverlay{
+                id: soundIconOverlay
+                anchors.fill: parent
+                source: parent
+                color: parent.color
+                antialiasing: true
+            }
+
+            MouseArea {
+                id: soundIconTrigger
+                anchors.fill: parent
+                hoverEnabled: true
+                propagateComposedEvents: true
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    sound.soundOn = !sound.soundOn
+                }
+            }
         }
+
+
 
         Image {
             id: prefs
@@ -280,23 +330,16 @@ Window {
 
     Item {
         id: fakeDial
-
-        property color color: "#CEC9B6"
-
-        property color colorDay: "#CEC9B6"
-        property color colorNight: "#4F5655"
+        property color color: colors.fakeLight
 
     }
 
     Item {
         id: timerDial
 
-        property color color: "#968F7E"
+        property color color: colors.accentLight
 
-        property color colorDay: "#968F7E"
-        property color colorNight: "#859391"
-
-        property real duration: 25
+        property real duration: 0
 
         property bool bell: true
         property bool endSoon: true
@@ -309,10 +352,7 @@ Window {
     Item {
         id: pomodoroDial
 
-        property color color: "#E26767"
-
-        property color colorDay: "#E26767"
-        property color colorNight: "#C23E3E"
+        property color color: colors.pomodoroLight
 
         property bool fullCircle: true
 
@@ -328,10 +368,7 @@ Window {
     Item {
         id: shortBreakDial
 
-        property color color: "#7DCF6F"
-
-        property color colorDay: "#7DCF6F"
-        property color colorNight: "#5BB44C"
+        property color color: colors.shortBreakLight
 
         property bool fullCircle: true
 
@@ -346,10 +383,7 @@ Window {
     Item {
         id: longBreakDial
 
-        property color color: "#6F85CF"
-
-        property color colorDay: "#6F85CF"
-        property color colorNight: "#5069BE"
+        property color color: colors.longBreakLight
 
         property bool fullCircle: true
 
@@ -369,8 +403,11 @@ Window {
 
 
 
+
+
 /*##^##
 Designer {
-    D{i:7;anchors_x:99;anchors_y:54}D{i:8;anchors_x:104}D{i:1;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}
+    D{i:1;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:8;anchors_x:104}
+D{i:7;anchors_x:99;anchors_y:54}
 }
 ##^##*/
