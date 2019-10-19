@@ -29,9 +29,3 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-DISTFILES += \
-    img/moon.svg \
-    img/sun.svg \
-    img/moon.png \
-    img/sun.png \

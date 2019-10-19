@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>img/moon.svg</file>
+        <file>img/sun.svg</file>
+        <file>img/sound.svg</file>
+        <file>img/prefs.svg</file>
     </qresource>
 </RCC>
