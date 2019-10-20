@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Window 2.13
 import QtGraphicalEffects 1.12
+import QtMultimedia 5.13
 
 Window {
     id: window
@@ -41,16 +42,37 @@ Window {
         property color longBreakDark: "#5069BE"
     }
     Item {
+//        id: globalTimer
+//        property bool running: true
+//        property real duration: 25
+//        property real timeLeft: 0
+
+        Timer {
+            id: globalTimer
+            property real duration: 0
+
+            onDurationChanged: {canvas.requestPaint()}
+
+            interval: 1000;
+            running: false;
+            repeat: true
+            onTriggered: {
+                duration >= 1 ? duration = duration - 1 : stop()
+                canvas.requestPaint()
+                console.log(duration)
+            }
+        }
+    }
+    Item {
         id: fakeDial
         property color color: colors.fakeLight
-
     }
     Item {
         id: timerDial
 
         property color color: colors.accentLight
 
-        property real duration: 0
+        property real angle: globalTimer.duration / 10
 
         property bool bell: true
         property bool endSoon: true
@@ -148,19 +170,6 @@ Window {
 
                 property real centreX : width / 2
                 property real centreY : height / 2
-                x: -44
-                y: -55
-
-                function pad(value){
-                    if (value < 10) {return "0" + value
-                    } else {return value}
-                }
-
-                onTimeChanged: {
-                    canvas.timeMin = pad(Math.trunc(canvas.time / 60))
-                    canvas.timeSec = pad(canvas.time - Math.trunc(canvas.time / 60) * 60)
-                    requestPaint()
-                }
 
                 onPaint: {
                     var ctx = getContext("2d");
@@ -180,56 +189,54 @@ Window {
                             var dash = clength / devisions / 5;
                             var space = clength / devisions - dash;
 
-                            //                        console.log(diametr, clength, dash, space);
-
                             ctx.setLineDash([dash, space]);
 
                         } else {
                             ctx.setLineDash([1,0]);
                         }
 
-                        ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
+                        ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec * Math.PI / 180 + 1.5 *Math.PI,  endSec * Math.PI / 180 + 1.5 *Math.PI);
                         ctx.stroke();
                     }
 
                     dial(width - 7, 12, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
-                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, canvas.time)
+                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, timerDial.angle)
 
-                    canvas.time <= pomodoro.duration * 60 ? canvas.sectorPomoVisible = 0 : canvas.sectorPomoVisible = canvas.time - pomodoro.duration * 60
+                    timerDial.angle <= pomodoro.duration * 6 ? canvas.sectorPomoVisible = 0 : canvas.sectorPomoVisible = timerDial.angle - pomodoro.duration * 6
 
-                    dial(width - 7, 12, false, window.darkMode ? colors.pomodoroDark : colors.pomodoroLight, canvas.sectorPomoVisible, canvas.time)
+                    dial(width - 7, 12, false, window.darkMode ? colors.pomodoroDark : colors.pomodoroLight, canvas.sectorPomoVisible, timerDial.angle)
 
-                    //            ctx.fillStyle = "black";
-
-                    //            ctx.ellipse(mouseArea.circleStart.x, mouseArea.circleStart.y, 5, 5);
-                    //            ctx.fill();
-
-                    //            ctx.beginPath();
-                    //            ctx.lineWidth = 2;
-                    //            ctx.strokeStyle = "black";
-                    //            ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-                    //            ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
-                    //            ctx.lineTo(centreX, centreY);
-                    //            ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-                    //            ctx.stroke();
+//                                ctx.beginPath();
+//                                ctx.lineWidth = 2;
+//                                ctx.strokeStyle = "black";
+//                                ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+//                                ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
+//                                ctx.lineTo(centreX, centreY);
+//                                ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+//                                ctx.stroke();
                 }
 
 
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
-                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     propagateComposedEvents: true
 
                     property point circleStart: Qt.point(0, 0)
                     property point mousePoint: Qt.point(0, 0)
+                    property real scroll: 0
+                    property real scrollMultiplier: 5
+
+                    onReleased: {
+                        globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop()
+                        console.log("triggered")
+                    }
 
                     onPositionChanged: {
+                        globalTimer.stop()
                         function mouseAngle(refPointX, refPointY){
-
                             const {x, y} = mouse;
-
                             mousePoint = Qt.point(x, y);
                             const radius = Math.hypot(x - refPointX, y - refPointY);
 
@@ -240,15 +247,11 @@ Window {
                             if (mousePoint.x >= circleStart.x) {
                                 return angle
                             } else {
-                                return 180 - angle + 180
+                                return 360 - angle
                             }
                         }
 
-                        //                console.log(mouseAngle(canvas.centreX, canvas.centreY));
-                        canvas.time = Math.trunc(mouseAngle(canvas.centreX, canvas.centreY) * 10)
-
-                        //                parent.requestPaint();
-
+                        globalTimer.duration = Math.trunc(mouseAngle(canvas.centreX, canvas.centreY) * 10)
                     }
 
                 }
@@ -264,10 +267,18 @@ Window {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
 
+                property string min: "00"
+                property string sec: "00"
+
+                function pad(value){
+                    if (value < 10) {return "0" + value
+                    } else {return value}
+                }
+
                 Text {
                     id: digitalSec
                     height: 22
-                    text: canvas.timeSec
+                    text: parent.pad(globalTimer.duration % 60)
                     verticalAlignment: Text.AlignTop
                     anchors.top: digitalMin.top
                     anchors.topMargin: 0
@@ -282,7 +293,7 @@ Window {
                     y: 112
                     width: 60
                     height: 44
-                    text: canvas.timeMin
+                    text: parent.pad(Math.trunc(globalTimer.duration / 60))
                     anchors.left: parent.left
                     anchors.leftMargin: 26
                     font.preferShaping: true
@@ -315,13 +326,25 @@ Window {
 
                 property string iconSound: "./img/sound.svg"
                 property string iconNoSound: "./img/nosound.svg"
-                x: 0
-                y: 0
+
+                property bool playSound: globalTimer.duration
+
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
 
                 onSoundOnChanged: {
-                    soundOn ? soundIcon.source = iconSound : soundIcon.source = iconNoSound
+                    if ( soundOn ){
+                        soundIcon.source = iconSound
+                        soundNotification.muted = false
+                    } else{
+                        soundIcon.source = iconNoSound
+                        soundNotification.muted = true
+                    }
+
+                }
+
+                onPlaySoundChanged: {
+                    !playSound ? soundNotification.play() : soundNotification.stop()
                 }
 
                 ColorOverlay{
@@ -330,6 +353,12 @@ Window {
                     source: parent
                     color: window.darkMode ? colors.fakeDark : colors.fakeLight
                     antialiasing: true
+                }
+
+                SoundEffect {
+                    id: soundNotification
+                    muted: false
+                    source: "./sound/danay.wav"
                 }
 
                 MouseArea {
@@ -369,7 +398,7 @@ Window {
             Item {
                 id: sliceLine
                 height: 50
-                anchors.top: rectangle.bottom
+                anchors.top: lineDivider.bottom
                 anchors.topMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 0

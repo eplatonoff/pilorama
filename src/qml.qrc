@@ -6,5 +6,7 @@
         <file>img/sound.svg</file>
         <file>img/prefs.svg</file>
         <file>img/nosound.svg</file>
+        <file>sound/piano-low.wav</file>
+        <file>sound/danay.wav</file>
     </qresource>
 </RCC>
