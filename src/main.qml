@@ -41,28 +41,23 @@ Window {
         property color longBreakLight: "#6F85CF"
         property color longBreakDark: "#5069BE"
     }
-    Item {
-//        id: globalTimer
-//        property bool running: true
-//        property real duration: 25
-//        property real timeLeft: 0
 
-        Timer {
-            id: globalTimer
-            property real duration: 0
+    Timer {
+        id: globalTimer
+        property real duration: 0
 
-            onDurationChanged: {canvas.requestPaint()}
+        onDurationChanged: { canvas.requestPaint() }
 
-            interval: 1000;
-            running: false;
-            repeat: true
-            onTriggered: {
-                duration >= 1 ? duration = duration - 1 : stop()
-                canvas.requestPaint()
-                console.log(duration)
-            }
+        interval: 1000;
+        running: false;
+        repeat: true
+        onTriggered: {
+            duration >= 1 ? duration = duration - 1 : stop()
+            canvas.requestPaint()
+            console.log(duration)
         }
     }
+
     Item {
         id: fakeDial
         property color color: colors.fakeLight
@@ -206,14 +201,14 @@ Window {
 
                     dial(width - 7, 12, false, window.darkMode ? colors.pomodoroDark : colors.pomodoroLight, canvas.sectorPomoVisible, timerDial.angle)
 
-//                                ctx.beginPath();
-//                                ctx.lineWidth = 2;
-//                                ctx.strokeStyle = "black";
-//                                ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-//                                ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
-//                                ctx.lineTo(centreX, centreY);
-//                                ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
-//                                ctx.stroke();
+                    //                                ctx.beginPath();
+                    //                                ctx.lineWidth = 2;
+                    //                                ctx.strokeStyle = "black";
+                    //                                ctx.moveTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+                    //                                ctx.lineTo(mouseArea.mousePoint.x, mouseArea.mousePoint.y);
+                    //                                ctx.lineTo(centreX, centreY);
+                    //                                ctx.lineTo(mouseArea.circleStart.x, mouseArea.circleStart.y);
+                    //                                ctx.stroke();
                 }
 
 
@@ -259,9 +254,149 @@ Window {
             }
 
             Item {
+                id: startControls
+                visible: !globalTimer.duration
+                width: 140
+                height: 140
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+
+                Image {
+                    id: startPomoIcon
+                    anchors.left: parent.left
+                    anchors.leftMargin: 16
+                    sourceSize.height: 45
+                    sourceSize.width: 45
+                    antialiasing: true
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    source: "./img/play.svg"
+
+                    ColorOverlay{
+                        id: startPomoOverlay
+                        anchors.fill: parent
+                        source: parent
+                        color: window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                        antialiasing: true
+                    }
+
+                    MouseArea {
+                        id: startPomoTrigger
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        propagateComposedEvents: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onReleased: {
+                            globalTimer.duration = 25 * 60
+                            globalTimer.start()
+                        }
+                    }
+                }
+
+                Column {
+                    id: column
+                    y: 54
+                    width: 54
+                    height: 46
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 4
+                    anchors.left: startPomoIcon.right
+                    anchors.leftMargin: 9
+
+                    Item {
+                        id: pomodoroLine
+                        height: 12
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+                        Rectangle {
+                            width: 7
+                            height: 7
+                            radius: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            color: window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                        }
+
+                        Text {
+                            height: 11
+                            text: pomodoro.duration + " min"
+                            verticalAlignment: Text.AlignVCenter
+                            color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            font.pixelSize: 11
+                        }
+
+                    }
+                    Item {
+                        id: shortBreakLine
+                        height: 12
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+                        Rectangle {
+                            width: 7
+                            height: 7
+                            radius: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            color: window.darkMode ? colors.shortBreakDark : colors.shortBreakLight
+                        }
+
+                        Text {
+                            height: 11
+                            text: shortBreak.duration + " min"
+                            verticalAlignment: Text.AlignVCenter
+                            color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            font.pixelSize: 11
+                        }
+
+                    }
+                    Item {
+                        id: longBreakLine
+                        height: 12
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+                        Rectangle {
+                            width: 7
+                            height: 7
+                            radius: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            color: window.darkMode ? colors.longBreakDark : colors.longBreakLight
+                        }
+
+                        Text {
+                            height: 11
+                            text: longBreak.duration + " min"
+                            verticalAlignment: Text.AlignVCenter
+                            color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            font.pixelSize: 11
+                        }
+
+                    }
+                }
+            }
+
+            Item {
                 id: digitalClock
-                x: 20
-                y: 9
+                visible: globalTimer.duration
                 width: 140
                 height: 140
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -373,6 +508,8 @@ Window {
                     }
                 }
             }
+
+
         }
 
         Item {
@@ -591,13 +728,20 @@ Window {
 /*##^##
 Designer {
     D{i:1;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:3;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
-D{i:6;anchors_x:99;anchors_y:54}D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
-D{i:15;anchors_width:200;invisible:true}D{i:16;anchors_x:99;anchors_y:54;invisible:true}
-D{i:8;invisible:true}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}
-D{i:21;anchors_x:99;anchors_y:54}D{i:22;anchors_x:99;anchors_y:54}D{i:24;anchors_x:245;anchors_y:245}
-D{i:26;anchors_x:99;anchors_y:54;invisible:true}D{i:27;invisible:true}D{i:25;anchors_x:99;anchors_y:54;invisible:true}
-D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:29;anchors_x:99;anchors_y:54;invisible:true}
-D{i:30;invisible:true}D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:32;invisible:true}
-D{i:33;invisible:true}D{i:31;invisible:true}D{i:7;anchors_x:104}
+D{i:5;anchors_x:99;anchors_y:54}D{i:6;anchors_x:99;anchors_y:54}D{i:7;anchors_x:104;invisible:true}
+D{i:15;anchors_width:200;invisible:true}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}
+D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:21;anchors_x:99;anchors_y:54}
+D{i:22;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}D{i:24;anchors_x:245;anchors_y:245}
+D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}
+D{i:27;anchors_x:99;anchors_y:54;invisible:true}D{i:28;anchors_x:99;anchors_y:54;invisible:true}
+D{i:26;anchors_x:99;anchors_y:54;invisible:true}D{i:30;anchors_x:245;anchors_y:245;invisible:true}
+D{i:31;anchors_x:99;anchors_y:54;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}
+D{i:29;anchors_x:99;anchors_y:54;invisible:true}D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
+D{i:34;anchors_x:99;anchors_y:54;invisible:true}D{i:36;anchors_x:99;anchors_y:54;invisible:true}
+D{i:37;anchors_x:99;anchors_y:54;invisible:true}D{i:38;anchors_x:99;anchors_y:54;invisible:true}
+D{i:39;anchors_x:99;anchors_y:54;invisible:true}D{i:40;anchors_x:99;anchors_y:54;invisible:true}
+D{i:42;anchors_x:99;anchors_y:54;invisible:true}D{i:43;invisible:true}D{i:41;anchors_x:99;anchors_y:54;invisible:true}
+D{i:35;anchors_x:99;anchors_y:54;invisible:true}D{i:33;anchors_x:99;anchors_y:54;invisible:true}
+D{i:45;invisible:true}D{i:46;invisible:true}D{i:44;invisible:true}D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
 }
 ##^##*/

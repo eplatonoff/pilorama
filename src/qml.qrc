@@ -8,5 +8,6 @@
         <file>img/nosound.svg</file>
         <file>sound/piano-low.wav</file>
         <file>sound/danay.wav</file>
+        <file>img/play.svg</file>
     </qresource>
 </RCC>
