@@ -444,6 +444,21 @@ Window {
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: 44
                 }
+
+
+                MouseArea {
+                    id: digitalClockStop
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    propagateComposedEvents: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onReleased: {
+                        globalTimer.duration = 0
+                        globalTimer.stop()
+                        soundIcon.playSound = true
+                    }
+                }
             }
 
             Image {
