@@ -3,6 +3,8 @@ import QtQuick.Window 2.13
 import QtGraphicalEffects 1.12
 import QtMultimedia 5.13
 
+import "utils/geometry.mjs" as GeometryScripts
+
 Window {
     id: window
     visible: true
@@ -231,21 +233,9 @@ Window {
                     onPositionChanged: {
                         globalTimer.stop();
 
-                        function mouseAngle(mousePoint, centerPoint) {
-                            const angle =
-                                        Math.atan(
-                                            Math.abs(mousePoint.x - centerPoint.x) /
-                                            Math.abs(mousePoint.y - centerPoint.y)
-                                            )
-                                        * (180 / Math.PI);
-
-                            if (mousePoint.x >= centerPoint.x)
-                                return y <= centerPoint.y ? angle : 180 - angle;
-                            else
-                                return y <= centerPoint.y ? 360 - angle : 180 + angle;
-                        }
-
-                        const angle = mouseAngle(Qt.point(mouse.x, mouse.y), Qt.point(canvas.centreX, canvas.centreY));
+                        const angle = GeometryScripts.mouseAngle(
+                                        Qt.point(mouse.x, mouse.y),
+                                        Qt.point(canvas.centreX, canvas.centreY));
 
                         globalTimer.duration = Math.trunc(angle * 10);
                     }

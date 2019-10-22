@@ -9,5 +9,6 @@
         <file>sound/piano-low.wav</file>
         <file>sound/danay.wav</file>
         <file>img/play.svg</file>
+        <file>utils/geometry.mjs</file>
     </qresource>
 </RCC>
