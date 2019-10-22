@@ -229,24 +229,25 @@ Window {
                     }
 
                     onPositionChanged: {
-                        globalTimer.stop()
-                        function mouseAngle(refPointX, refPointY){
-                            const {x, y} = mouse;
-                            mousePoint = Qt.point(x, y);
-                            const radius = Math.hypot(x - refPointX, y - refPointY);
+                        globalTimer.stop();
 
-                            circleStart = Qt.point(refPointX, refPointY - radius)
-                            const horde = Math.hypot(x - refPointX, y - (refPointY - radius));
-                            const angle = Math.asin((horde/2) / radius ) * 2 * ( 180 / Math.PI );
+                        function mouseAngle(mousePoint, centerPoint) {
+                            const angle =
+                                        Math.atan(
+                                            Math.abs(mousePoint.x - centerPoint.x) /
+                                            Math.abs(mousePoint.y - centerPoint.y)
+                                            )
+                                        * (180 / Math.PI);
 
-                            if (mousePoint.x >= circleStart.x) {
-                                return angle
-                            } else {
-                                return 360 - angle
-                            }
+                            if (mousePoint.x >= centerPoint.x)
+                                return y <= centerPoint.y ? angle : 180 - angle;
+                            else
+                                return y <= centerPoint.y ? 360 - angle : 180 + angle;
                         }
 
-                        globalTimer.duration = Math.trunc(mouseAngle(canvas.centreX, canvas.centreY) * 10)
+                        const angle = mouseAngle(Qt.point(mouse.x, mouse.y), Qt.point(canvas.centreX, canvas.centreY));
+
+                        globalTimer.duration = Math.trunc(angle * 10);
                     }
 
                 }
