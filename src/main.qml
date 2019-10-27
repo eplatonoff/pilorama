@@ -5,6 +5,7 @@ import QtMultimedia 5.13
 
 import "utils/geometry.mjs" as GeometryScripts
 
+
 Window {
     id: window
     visible: true
@@ -19,6 +20,19 @@ Window {
 
     onDarkModeChanged: { canvas.requestPaint()}
     onShowPrefsChanged: { canvas.requestPaint()}
+
+    QtObject {
+       id: durationSettings
+
+       property real pomodoro: 25 * 60
+       property real pause: 5 * 60
+       property real breakTime: 15 * 60
+       property int repeatBeforeBreak: 4
+    }
+
+    ListModel {
+        id: pomodoroQueue
+    }
 
     Item {
         id: colors
@@ -229,6 +243,7 @@ Window {
 
                     property real _prevAngle: 0
                     property real _totalRotated: 0
+                    property real _totalRotatedSecs: 0
 
                     onReleased: {
                         globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop()
@@ -237,7 +252,8 @@ Window {
 
                     onRotated: {
                         this._totalRotated += delta;
-                        console.log(_totalRotated);
+                        this._totalRotatedSecs += delta * 10;
+                        console.log(_totalRotatedSecs / 60);
                     }
 
                     onPressed: {
