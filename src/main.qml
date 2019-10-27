@@ -220,14 +220,31 @@ Window {
                     cursorShape: Qt.PointingHandCursor
                     propagateComposedEvents: true
 
+                    signal rotated(real delta)
+
                     property point circleStart: Qt.point(0, 0)
                     property point mousePoint: Qt.point(0, 0)
                     property real scroll: 0
                     property real scrollMultiplier: 5
 
+                    property real _prevAngle: 0
+                    property real _totalRotated: 0
+
                     onReleased: {
                         globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop()
-                        console.log("triggered")
+//                        console.log("triggered")
+                    }
+
+                    onRotated: {
+                        this._totalRotated += delta;
+                        console.log(_totalRotated);
+                    }
+
+                    onPressed: {
+                        const angle = GeometryScripts.mouseAngle(
+                                        Qt.point(mouse.x, mouse.y),
+                                        Qt.point(canvas.centreX, canvas.centreY));
+                        this._prevAngle = angle;
                     }
 
                     onPositionChanged: {
@@ -236,6 +253,38 @@ Window {
                         const angle = GeometryScripts.mouseAngle(
                                         Qt.point(mouse.x, mouse.y),
                                         Qt.point(canvas.centreX, canvas.centreY));
+
+                        function modulo(num, denom)
+                        {
+                            if (num%denom >= 0)
+                            {
+                                return Math.abs(num%denom);
+                            }
+                            else
+                            {
+                                return num%denom + denom;
+                            }
+                        }
+
+                        function lessDelta(newAngle, prevAngle) {
+
+                            const delta1 = modulo(newAngle - prevAngle, 360);
+                            const delta2 = modulo(prevAngle - newAngle, 360);
+
+                            let delta = delta1 < delta2 ? delta1 : delta2;
+
+                            if (modulo(prevAngle + delta, 360) !== newAngle) {
+                                delta = delta * (-1);
+                            }
+
+                            return delta;
+                        }
+
+                        const delta = lessDelta(angle, this._prevAngle)
+
+                        this._prevAngle = angle;
+
+                        this.rotated(delta);
 
                         globalTimer.duration = Math.trunc(angle * 10);
                     }
