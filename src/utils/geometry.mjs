@@ -1,4 +1,3 @@
-
 export function mouseAngle(mousePoint, centerPoint) {
     const angle =
                 Math.atan(

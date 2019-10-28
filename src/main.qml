@@ -68,7 +68,7 @@ Window {
         running: false;
         repeat: true
         onTriggered: {
-            duration >= 1 ? duration = duration - 1 : stop()
+            duration >= 0 ? duration-- : stop()
             canvas.requestPaint()
             console.log(duration)
         }
@@ -211,7 +211,7 @@ Window {
                     }
 
                     dial(width - 7, 12, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
-                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, timerDial.angle)
+                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration / 10)
 
                     timerDial.angle <= pomodoro.duration * 6 ? canvas.sectorPomoVisible = 0 : canvas.sectorPomoVisible = timerDial.angle - pomodoro.duration * 6
 
@@ -247,13 +247,17 @@ Window {
 
                     onReleased: {
                         globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop()
-//                        console.log("triggered")
                     }
 
                     onRotated: {
                         this._totalRotated += delta;
                         this._totalRotatedSecs += delta * 10;
-                        console.log(_totalRotatedSecs / 60);
+
+                        if (_totalRotatedSecs > 0){
+                            globalTimer.duration = Math.trunc(_totalRotatedSecs);
+                        } else {
+                            _totalRotatedSecs = 0
+                        }
                     }
 
                     onPressed: {
@@ -302,7 +306,7 @@ Window {
 
                         this.rotated(delta);
 
-                        globalTimer.duration = Math.trunc(angle * 10);
+//                        globalTimer.duration = Math.trunc(angle * 10);
                     }
 
                 }
