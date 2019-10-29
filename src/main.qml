@@ -253,10 +253,10 @@ Window {
                         this._totalRotated += delta;
                         this._totalRotatedSecs += delta * 10;
 
-                        if (_totalRotatedSecs > 0){
+                        if (_totalRotatedSecs > 0) {
                             globalTimer.duration = Math.trunc(_totalRotatedSecs);
                         } else {
-                            _totalRotatedSecs = 0
+                            _totalRotatedSecs = 0;
                         }
                     }
 
@@ -274,39 +274,12 @@ Window {
                                         Qt.point(mouse.x, mouse.y),
                                         Qt.point(canvas.centreX, canvas.centreY));
 
-                        function modulo(num, denom)
-                        {
-                            if (num%denom >= 0)
-                            {
-                                return Math.abs(num%denom);
-                            }
-                            else
-                            {
-                                return num%denom + denom;
-                            }
-                        }
 
-                        function lessDelta(newAngle, prevAngle) {
-
-                            const delta1 = modulo(newAngle - prevAngle, 360);
-                            const delta2 = modulo(prevAngle - newAngle, 360);
-
-                            let delta = delta1 < delta2 ? delta1 : delta2;
-
-                            if (modulo(prevAngle + delta, 360) !== newAngle) {
-                                delta = delta * (-1);
-                            }
-
-                            return delta;
-                        }
-
-                        const delta = lessDelta(angle, this._prevAngle)
+                        const delta = GeometryScripts.lessDelta(angle, this._prevAngle);
 
                         this._prevAngle = angle;
 
                         this.rotated(delta);
-
-//                        globalTimer.duration = Math.trunc(angle * 10);
                     }
 
                 }
