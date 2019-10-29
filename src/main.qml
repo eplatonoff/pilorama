@@ -32,6 +32,8 @@ Window {
 
     ListModel {
         id: pomodoroQueue
+
+        property int totalPomodoros: 0
     }
 
     Item {
@@ -246,12 +248,106 @@ Window {
                     property real _totalRotatedSecs: 0
 
                     onReleased: {
-                        globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop()
+                        globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop();
                     }
 
                     onRotated: {
+
+                        const deltaSecs = delta * 10;
+
                         this._totalRotated += delta;
-                        this._totalRotatedSecs += delta * 10;
+                        this._totalRotatedSecs += deltaSecs;
+
+
+                        function changeQueue(deltaSecs) {
+
+                            function changeItem(secs) {
+
+                                let durationBound = 0;
+
+                                switch (pomodoroQueue.get(0).type) {
+                                case "pomodoro":
+                                    durationBound = durationSettings.pomodoro; break;
+                                case "pause":
+                                    durationBound = durationSettings.pause; break;
+                                case "break":
+                                    durationBound = durationSettings.breakTime; break;
+                                default:
+                                    throw "unknown time segment type";
+                                }
+
+
+                                const rawValue = pomodoroQueue.get(0).duration + secs;
+
+                                if (rawValue > durationBound) {
+                                    pomodoroQueue.get(0).duration = durationBound;
+                                    return rawValue - durationBound;
+                                }
+                                else
+                                if (rawValue <= 0) {
+                                    pomodoroQueue.get(0).duration = 0;
+                                    return rawValue;
+                                }
+                                else {
+                                    pomodoroQueue.get(0).duration += secs;
+                                    return 0;
+                                }
+                            }
+
+
+                            if (pomodoroQueue.count == 0) {
+                                pomodoroQueue.insert(0, {"type": "pomodoro", "duration": 0});
+                                pomodoroQueue.totalPomodoros += 1;
+                            }
+
+                            let secsToCalc = deltaSecs;
+
+                            while (secsToCalc !== 0 && pomodoroQueue.count > 0) {
+
+
+                                const restSecs = changeItem(secsToCalc);
+
+                                if (restSecs < 0) {
+
+                                    if (pomodoroQueue.get(0).type === "pomodoro") {
+                                        pomodoroQueue.totalPomodoros -= 1;
+                                    }
+
+                                    pomodoroQueue.remove(0);
+                                }
+                                else
+                                if (restSecs > 0) {
+
+                                    function insertPauseOrBreak() {
+                                        if (pomodoroQueue.totalPomodoros % durationSettings.repeatBeforeBreak === 0 ) {
+                                            pomodoroQueue.insert(0, {"type": "break", "duration": 0});
+                                        }
+                                        else
+                                            pomodoroQueue.insert(0, {"type": "pause", "duration": 0});
+                                    }
+
+                                    switch (pomodoroQueue.get(0).type) {
+                                    case "pomodoro": insertPauseOrBreak(); break;
+                                    case "pause":
+                                    case "break":
+                                        pomodoroQueue.insert(0, {"type": "pomodoro", "duration": 0});
+                                        pomodoroQueue.totalPomodoros += 1;
+                                        break;
+                                    default:
+                                        throw "unknown time segment type";
+                                    }
+
+                                }
+
+
+                                secsToCalc = restSecs;
+                            }
+
+                            console.log(JSON.stringify(pomodoroQueue.get(0)));
+                        }
+
+
+                        changeQueue(deltaSecs);
 
                         if (_totalRotatedSecs > 0) {
                             globalTimer.duration = Math.trunc(_totalRotatedSecs);
