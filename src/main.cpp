@@ -1,10 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTimer>
-#include <QDebug>>
+#include <QDebug>
+
+void disable_app_nap(void);
+
+
+
 
 int main(int argc, char *argv[])
 {
+    disable_app_nap();
+
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
@@ -22,18 +29,25 @@ int main(int argc, char *argv[])
 
         qDebug() << "obj created";
 
-        QTimer::singleShot(5 * 1000, [obj]() {
-            QMetaObject::invokeMethod(obj, "timerTest");
-        });
+//        QTimer::singleShot(5 * 1000, [obj]() {
+//            QMetaObject::invokeMethod(obj, "timerTest");
+//        });
 
-        QTimer::singleShot(5 * 1000 * 60, [obj]() {
-            QMetaObject::invokeMethod(obj, "timerTest");
-        });
+//        QTimer::singleShot(5 * 1000 * 60, [obj]() {
+//            qDebug() << "timer test in c++";
+//            QMetaObject::invokeMethod(obj, "timerTest");
+//        });
+
+
+//        auto timer = new QTimer();
+//        timer->setTimerType(Qt::PreciseTimer);
+//        QTimer::connect(timer, &QTimer::timeout, [obj]() {
+//            QMetaObject::invokeMethod(obj, "timerTest", Qt::QueuedConnection);
+//        });
+//        timer->start(1000);
 
 
     }, Qt::QueuedConnection);
-
-
 
     engine.load(url);
 
