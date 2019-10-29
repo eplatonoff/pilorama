@@ -21,6 +21,12 @@ Window {
     onDarkModeChanged: { canvas.requestPaint()}
     onShowPrefsChanged: { canvas.requestPaint()}
 
+    function timerTest() {
+
+        console.log('timer test');
+
+    }
+
     QtObject {
        id: durationSettings
 
