@@ -32,26 +32,6 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
 
-        qDebug() << "obj created";
-
-//        QTimer::singleShot(5 * 1000, [obj]() {
-//            QMetaObject::invokeMethod(obj, "timerTest");
-//        });
-
-//        QTimer::singleShot(5 * 1000 * 60, [obj]() {
-//            qDebug() << "timer test in c++";
-//            QMetaObject::invokeMethod(obj, "timerTest");
-//        });
-
-
-//        auto timer = new QTimer();
-//        timer->setTimerType(Qt::PreciseTimer);
-//        QTimer::connect(timer, &QTimer::timeout, [obj]() {
-//            QMetaObject::invokeMethod(obj, "timerTest", Qt::QueuedConnection);
-//        });
-//        timer->start(1000);
-
-
     }, Qt::QueuedConnection);
 
     engine.load(url);
