@@ -78,7 +78,6 @@ Window {
         onTriggered: {
             duration >= 0 ? duration-- : stop()
             canvas.requestPaint()
-            console.log(duration)
         }
     }
 
@@ -107,8 +106,7 @@ Window {
 
         property bool fullCircle: true
 
-        property real duration: 25
-        property real timeshift: 0
+        property real timeleft: 25
 
         property bool bell: true
         property bool endSoon: true
@@ -214,16 +212,56 @@ Window {
                             ctx.setLineDash([1,0]);
                         }
 
-                        ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec * Math.PI / 180 + 1.5 *Math.PI,  endSec * Math.PI / 180 + 1.5 *Math.PI);
+                        ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
                         ctx.stroke();
                     }
 
                     dial(width - 7, 12, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
-                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration / 10)
 
-                    timerDial.angle <= pomodoro.duration * 6 ? canvas.sectorPomoVisible = 0 : canvas.sectorPomoVisible = timerDial.angle - pomodoro.duration * 6
+                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration)
 
-                    dial(width - 7, 12, false, window.darkMode ? colors.pomodoroDark : colors.pomodoroLight, canvas.sectorPomoVisible, timerDial.angle)
+                    if(globalTimer.running){
+                        let splitIncrement;
+                        let splitTimeLeft;
+                        let splitColor;
+
+                        function wholeSplitsDuration(){
+                            if (pomodoroQueue.count > 1)
+                            {return pomodoroQueue.get(1).duration}
+                            else {return 0}
+                         }
+
+
+                        switch (pomodoroQueue.get(0).type) {
+                        case "pomodoro":
+                            splitIncrement = 3600 / durationSettings.pomodoro ;
+                            splitColor = window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                            break;
+                        case "pause":
+                            splitIncrement = 3600 / durationSettings.pause;
+                            splitColor = window.darkMode ? colors.shortBreakDark : colors.shortBreakLight
+                            break;
+                        case "break":
+                            splitIncrement = 3600 / durationSettings.breakTime;
+                            splitColor = window.darkMode ? colors.longBreakDark : colors.longBreakLight
+                            break;
+                        default:
+                            throw "can't calculate split time values";
+                        }
+
+                        let splitTimer = (globalTimer.duration - wholeSplitsDuration()) * splitIncrement
+
+                        console.log(globalTimer.duration, (globalTimer.duration - wholeSplitsDuration()), splitIncrement, splitTimer )
+
+
+                        dial(width - 7, 12, false, splitColor, 0, splitTimer)
+
+                    } else {
+                        globalTimer.duration <= durationSettings.pomodoro ? canvas.sectorPomoVisible = globalTimer.duration : canvas.sectorPomoVisible = durationSettings.pomodoro
+                        dial(width - 7, 12, false, window.darkMode ? colors.pomodoroDark : colors.pomodoroLight, 0, canvas.sectorPomoVisible)
+                    }
+
+
 
                     //                                ctx.beginPath();
                     //                                ctx.lineWidth = 2;
