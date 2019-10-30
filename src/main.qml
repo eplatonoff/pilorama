@@ -32,7 +32,7 @@ Window {
        property real pomodoro: 25 * 60
        property real pause: 5 * 60
        property real breakTime: 15 * 60
-       property int repeatBeforeBreak: 4
+       property int repeatBeforeBreak: 2
     }
 
     Item {
@@ -62,6 +62,7 @@ Window {
     Timer {
         id: globalTimer
         property real duration: 0
+        property real splitDuration: 0
 
         onDurationChanged: { canvas.requestPaint() }
 
@@ -70,6 +71,7 @@ Window {
         repeat: true
         onTriggered: {
             duration >= 0 ? duration-- : stop()
+            if (pomodoroQueue.get(0).duration > 0){ pomodoroQueue.get(0).duration--; }
             canvas.requestPaint()
         }
     }
@@ -172,8 +174,6 @@ Window {
 
                 property real dialAbsolute: 0
 
-                property real sectorPomoVisible: 0
-
                 property string text: "Text"
 
                 signal clicked()
@@ -213,45 +213,51 @@ Window {
 
                     dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration)
 
-                    if(globalTimer.running){
+                    function getSplit(type){
                         let splitIncrement;
-                        let splitTimeLeft;
                         let splitColor;
+                        let splitDuration;
 
-                        function wholeSplitsDuration(){
-                            if (pomodoroQueue.count > 1)
-                            {return pomodoroQueue.get(1).duration}
-                            else {return 0}
-                         }
-
-
-                        switch (pomodoroQueue.get(0).type) {
+                        switch (type) {
                         case "pomodoro":
+                            splitDuration = durationSettings.pomodoro
                             splitIncrement = 3600 / durationSettings.pomodoro ;
                             splitColor = window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
                             break;
                         case "pause":
+                            splitDuration = durationSettings.pause
                             splitIncrement = 3600 / durationSettings.pause;
                             splitColor = window.darkMode ? colors.shortBreakDark : colors.shortBreakLight
                             break;
                         case "break":
+                            splitDuration = durationSettings.breakTime
                             splitIncrement = 3600 / durationSettings.breakTime;
                             splitColor = window.darkMode ? colors.longBreakDark : colors.longBreakLight
                             break;
                         default:
                             throw "can't calculate split time values";
                         }
-
-                        let splitTimer = (globalTimer.duration - wholeSplitsDuration()) * splitIncrement
-
-                        console.log(globalTimer.duration, (globalTimer.duration - wholeSplitsDuration()), splitIncrement, splitTimer )
+                        return {duration: splitDuration, increment: splitIncrement, color: splitColor};
+                    }
 
 
-                        dial(width - 7, 12, false, splitColor, 0, splitTimer)
+                    if(globalTimer.running){
+                       dial(width - 7, 12, false, getSplit(pomodoroQueue.get(0).type).color, 0, pomodoroQueue.get(0).duration * getSplit(pomodoroQueue.get(0).type).increment)
+                    }
+                    else {
+                        var i;
+                        var splitVisibleEnd = 0;
+                        var splitVisibleStart = 0;
+                        var prevSplit;
 
-                    } else {
-                        globalTimer.duration <= durationSettings.pomodoro ? canvas.sectorPomoVisible = globalTimer.duration : canvas.sectorPomoVisible = durationSettings.pomodoro
-                        dial(width - 7, 12, false, window.darkMode ? colors.pomodoroDark : colors.pomodoroLight, 0, canvas.sectorPomoVisible)
+                        for(i=0; i < pomodoroQueue.count; i++){
+                            i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i - 1).duration
+
+                            splitVisibleStart = prevSplit + splitVisibleStart;
+                            splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
+
+                            dial(width - 7, 12, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
+                        }
                     }
 
 
@@ -837,3 +843,4 @@ D{i:35;anchors_x:99;anchors_y:54;invisible:true}D{i:33;anchors_x:99;anchors_y:54
 D{i:45;invisible:true}D{i:46;invisible:true}D{i:44;invisible:true}D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
 }
 ##^##*/
+
