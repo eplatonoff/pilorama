@@ -70,8 +70,8 @@ Window {
         running: false;
         repeat: true
         onTriggered: {
-            duration >= 0 ? duration-- : stop()
-            if (pomodoroQueue.get(0).duration > 0){ pomodoroQueue.get(0).duration--; }
+            duration >= 1 ? duration-- : stop()
+            if (pomodoroQueue.get(pomodoroQueue.count - 1).duration > 0){ pomodoroQueue.get(pomodoroQueue.count - 1).duration--; }
             canvas.requestPaint()
         }
     }
@@ -209,9 +209,23 @@ Window {
                         ctx.stroke();
                     }
 
+                    var mainDialDiametr = width
+                    var mainDialTurns = Math.trunc(globalTimer.duration / 3600);
+
                     dial(width - 7, 12, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
 
-                    dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration)
+                    function mainDialTurn(){
+                        var t;
+                        for(t = mainDialTurns; t > 0; t--){
+                            dial(width - 50 - t * 9 , 2, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, 500)
+                        }
+
+                        dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
+                    }
+                    mainDialTurn()
+
+
+
 
                     function getSplit(type){
                         let splitIncrement;
@@ -241,24 +255,19 @@ Window {
                     }
 
 
-                    if(globalTimer.running){
-                       dial(width - 7, 12, false, getSplit(pomodoroQueue.get(0).type).color, 0, pomodoroQueue.get(0).duration * getSplit(pomodoroQueue.get(0).type).increment)
-                    }
-                    else {
                         var i;
                         var splitVisibleEnd = 0;
                         var splitVisibleStart = 0;
                         var prevSplit;
 
-                        for(i=0; i < pomodoroQueue.count; i++){
-                            i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i - 1).duration
+                        for(i = 0; i <= pomodoroQueue.count - 1; i++){
+                            i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
 
                             splitVisibleStart = prevSplit + splitVisibleStart;
                             splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
 
                             dial(width - 7, 12, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
                         }
-                    }
 
 
 
@@ -291,7 +300,11 @@ Window {
                     property real _totalRotatedSecs: 0
 
                     onReleased: {
-                        globalTimer.duration > 0 ? globalTimer.start() : globalTimer.stop();
+                        if (globalTimer.duration > 0) {
+                            globalTimer.start()
+                        }  else {
+                            globalTimer.stop();
+                        }
                     }
 
                     onRotated: {
@@ -406,7 +419,7 @@ Window {
 
                         Text {
                             height: 11
-                            text: pomodoro.duration + " min"
+                            text: (durationSettings.pomodoro / 60) + " min"
                             verticalAlignment: Text.AlignVCenter
                             color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
                             anchors.verticalCenter: parent.verticalCenter
@@ -435,7 +448,7 @@ Window {
 
                         Text {
                             height: 11
-                            text: shortBreak.duration + " min"
+                            text: (durationSettings.pause / 60) + " min"
                             verticalAlignment: Text.AlignVCenter
                             color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
                             anchors.verticalCenter: parent.verticalCenter
@@ -464,7 +477,7 @@ Window {
 
                         Text {
                             height: 11
-                            text: longBreak.duration + " min"
+                            text: (durationSettings.breakTime / 60) + " min"
                             verticalAlignment: Text.AlignVCenter
                             color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
                             anchors.verticalCenter: parent.verticalCenter
