@@ -3,14 +3,19 @@
 #include <QTimer>
 #include <QDebug>
 
-void disable_app_nap(void);
 
 
+void disable_app_nap();
 
 
 int main(int argc, char *argv[])
 {
-    disable_app_nap();
+    #ifdef __APPLE__
+       #if TARGET_OS_MAC
+        disable_app_nap();
+       #endif /* TARGET_OS_MAC */
+    #endif /* __APPLE__ */
+
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
