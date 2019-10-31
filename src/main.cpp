@@ -2,6 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <QTimer>
 #include <QDebug>
+#include <QSystemTrayIcon>
+#include <QPixmap>
+#include <QApplication>
 
 
 
@@ -19,7 +22,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
 
@@ -33,6 +36,21 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
 
     }, Qt::QueuedConnection);
+
+    QSystemTrayIcon trayIcon(&app);
+
+    QTimer::singleShot(3000, [&trayIcon]() {
+
+        auto pixmap = QPixmap(":/img/play.svg");
+
+        QIcon icon(pixmap);
+
+        trayIcon.setIcon(icon);
+        trayIcon.show();
+
+        trayIcon.showMessage("Test title", "Test message");
+    });
+
 
     engine.load(url);
 

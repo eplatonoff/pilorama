@@ -1,4 +1,4 @@
-QT += quick xml svg
+QT += quick xml svg widgets
 QTPLUGIN += qsvg
 
 CONFIG += c++17
