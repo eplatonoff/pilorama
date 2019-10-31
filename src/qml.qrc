@@ -12,5 +12,7 @@
         <file>utils/geometry.mjs</file>
         <file>PomodoroModel.qml</file>
         <file>img/bell.svg</file>
+        <file>img/icon.icns</file>
+        <file>img/trayicon.icns</file>
     </qresource>
 </RCC>

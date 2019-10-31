@@ -41,11 +41,7 @@ int main(int argc, char *argv[])
 
     QTimer::singleShot(3000, [&trayIcon]() {
 
-        auto pixmap = QPixmap(":/img/play.svg");
-
-        QIcon icon(pixmap);
-
-        trayIcon.setIcon(icon);
+        trayIcon.setIcon(QIcon(":/img/trayicon.icns"));
         trayIcon.show();
 
         trayIcon.showMessage("Test title", "Test message");

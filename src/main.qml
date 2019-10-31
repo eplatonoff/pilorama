@@ -197,13 +197,13 @@ Window {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
-                    function dial(diametr, stroke, dashed, color, startSec, endSec) {
+                    function dial(diameter, stroke, dashed, color, startSec, endSec) {
                         ctx.beginPath();
                         ctx.lineWidth = stroke;
                         ctx.strokeStyle = color;
                         if (dashed) {
 
-                            var clength = Math.PI * (diametr - stroke) / 10;
+                            var clength = Math.PI * (diameter - stroke) / 10;
                             var devisions = 180;
                             var dash = clength / devisions / 5;
                             var space = clength / devisions - dash;
@@ -214,26 +214,35 @@ Window {
                             ctx.setLineDash([1,0]);
                         }
 
-                        ctx.arc(centreX, centreY, diametr / 2 - stroke, startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
+                        ctx.arc(centreX, centreY, (diameter - stroke) / 2  , startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
                         ctx.stroke();
                     }
 
-                    var mainDialDiametr = width
                     var mainDialTurns = Math.trunc(globalTimer.duration / 3600);
 
-                    dial(width - 7, 12, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                    var turnsDialLine = 2
+                    var turnsDialPadding = 5
+
+                    var mainDialLine = 4
+                    var mainDialPadding = 8
+                    var mainDialDiameter = mainDialTurns < 1 ? width : width - (mainDialTurns - 1) * turnsDialPadding - mainDialTurns * turnsDialLine * 2 - mainDialPadding
+
+                    var fakeDialLine = 12
+                    var fakeDialPadding = 8
+                    var fakeDialDiameter = mainDialDiameter - mainDialLine * 2 - fakeDialPadding
+
+                    dial(fakeDialDiameter, fakeDialLine, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
 
                     function mainDialTurn(){
                         var t;
                         for(t = mainDialTurns; t > 0; t--){
-                            dial(width - 50 - t * 9 , 2, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, 500)
+                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, false, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
                         }
 
-                        dial(width, 4, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
+                        dial(mainDialDiameter, mainDialLine, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
                     }
+
                     mainDialTurn()
-
-
 
 
                     function getSplit(type){
@@ -275,7 +284,7 @@ Window {
                         splitVisibleStart = prevSplit + splitVisibleStart;
                         splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
 
-                        dial(width - 7, 12, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
+                        dial(fakeDialDiameter, fakeDialLine, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
                     }
 
 
