@@ -27,12 +27,12 @@ Window {
     }
 
     QtObject {
-       id: durationSettings
+        id: durationSettings
 
-       property real pomodoro: 25 * 60
-       property real pause: 5 * 60
-       property real breakTime: 15 * 60
-       property int repeatBeforeBreak: 2
+        property real pomodoro: 25 * 60
+        property real pause: 5 * 60
+        property real breakTime: 15 * 60
+        property int repeatBeforeBreak: 2
     }
 
     Item {
@@ -71,9 +71,18 @@ Window {
         repeat: true
         onTriggered: {
             duration >= 1 ? duration-- : stop()
-            if (pomodoroQueue.get(pomodoroQueue.count - 1).duration > 0){ pomodoroQueue.get(pomodoroQueue.count - 1).duration--; }
+            if (pomodoroQueue.get(0).duration > 0){ pomodoroQueue.get(0).duration--; }
             canvas.requestPaint()
         }
+    }
+
+    QtObject {
+        id: time
+        property var locale: Qt.locale()
+        property date currentDate: new Date()
+        property real hours: currentDate.getHours()
+        property real minuts: currentDate.getMinutes()
+        property real seconds: currentDate.getSeconds()
     }
 
     Item {
@@ -255,19 +264,19 @@ Window {
                     }
 
 
-                        var i;
-                        var splitVisibleEnd = 0;
-                        var splitVisibleStart = 0;
-                        var prevSplit;
+                    var i;
+                    var splitVisibleEnd = 0;
+                    var splitVisibleStart = 0;
+                    var prevSplit;
 
-                        for(i = 0; i <= pomodoroQueue.count - 1; i++){
-                            i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
+                    for(i = 0; i <= pomodoroQueue.count - 1; i++){
+                        i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
 
-                            splitVisibleStart = prevSplit + splitVisibleStart;
-                            splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
+                        splitVisibleStart = prevSplit + splitVisibleStart;
+                        splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
 
-                            dial(width - 7, 12, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
-                        }
+                        dial(width - 7, 12, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
+                    }
 
 
 
@@ -506,8 +515,57 @@ Window {
                     } else {return value}
                 }
 
+                Image {
+                    id: bellIcon
+                    anchors.left: parent.left
+                    anchors.leftMargin: 40
+                    anchors.top: parent.top
+                    anchors.topMargin: 25
+                    sourceSize.height: 16
+                    sourceSize.width: 16
+                    source: "./img/bell.svg"
+                    antialiasing: true
+                    fillMode: Image.PreserveAspectFit
+
+                    ColorOverlay{
+                        id: bellIconOverlay
+                        anchors.fill: parent
+                        source: parent
+                        color: darkMode ? colors.accentDark : colors.accentLight
+                        antialiasing: true
+                    }
+                }
+
+                Text {
+                    id: digitalTime
+                    y: 245
+                    width: 80
+                    height: 15
+                    text: showFuture()
+                    font.bold: true
+                    font.pixelSize: 14
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.verticalCenter: bellIcon.verticalCenter
+                    anchors.left: bellIcon.right
+                    anchors.leftMargin: 3
+                    anchors.bottom: digitalMin.top
+                    anchors.bottomMargin: 5
+                    horizontalAlignment: Text.AlignLeft
+                    color: darkMode ? colors.accentDark : colors.accentLight
+
+                    function showFuture() {
+                        var future = time.hours * 3600 + time.minuts *60 + time.seconds + globalTimer.duration
+                        var h = Math.trunc(future / 3600)
+                        var m = Math.trunc((future - h * 3600) / 60)
+
+                        return parent.pad(h) + ":" + parent.pad(m)
+                   }
+
+                }
+
                 Text {
                     id: digitalSec
+                    width: 51
                     height: 22
                     text: parent.pad(globalTimer.duration % 60)
                     verticalAlignment: Text.AlignTop
@@ -619,6 +677,7 @@ Window {
                     }
                 }
             }
+
 
 
         }
@@ -840,20 +899,20 @@ Window {
 Designer {
     D{i:1;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:3;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
 D{i:5;anchors_x:99;anchors_y:54}D{i:6;anchors_x:99;anchors_y:54}D{i:7;anchors_x:104;invisible:true}
-D{i:15;anchors_width:200;invisible:true}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}
-D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:21;anchors_x:99;anchors_y:54}
+D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}
+D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}D{i:21;anchors_x:99;anchors_y:54}
 D{i:22;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}D{i:24;anchors_x:245;anchors_y:245}
-D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}
-D{i:27;anchors_x:99;anchors_y:54;invisible:true}D{i:28;anchors_x:99;anchors_y:54;invisible:true}
-D{i:26;anchors_x:99;anchors_y:54;invisible:true}D{i:30;anchors_x:245;anchors_y:245;invisible:true}
-D{i:31;anchors_x:99;anchors_y:54;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}
-D{i:29;anchors_x:99;anchors_y:54;invisible:true}D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
-D{i:34;anchors_x:99;anchors_y:54;invisible:true}D{i:36;anchors_x:99;anchors_y:54;invisible:true}
+D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:27;anchors_x:99;anchors_y:54;invisible:true}
+D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:26;anchors_x:99;anchors_y:54;invisible:true}
+D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:15;anchors_width:200;invisible:true}
+D{i:31;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}D{i:29;anchors_x:99;anchors_y:54;invisible:true}
 D{i:37;anchors_x:99;anchors_y:54;invisible:true}D{i:38;anchors_x:99;anchors_y:54;invisible:true}
-D{i:39;anchors_x:99;anchors_y:54;invisible:true}D{i:40;anchors_x:99;anchors_y:54;invisible:true}
-D{i:42;anchors_x:99;anchors_y:54;invisible:true}D{i:43;invisible:true}D{i:41;anchors_x:99;anchors_y:54;invisible:true}
-D{i:35;anchors_x:99;anchors_y:54;invisible:true}D{i:33;anchors_x:99;anchors_y:54;invisible:true}
-D{i:45;invisible:true}D{i:46;invisible:true}D{i:44;invisible:true}D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+D{i:39;anchors_x:99;anchors_y:54;invisible:true}D{i:36;anchors_x:99;anchors_y:54;invisible:true}
+D{i:41;anchors_x:99;anchors_y:54;invisible:true}D{i:43;anchors_x:99;anchors_y:54;invisible:true}
+D{i:44;anchors_x:99;anchors_y:54;invisible:true}D{i:45;invisible:true}D{i:46;invisible:true}
+D{i:47;invisible:true}D{i:48;invisible:true}D{i:42;anchors_x:99;anchors_y:54;invisible:true}
+D{i:40;anchors_x:99;anchors_y:54;invisible:true}
 }
 ##^##*/
 

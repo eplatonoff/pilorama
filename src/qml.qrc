@@ -11,5 +11,6 @@
         <file>img/play.svg</file>
         <file>utils/geometry.mjs</file>
         <file>PomodoroModel.qml</file>
+        <file>img/bell.svg</file>
     </qresource>
 </RCC>
