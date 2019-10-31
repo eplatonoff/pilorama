@@ -71,7 +71,7 @@ Window {
         repeat: true
         onTriggered: {
             duration >= 1 ? duration-- : stop()
-            if (pomodoroQueue.get(0).duration > 0){ pomodoroQueue.get(0).duration--; }
+            if (pomodoroQueue.first.duration > 0){ pomodoroQueue.first.duration--; }
             canvas.requestPaint()
         }
     }
@@ -320,6 +320,7 @@ Window {
                     onReleased: {
                         if (globalTimer.duration > 0) {
                             globalTimer.start()
+
                         }  else {
                             globalTimer.stop();
                         }
@@ -333,6 +334,8 @@ Window {
                         this._totalRotatedSecs += deltaSecs;
 
                         pomodoroQueue.changeQueue(deltaSecs);
+
+                        console.log(deltaSecs)
 
                         if (_totalRotatedSecs > 0) {
                             globalTimer.duration = Math.trunc(_totalRotatedSecs);
@@ -402,8 +405,7 @@ Window {
                         cursorShape: Qt.PointingHandCursor
 
                         onReleased: {
-                            globalTimer.duration = 25 * 60
-                            globalTimer.start()
+                            pomodoroQueue.infiniteMode = true
                         }
                     }
                 }
@@ -576,7 +578,7 @@ Window {
                     id: digitalSec
                     width: 51
                     height: 22
-                    text: parent.pad(globalTimer.duration % 60)
+                    text: globalTimer.running ? parent.pad(globalTimer.duration % 60) : qsTr('min')
                     verticalAlignment: Text.AlignTop
                     anchors.top: digitalMin.top
                     anchors.topMargin: 0
@@ -609,17 +611,34 @@ Window {
                 }
 
 
-                MouseArea {
-                    id: digitalClockStop
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    propagateComposedEvents: true
-                    cursorShape: Qt.PointingHandCursor
 
-                    onReleased: {
-                        globalTimer.duration = 0
-                        globalTimer.stop()
-                        soundIcon.playSound = true
+                Text {
+                    id: digitalClockReset
+                    height: 45
+                    text: qsTr("reset timer")
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 8
+                    font.pixelSize: 12
+                    color: darkMode ? colors.accentDark : colors.accentLight
+
+                    MouseArea {
+                        id: digitalClockResetTrigger
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        propagateComposedEvents: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onReleased: {
+                            globalTimer.duration = 0
+                            globalTimer.stop()
+                            soundIcon.playSound = true
+                        }
                     }
                 }
             }
@@ -915,13 +934,13 @@ D{i:22;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}D{i:24;anchors
 D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:27;anchors_x:99;anchors_y:54;invisible:true}
 D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:26;anchors_x:99;anchors_y:54;invisible:true}
 D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:15;anchors_width:200;invisible:true}
-D{i:31;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}D{i:29;anchors_x:99;anchors_y:54;invisible:true}
-D{i:37;anchors_x:99;anchors_y:54;invisible:true}D{i:38;anchors_x:99;anchors_y:54;invisible:true}
-D{i:39;anchors_x:99;anchors_y:54;invisible:true}D{i:36;anchors_x:99;anchors_y:54;invisible:true}
-D{i:41;anchors_x:99;anchors_y:54;invisible:true}D{i:43;anchors_x:99;anchors_y:54;invisible:true}
-D{i:44;anchors_x:99;anchors_y:54;invisible:true}D{i:45;invisible:true}D{i:46;invisible:true}
-D{i:47;invisible:true}D{i:48;invisible:true}D{i:42;anchors_x:99;anchors_y:54;invisible:true}
-D{i:40;anchors_x:99;anchors_y:54;invisible:true}
+D{i:31;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}D{i:29;anchors_x:99;anchors_y:54}
+D{i:38;anchors_x:99;anchors_y:54;invisible:true}D{i:39;anchors_x:99;anchors_y:54;invisible:true}
+D{i:40;anchors_x:99;anchors_y:54;invisible:true}D{i:37;anchors_x:99;anchors_y:54;invisible:true}
+D{i:42;anchors_x:99;anchors_y:54;invisible:true}D{i:44;anchors_x:99;anchors_y:54;invisible:true}
+D{i:45;anchors_x:99;anchors_y:54;invisible:true}D{i:46;invisible:true}D{i:47;invisible:true}
+D{i:48;invisible:true}D{i:49;invisible:true}D{i:43;anchors_x:99;anchors_y:54;invisible:true}
+D{i:41;anchors_x:99;anchors_y:54;invisible:true}
 }
 ##^##*/
 
