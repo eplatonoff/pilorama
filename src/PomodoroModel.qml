@@ -6,23 +6,16 @@ ListModel {
     property QtObject durationSettings: null
 
     property int totalPomodoros: 0
+    property bool infiniteMode: false
 
-    function _lastItemDurationBound() {
+    Component.onCompleted: {
+        if (infiniteMode)
+            _createBatch();
+    }
 
-        if (this.count === 0) {
-            throw "pomodoro queue is empty";
-        }
-
-        switch (last().type) {
-        case "pomodoro":
-            return durationSettings.pomodoro;
-        case "pause":
-            return durationSettings.pause;
-        case "break":
-            return durationSettings.breakTime;
-        default:
-            throw "unknown time segment type";
-        }
+    onCountChanged: {
+        if (infiniteMode && count === 0)
+            _createBatch();
     }
 
     function first() {
@@ -53,36 +46,6 @@ ListModel {
             totalPomodoros -= 1;
         }
         remove(count - 1);
-    }
-
-    function _createNext() {
-
-        function createPomodoro() {
-            append({"type": "pomodoro", "duration": 0});
-            totalPomodoros += 1;
-        }
-
-        function createPauseOrBreak() {
-            if (totalPomodoros % durationSettings.repeatBeforeBreak === 0 ) {
-                append({"type": "break", "duration": 0});
-            }
-            else
-                append({"type": "pause", "duration": 0});
-        }
-
-        if (count == 0) {
-            createPomodoro();
-            return;
-        }
-
-        switch (last().type) {
-        case "pomodoro": createPauseOrBreak(); break;
-        case "pause":
-        case "break":
-            createPomodoro(); break;
-        default:
-            throw "unknown time segment type";
-        }
     }
 
     function changeQueue(deltaSecs) {
@@ -157,4 +120,63 @@ ListModel {
         }
 
     }
+
+
+    function _lastItemDurationBound() {
+
+        if (this.count === 0) {
+            throw "pomodoro queue is empty";
+        }
+
+        switch (last().type) {
+        case "pomodoro":
+            return durationSettings.pomodoro;
+        case "pause":
+            return durationSettings.pause;
+        case "break":
+            return durationSettings.breakTime;
+        default:
+            throw "unknown time segment type";
+        }
+    }
+
+    function _createNext() {
+
+        function createPomodoro() {
+            append({"type": "pomodoro", "duration": 0});
+            totalPomodoros += 1;
+        }
+
+        function createPauseOrBreak() {
+            if (totalPomodoros % durationSettings.repeatBeforeBreak === 0 ) {
+                append({"type": "break", "duration": 0});
+            }
+            else
+                append({"type": "pause", "duration": 0});
+        }
+
+        if (count == 0) {
+            createPomodoro();
+            return;
+        }
+
+        switch (last().type) {
+        case "pomodoro": createPauseOrBreak(); break;
+        case "pause":
+        case "break":
+            createPomodoro(); break;
+        default:
+            throw "unknown time segment type";
+        }
+    }
+
+
+    function _createBatch() {
+        changeQueue(
+            durationSettings.pomodoro * durationSettings.repeatBeforeBreak +
+            durationSettings.pause * (durationSettings.repeatBeforeBreak - 1) +
+            durationSettings.breakTime
+        );
+    }
+
 }
