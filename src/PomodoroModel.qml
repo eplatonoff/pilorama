@@ -7,7 +7,7 @@ ListModel {
 
     property int totalPomodoros: 0
 
-    function topItemDurationBound() {
+    function _topItemDurationBound() {
 
         if (this.count === 0) {
             throw "pomodoro queue is empty";
@@ -25,42 +25,61 @@ ListModel {
         }
     }
 
-    function top() {
+    function first() {
         return get(0);
     }
 
-    function removeTop() {
-        if (top().type === "pomodoro") {
+    function last() {
+        return get(count - 1);
+    }
+
+    function removeFirst() {
+        if (!first()) {
+            throw "first element doesn't exist";
+        }
+
+        if (first().type === "pomodoro") {
             totalPomodoros -= 1;
         }
         remove(0);
     }
 
-    function createTop() {
+    function removeLast() {
+        if (!last()) {
+            throw "last element doesn't exist";
+        }
 
-        function insertPomodoro() {
-            insert(0, {"type": "pomodoro", "duration": 0});
+        if (last().type === "pomodoro") {
+            totalPomodoros -= 1;
+        }
+        remove(count - 1);
+    }
+
+    function _createNext() {
+
+        function createPomodoro() {
+            append({"type": "pomodoro", "duration": 0});
             totalPomodoros += 1;
         }
 
-        function insertPauseOrBreak() {
+        function createPauseOrBreak() {
             if (totalPomodoros % durationSettings.repeatBeforeBreak === 0 ) {
-                insert(0, {"type": "break", "duration": 0});
+                append({"type": "break", "duration": 0});
             }
             else
-                insert(0, {"type": "pause", "duration": 0});
+                append({"type": "pause", "duration": 0});
         }
 
         if (count == 0) {
-            insertPomodoro();
+            createPomodoro();
             return;
         }
 
-        switch (top().type) {
-        case "pomodoro": insertPauseOrBreak(); break;
+        switch (last().type) {
+        case "pomodoro": createPauseOrBreak(); break;
         case "pause":
         case "break":
-            insertPomodoro(); break;
+            createPomodoro(); break;
         default:
             throw "unknown time segment type";
         }
@@ -68,54 +87,74 @@ ListModel {
 
     function changeQueue(deltaSecs) {
 
-        // change top item duration
+        // change last item duration
         // returns reminded time to assign
-        function changeItem(secs) {
+        function changeLastItemDuration(secs) {
 
             if (count === 0)
                 return secs;
 
-            const durationBound = topItemDurationBound();
+            const durationBound = _topItemDurationBound();
 
-            const rawValue = top().duration + secs;
+            const rawValue = last().duration + secs;
 
             // item is filled
             if (rawValue > durationBound) {
-                top().duration = durationBound;
+                last().duration = durationBound;
                 return rawValue - durationBound;
             }
 
             // item is empty
             if (rawValue <= 0) {
-                top().duration = 0;
+                last().duration = 0;
                 return rawValue;
             }
 
-            top().duration += secs;
+            last().duration += secs;
             return 0;
         }
 
+        if (deltaSecs > 0 && count == 0)
+            _createNext();
+
         let secsToCalc = deltaSecs;
 
-        while (secsToCalc !== 0) {
+        while (secsToCalc !== 0 && count > 0) {
 
-            const restSecs = changeItem(secsToCalc);
+            const restSecs = changeLastItemDuration(secsToCalc);
 
-            if (restSecs < 0) {
-
-                if (count === 0)
-                    break;
-
-                removeTop();
-            }
+            if (restSecs < 0)
+                removeLast();
             else
-            if (restSecs > 0) {
-                createTop();
-            }
+            if (restSecs > 0)
+                _createNext();
 
             secsToCalc = restSecs;
         }
 
-        console.log(JSON.stringify(get(0)));
+        console.log(JSON.stringify(last()));
+    }
+
+    function drainTime(secs) {
+
+        if (secs <= 0)
+            throw "arg must be positivie";
+
+        if (count === 0)
+            return;
+
+        let secsToDrain = secs;
+
+        while(secsToDrain !== 0 && count > 0) {
+            first().duration -= secsToDrain;
+
+            if (first().duration <= 0) {
+                secsToDrain = Math.abs(first().duration);
+                removeFirst();
+            }
+            else
+                secsToDrain = 0;
+        }
+
     }
 }
