@@ -18,6 +18,10 @@ ListModel {
             _createBatch();
     }
 
+    onInfiniteModeChanged: {
+        clear();
+    }
+
     function first() {
         return get(0);
     }
