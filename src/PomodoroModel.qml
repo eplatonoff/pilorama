@@ -7,13 +7,13 @@ ListModel {
 
     property int totalPomodoros: 0
 
-    function _topItemDurationBound() {
+    function _lastItemDurationBound() {
 
         if (this.count === 0) {
             throw "pomodoro queue is empty";
         }
 
-        switch (get(0).type) {
+        switch (last().type) {
         case "pomodoro":
             return durationSettings.pomodoro;
         case "pause":
@@ -94,7 +94,7 @@ ListModel {
             if (count === 0)
                 return secs;
 
-            const durationBound = _topItemDurationBound();
+            const durationBound = _lastItemDurationBound();
 
             const rawValue = last().duration + secs;
 
