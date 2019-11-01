@@ -70,8 +70,8 @@ Window {
         running: false;
         repeat: true
         onTriggered: {
-            duration >= 1 ? duration-- : stop()
-            if (pomodoroQueue.first.duration > 0){ pomodoroQueue.first.duration--; }
+            if(!pomodoroQueue.infiniteMode){ duration >= 1 ? duration-- : stop() }
+            if (pomodoroQueue.get(0).duration > 0){ pomodoroQueue.get(0).duration--; }
             canvas.requestPaint()
         }
     }
@@ -218,6 +218,8 @@ Window {
                         ctx.stroke();
                     }
 
+
+
                     var mainDialTurns = Math.trunc(globalTimer.duration / 3600);
 
                     var turnsDialLine = 2
@@ -272,22 +274,35 @@ Window {
                         return {duration: splitDuration, increment: splitIncrement, color: splitColor};
                     }
 
+                    if (pomodoroQueue.infiniteMode){
+                        console.log(pomodoroQueue.first.duration)
+                        dial(fakeDialDiameter, fakeDialLine, false,
+                             getSplit(pomodoroQueue.first.type).color,
+                             0, pomodoroQueue.first.duration * getSplit(pomodoroQueue.first.type).increment )
+                    } else {
+                        var i;
+                        var splitVisibleEnd = 0;
+                        var splitVisibleStart = 0;
+                        var prevSplit;
+                        var splitIncrement = 3600 / globalTimer.duration
 
-                    var i;
-                    var splitVisibleEnd = 0;
-                    var splitVisibleStart = 0;
-                    var prevSplit;
+                        for(i = 0; i <= pomodoroQueue.count - 1; i++){
+                            i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
 
-                    for(i = 0; i <= pomodoroQueue.count - 1; i++){
-                        i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
+                            splitVisibleStart = prevSplit + splitVisibleStart;
+                            splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
 
-                        splitVisibleStart = prevSplit + splitVisibleStart;
-                        splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
+                            dial(fakeDialDiameter, fakeDialLine, false, getSplit(pomodoroQueue.get(i).type).color,
+                                 splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
+                                 splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd
+                                 )
 
-                        dial(fakeDialDiameter, fakeDialLine, false, getSplit(pomodoroQueue.get(i).type).color, splitVisibleStart, splitVisibleEnd)
+//                            dial(fakeDialDiameter, fakeDialLine, false, getSplit(pomodoroQueue.get(i).type).color,
+//                                 splitVisibleStart * splitIncrement,
+//                                 splitVisibleEnd * splitIncrement
+//                                 )
+                        }
                     }
-
-
 
                     //                                ctx.beginPath();
                     //                                ctx.lineWidth = 2;
@@ -349,6 +364,8 @@ Window {
                                         Qt.point(mouse.x, mouse.y),
                                         Qt.point(canvas.centreX, canvas.centreY));
                         this._prevAngle = angle;
+
+                        pomodoroQueue.infiniteMode = false
                     }
 
                     onPositionChanged: {
@@ -406,6 +423,7 @@ Window {
 
                         onReleased: {
                             pomodoroQueue.infiniteMode = true
+                            globalTimer.start()
                         }
                     }
                 }
@@ -570,7 +588,7 @@ Window {
                         var m = Math.trunc((future - h * 3600) / 60)
 
                         return parent.pad(h) + ":" + parent.pad(m)
-                   }
+                    }
 
                 }
 
@@ -612,32 +630,42 @@ Window {
 
 
 
-                Text {
-                    id: digitalClockReset
-                    height: 45
-                    text: qsTr("reset timer")
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
+                Rectangle {
+                    id: rectangle
+                    height: 38
+                    color: "transparent"
+                    border.color: darkMode ? colors.fakeDark : colors.fakeLight
+                    border.width: 2
+                    radius: 22.5
+
                     anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 8
-                    font.pixelSize: 12
-                    color: darkMode ? colors.accentDark : colors.accentLight
+                    anchors.bottomMargin: 0
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
 
-                    MouseArea {
-                        id: digitalClockResetTrigger
+                    Text {
+                        id: digitalClockReset
+                        text: qsTr("reset timer")
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         anchors.fill: parent
-                        hoverEnabled: true
-                        propagateComposedEvents: true
-                        cursorShape: Qt.PointingHandCursor
+                        font.pixelSize: 12
+                        color: darkMode ? colors.accentDark : colors.accentLight
 
-                        onReleased: {
-                            globalTimer.duration = 0
-                            globalTimer.stop()
-                            soundIcon.playSound = true
+                        MouseArea {
+                            id: digitalClockResetTrigger
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            propagateComposedEvents: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onReleased: {
+                                globalTimer.duration = 0
+                                globalTimer.stop()
+                                soundIcon.playSound = true
+                            }
                         }
                     }
                 }
