@@ -77,9 +77,7 @@ Window {
                 duration >= 1 ? duration-- : stop()
             }
 
-            if (pomodoroQueue.first().duration > 0){
-                pomodoroQueue.drainTime(secsInterval);
-            }
+            pomodoroQueue.drainTime(secsInterval);
 
             canvas.requestPaint()
         }
