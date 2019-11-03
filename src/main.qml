@@ -64,14 +64,23 @@ Window {
         property real duration: 0
         property real splitDuration: 0
 
+        property int secsInterval: Math.trunc(interval / 1000)
+
         onDurationChanged: { canvas.requestPaint() }
 
-        interval: 1000;
-        running: false;
+        interval: 1000
+        running: false
         repeat: true
+
         onTriggered: {
-            if(!pomodoroQueue.infiniteMode){ duration >= 1 ? duration-- : stop() }
-            if (pomodoroQueue.get(0).duration > 0){ pomodoroQueue.get(0).duration--; }
+            if(!pomodoroQueue.infiniteMode) {
+                duration >= 1 ? duration-- : stop()
+            }
+
+            if (pomodoroQueue.first().duration > 0){
+                pomodoroQueue.drainTime(secsInterval);
+            }
+
             canvas.requestPaint()
         }
     }
