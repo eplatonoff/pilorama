@@ -9,17 +9,22 @@ ListModel {
     property bool infiniteMode: false
 
     Component.onCompleted: {
-        if (infiniteMode)
-            _createBatch();
+        _tryToCreateBatch();
     }
 
     onCountChanged: {
-        if (infiniteMode && count === 0)
-            _createBatch();
+        _tryToCreateBatch();
     }
 
     onInfiniteModeChanged: {
         clear();
+        _tryToCreateBatch();
+    }
+
+    function _tryToCreateBatch() {
+        if (infiniteMode && count === 0) {
+            _createBatch();
+        }
     }
 
     function first() {
@@ -98,8 +103,6 @@ ListModel {
 
             secsToCalc = restSecs;
         }
-
-        console.log(JSON.stringify(last()));
     }
 
     function drainTime(secs) {
