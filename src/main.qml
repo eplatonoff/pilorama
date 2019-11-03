@@ -14,12 +14,23 @@ Window {
     color: darkMode ? colors.bgDark : colors.bgLight
     title: qsTr("qml timer")
 
+    property string clockMode: "start"
     property bool darkMode: false
     property bool soundOn: true
     property bool showPrefs: false
 
     onDarkModeChanged: { canvas.requestPaint()}
     onShowPrefsChanged: { canvas.requestPaint()}
+
+    function checkClockMode (){
+        if (pomodoroQueue.infiniteMode && globalTimer.running){
+            clockMode = "pomodoro"
+        } else if (!pomodoroQueue.infiniteMode){
+            clockMode = "timer"
+        } else {
+            clockMode = "start"
+        }
+    }
 
     PomodoroModel {
         id: pomodoroQueue
@@ -29,9 +40,9 @@ Window {
     QtObject {
         id: durationSettings
 
-        property real pomodoro: 25 * 60
-        property real pause: 5 * 60
-        property real breakTime: 15 * 60
+        property real pomodoro: 1 * 60
+        property real pause: 1 * 60
+        property real breakTime: 1 * 60
         property int repeatBeforeBreak: 2
     }
 
@@ -66,7 +77,11 @@ Window {
 
         property int secsInterval: Math.trunc(interval / 1000)
 
-        onDurationChanged: { canvas.requestPaint() }
+        onDurationChanged: {
+            window.checkClockMode()
+            time.updateTime()
+            canvas.requestPaint()
+        }
 
         interval: 1000
         running: false
@@ -74,22 +89,35 @@ Window {
 
         onTriggered: {
             if(!pomodoroQueue.infiniteMode) {
-                duration >= 1 ? duration-- : stop()
+                if(duration >= 1){
+                    duration--
+                } else {
+                    soundNotification.play()
+                    window.clockMode = "start"
+                    stop()
+                }
+            } else {
+                if (splitDuration === 1){ soundNotification.play() }
             }
-
+            splitDuration = pomodoroQueue.first().duration
             pomodoroQueue.drainTime(secsInterval);
-
+            time.updateTime()
             canvas.requestPaint()
         }
     }
 
     QtObject {
         id: time
-        property var locale: Qt.locale()
-        property date currentDate: new Date()
-        property real hours: currentDate.getHours()
-        property real minuts: currentDate.getMinutes()
-        property real seconds: currentDate.getSeconds()
+        property real hours: 0
+        property real minutes: 0
+        property real seconds: 0
+
+        function updateTime(){
+            var currentDate = new Date()
+            hours = currentDate.getHours()
+            minutes = currentDate.getMinutes()
+            seconds = currentDate.getSeconds()
+        }
     }
 
     Item {
@@ -203,7 +231,6 @@ Window {
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
                     function dial(diameter, stroke, dashed, color, startSec, endSec) {
                         ctx.beginPath();
                         ctx.lineWidth = stroke;
@@ -282,7 +309,6 @@ Window {
                     }
 
                     if (pomodoroQueue.infiniteMode){
-                        console.log(pomodoroQueue.first().duration)
                         dial(fakeDialDiameter, fakeDialLine, false,
                              getSplit(pomodoroQueue.first().type).color,
                              0, pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment )
@@ -396,7 +422,7 @@ Window {
 
             Item {
                 id: startControls
-                visible: !globalTimer.duration
+                visible: window.clockMode === "start"
                 width: 140
                 height: 140
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -429,6 +455,7 @@ Window {
                         cursorShape: Qt.PointingHandCursor
 
                         onReleased: {
+                            window.clockMode = "pomodoro"
                             pomodoroQueue.infiniteMode = true
                             globalTimer.start()
                         }
@@ -537,7 +564,7 @@ Window {
 
             Item {
                 id: digitalClock
-                visible: globalTimer.duration
+                visible: window.clockMode === "pomodoro" || window.clockMode === "timer"
                 width: 140
                 height: 140
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -554,7 +581,7 @@ Window {
                 Image {
                     id: bellIcon
                     anchors.left: parent.left
-                    anchors.leftMargin: 40
+                    anchors.leftMargin: 37
                     anchors.top: parent.top
                     anchors.topMargin: 25
                     sourceSize.height: 16
@@ -574,7 +601,6 @@ Window {
 
                 Text {
                     id: digitalTime
-                    y: 245
                     width: 80
                     height: 15
                     text: showFuture()
@@ -583,17 +609,35 @@ Window {
                     verticalAlignment: Text.AlignVCenter
                     anchors.verticalCenter: bellIcon.verticalCenter
                     anchors.left: bellIcon.right
-                    anchors.leftMargin: 3
+                    anchors.leftMargin: 1
                     anchors.bottom: digitalMin.top
                     anchors.bottomMargin: 5
                     horizontalAlignment: Text.AlignLeft
                     color: darkMode ? colors.accentDark : colors.accentLight
 
                     function showFuture() {
-                        var future = time.hours * 3600 + time.minuts *60 + time.seconds + globalTimer.duration
+                        var extraTime;
+                        if (!pomodoroQueue.infiniteMode){
+                            extraTime = globalTimer.duration
+                        } else {
+                            switch (pomodoroQueue.first().type) {
+                            case "pomodoro":
+                                extraTime = durationSettings.pomodoro
+                                break;
+                            case "pause":
+                                extraTime =  durationSettings.pause;
+                                break;
+                            case "break":
+                                extraTime = durationSettings.breakTime;
+                                break;
+                            default:
+                                throw "can't calculate notification time";
+                            }
+
+                        }
+                        var future = time.hours * 3600 + time.minutes *60 + time.seconds + extraTime
                         var h = Math.trunc(future / 3600)
                         var m = Math.trunc((future - h * 3600) / 60)
-
                         return parent.pad(h) + ":" + parent.pad(m)
                     }
 
@@ -602,37 +646,47 @@ Window {
                 Text {
                     id: digitalSec
                     width: 51
-                    height: 22
-                    text: globalTimer.running ? parent.pad(globalTimer.duration % 60) : qsTr('min')
+                    text: seconds();
+                    horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignTop
                     anchors.top: digitalMin.top
-                    anchors.topMargin: 0
+                    anchors.topMargin: 6
                     anchors.left: digitalMin.right
                     anchors.leftMargin: 3
                     font.pixelSize: 22
                     color: darkMode ? colors.accentTextDark : colors.accentTextLight
+
+                    function seconds(){
+                        if (pomodoroQueue.infiniteMode === true){
+                            return parent.pad(Math.trunc(globalTimer.splitDuration % 60))
+                        } else if(!pomodoroQueue.infiniteMode && !globalTimer.running) {
+                            return "min"
+                        }else {
+                            return parent.pad(Math.trunc(globalTimer.duration % 60))
+                        }
+                    }
                 }
 
-                TextInput {
+                Text {
                     id: digitalMin
-                    y: 112
                     width: 60
-                    height: 44
-                    text: parent.pad(Math.trunc(globalTimer.duration / 60))
+                    text: minutes()
+                    anchors.top: parent.top
+                    anchors.topMargin: 38
+                    horizontalAlignment: Text.AlignRight
+                    verticalAlignment: Text.AlignTop
                     anchors.left: parent.left
                     anchors.leftMargin: 26
-                    font.preferShaping: true
-                    font.kerning: true
-                    renderType: Text.QtRendering
-                    font.underline: false
-                    font.italic: false
-                    font.bold: false
-                    color: darkMode ? colors.accentTextDark : colors.accentTextLight
-                    anchors.verticalCenterOffset: 0
-                    cursorVisible: false
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
                     font.pixelSize: 44
+                    color: darkMode ? colors.accentTextDark : colors.accentTextLight
+
+                    function minutes(){
+                        if (pomodoroQueue.infiniteMode){
+                            return parent.pad(Math.trunc(globalTimer.splitDuration / 60))
+                        } else {
+                            return parent.pad(Math.trunc(globalTimer.duration / 60))
+                        }
+                    }
                 }
 
 
@@ -648,9 +702,9 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 0
                     anchors.right: parent.right
-                    anchors.rightMargin: 10
+                    anchors.rightMargin: 15
                     anchors.left: parent.left
-                    anchors.leftMargin: 10
+                    anchors.leftMargin: 15
 
                     Text {
                         id: digitalClockReset
@@ -658,7 +712,7 @@ Window {
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         anchors.fill: parent
-                        font.pixelSize: 12
+                        font.pixelSize: 14
                         color: darkMode ? colors.accentDark : colors.accentLight
 
                         MouseArea {
@@ -669,9 +723,12 @@ Window {
                             cursorShape: Qt.PointingHandCursor
 
                             onReleased: {
+                                pomodoroQueue.infiniteMode = false;
+                                pomodoroQueue.clear();
                                 globalTimer.duration = 0
                                 globalTimer.stop()
-                                soundIcon.playSound = true
+                                window.clockMode = "start"
+                                soundNotification.stop()
                             }
                         }
                     }
@@ -694,24 +751,20 @@ Window {
                 property string iconSound: "./img/sound.svg"
                 property string iconNoSound: "./img/nosound.svg"
 
-                property bool playSound: globalTimer.duration
-
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
+
 
                 onSoundOnChanged: {
                     if ( soundOn ){
                         soundIcon.source = iconSound
                         soundNotification.muted = false
-                    } else{
+                    } else {
+                        soundNotification.stop()
                         soundIcon.source = iconNoSound
                         soundNotification.muted = true
                     }
 
-                }
-
-                onPlaySoundChanged: {
-                    !playSound ? soundNotification.play() : soundNotification.stop()
                 }
 
                 ColorOverlay{
@@ -725,7 +778,7 @@ Window {
                 SoundEffect {
                     id: soundNotification
                     muted: false
-                    source: "./sound/danay.wav"
+                    source: "./sound/piano-low.wav"
                 }
 
                 MouseArea {
@@ -969,13 +1022,13 @@ D{i:22;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}D{i:24;anchors
 D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:27;anchors_x:99;anchors_y:54;invisible:true}
 D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:26;anchors_x:99;anchors_y:54;invisible:true}
 D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:15;anchors_width:200;invisible:true}
-D{i:31;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}D{i:29;anchors_x:99;anchors_y:54}
-D{i:38;anchors_x:99;anchors_y:54;invisible:true}D{i:39;anchors_x:99;anchors_y:54;invisible:true}
-D{i:40;anchors_x:99;anchors_y:54;invisible:true}D{i:37;anchors_x:99;anchors_y:54;invisible:true}
-D{i:42;anchors_x:99;anchors_y:54;invisible:true}D{i:44;anchors_x:99;anchors_y:54;invisible:true}
-D{i:45;anchors_x:99;anchors_y:54;invisible:true}D{i:46;invisible:true}D{i:47;invisible:true}
-D{i:48;invisible:true}D{i:49;invisible:true}D{i:43;anchors_x:99;anchors_y:54;invisible:true}
-D{i:41;anchors_x:99;anchors_y:54;invisible:true}
+D{i:31;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}D{i:33;anchors_height:22}
+D{i:37;anchors_x:99;anchors_y:54;invisible:true}D{i:29;anchors_x:99;anchors_y:54}
+D{i:39;anchors_x:99;anchors_y:54;invisible:true}D{i:40;anchors_x:99;anchors_y:54;invisible:true}
+D{i:41;anchors_x:99;anchors_y:54;invisible:true}D{i:38;anchors_x:99;anchors_y:54;invisible:true}
+D{i:43;anchors_x:99;anchors_y:54;invisible:true}D{i:45;anchors_x:99;anchors_y:54;invisible:true}
+D{i:46;invisible:true}D{i:47;invisible:true}D{i:48;invisible:true}D{i:49;invisible:true}
+D{i:44;anchors_x:99;anchors_y:54;invisible:true}D{i:42;anchors_x:99;anchors_y:54;invisible:true}
 }
 ##^##*/
 
