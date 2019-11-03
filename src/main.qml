@@ -275,10 +275,10 @@ Window {
                     }
 
                     if (pomodoroQueue.infiniteMode){
-                        console.log(pomodoroQueue.first.duration)
+                        console.log(pomodoroQueue.first().duration)
                         dial(fakeDialDiameter, fakeDialLine, false,
-                             getSplit(pomodoroQueue.first.type).color,
-                             0, pomodoroQueue.first.duration * getSplit(pomodoroQueue.first.type).increment )
+                             getSplit(pomodoroQueue.first().type).color,
+                             0, pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment )
                     } else {
                         var i;
                         var splitVisibleEnd = 0;
