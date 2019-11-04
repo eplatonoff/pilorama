@@ -12,9 +12,19 @@ find_package( Qt5Widgets REQUIRED)
 
 include_directories(
 		"."
+		"notifications"
 )
 
 file(GLOB SRCS_TOP ${PROJECT_SOURCE_DIR}/*.cpp)
+
+file( GLOB_RECURSE SRCS_NESTED
+		${PROJECT_SOURCE_DIR}/notifications/*.cpp
+		)
+
+file( GLOB_RECURSE HDRS
+		${PROJECT_SOURCE_DIR}/notifications/*.h
+		)
+
 file( GLOB_RECURSE QRCS *.qrc)
 
 IF(APPLE)
@@ -25,7 +35,7 @@ IF(APPLE)
 			)
 ENDIF()
 
-set(SOURCE_FILES ${SRCS_TOP} ${QRCS})
+set(SOURCE_FILES ${SRCS_TOP} ${SRCS_NESTED} ${HDRS} ${QRCS})
 
 add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

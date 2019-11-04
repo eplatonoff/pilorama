@@ -5,6 +5,8 @@ import QtMultimedia 5.13
 
 import "utils/geometry.mjs" as GeometryScripts
 
+import notifications 1.0
+
 
 Window {
     id: window
@@ -31,6 +33,11 @@ Window {
             clockMode = "start"
         }
     }
+
+    NotificationSystem {
+        id: notifications
+    }
+
 
     PomodoroModel {
         id: pomodoroQueue
@@ -393,6 +400,7 @@ Window {
                     }
 
                     onPressed: {
+
                         const angle = GeometryScripts.mouseAngle(
                                         Qt.point(mouse.x, mouse.y),
                                         Qt.point(canvas.centreX, canvas.centreY));

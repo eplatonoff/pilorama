@@ -5,8 +5,8 @@
 #include <QSystemTrayIcon>
 #include <QPixmap>
 #include <QApplication>
-
-
+#include <notifications/notificationsystem.h>
+#include <QQmlContext>
 
 void disable_app_nap();
 
@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
+    qmlRegisterType<NotificationSystem>("notifications", 1, 0, "NotificationSystem");
+
     QQmlApplicationEngine engine;
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -36,17 +38,6 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
 
     }, Qt::QueuedConnection);
-
-    QSystemTrayIcon trayIcon(&app);
-
-    QTimer::singleShot(3000, [&trayIcon]() {
-
-        trayIcon.setIcon(QIcon(":/img/trayicon.icns"));
-        trayIcon.show();
-
-        trayIcon.showMessage("Test title", "Test message");
-    });
-
 
     engine.load(url);
 
