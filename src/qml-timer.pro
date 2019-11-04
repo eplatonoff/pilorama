@@ -2,7 +2,7 @@ QT += quick widgets
 
 CONFIG += c++17
 
-OBJECTIVE_SOURCES += appnap.mm
+OBJECTIVE_SOURCES += mac/appnap.mm
 
 
 macx: {

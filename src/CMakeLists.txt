@@ -21,7 +21,7 @@ IF(APPLE)
 	SET(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -w")
 
 	SET(PLATFORM_FILES
-			appnap.mm
+			mac/appnap.mm
 			)
 ENDIF()
 
