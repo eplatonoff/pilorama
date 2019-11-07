@@ -23,6 +23,7 @@ Window {
 
     onDarkModeChanged: { canvas.requestPaint()}
     onShowPrefsChanged: { canvas.requestPaint()}
+    onClockModeChanged: { canvas.requestPaint()}
 
     function checkClockMode (){
         if (pomodoroQueue.infiniteMode && globalTimer.running){
@@ -47,9 +48,9 @@ Window {
     QtObject {
         id: durationSettings
 
-        property real pomodoro: 1 * 60
-        property real pause: 1 * 60
-        property real breakTime: 1 * 60
+        property real pomodoro: 25 * 60
+        property real pause: 10 * 60
+        property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
     }
 
@@ -127,69 +128,7 @@ Window {
         }
     }
 
-    Item {
-        id: fakeDial
-        property color color: colors.fakeLight
-    }
-    Item {
-        id: timerDial
 
-        property color color: colors.accentLight
-
-        property real angle: globalTimer.duration / 10
-
-        property bool bell: true
-        property bool endSoon: true
-
-        property real endSoonTime: 5
-
-
-    }
-    Item {
-        id: pomodoro
-
-        property color color: colors.pomodoroLight
-
-        property bool fullCircle: true
-
-        property real timeleft: 25
-
-        property bool bell: true
-        property bool endSoon: true
-
-        property real endSoonTime: 5
-
-    }
-    Item {
-        id: shortBreak
-
-        property color color: colors.shortBreakLight
-
-        property bool fullCircle: true
-
-        property real duration: 10
-        property real timeshift: 0
-
-        property bool bell: true
-        property bool endSoon: true
-
-        property real endSoonTime: 5
-    }
-    Item {
-        id: longBreak
-
-        property color color: colors.longBreakLight
-
-        property bool fullCircle: true
-
-        property real duration: 15
-        property real timeshift: 0
-
-        property bool bell: true
-        property bool endSoon: true
-
-        property real endSoonTime: 5
-    }
 
     Item {
         id: content
@@ -219,16 +158,6 @@ Window {
 
                 antialiasing: true
 
-                property real time: 0
-                property string timeMin: "00"
-                property string timeSec: "00"
-
-                property real dialAbsolute: 0
-
-                property string text: "Text"
-
-                signal clicked()
-
                 property real centreX : width / 2
                 property real centreY : height / 2
 
@@ -242,11 +171,12 @@ Window {
                         ctx.beginPath();
                         ctx.lineWidth = stroke;
                         ctx.strokeStyle = color;
-                        if (dashed) {
+                        if (dashed !== 0) {
 
-                            var clength = Math.PI * (diameter - stroke) / 10;
-                            var devisions = 180;
-                            var dash = clength / devisions / 5;
+                            var clength = Math.PI * (diameter - stroke) / stroke;
+                            var devisions = dashed;
+//                            var dash = clength / devisions / 2
+                            var dash = 2.5 /stroke
                             var space = clength / devisions - dash;
 
                             ctx.setLineDash([dash, space]);
@@ -271,18 +201,20 @@ Window {
                     var mainDialDiameter = mainDialTurns < 1 ? width : width - (mainDialTurns - 1) * turnsDialPadding - mainDialTurns * turnsDialLine * 2 - mainDialPadding
 
                     var fakeDialLine = 12
+                    var fakeDialLine2 = 6
                     var fakeDialPadding = 8
                     var fakeDialDiameter = mainDialDiameter - mainDialLine * 2 - fakeDialPadding
 
-                    dial(fakeDialDiameter, fakeDialLine, true, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                    dial(fakeDialDiameter, fakeDialLine, 12, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                    dial(fakeDialDiameter, fakeDialLine2, 60, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
 
                     function mainDialTurn(){
                         var t;
                         for(t = mainDialTurns; t > 0; t--){
-                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, false, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, 0, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
                         }
 
-                        dial(mainDialDiameter, mainDialLine, false, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
+                        dial(mainDialDiameter, mainDialLine, 0, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
                     }
 
                     mainDialTurn()
@@ -316,7 +248,7 @@ Window {
                     }
 
                     if (pomodoroQueue.infiniteMode){
-                        dial(fakeDialDiameter, fakeDialLine, false,
+                        dial(fakeDialDiameter, fakeDialLine, 0,
                              getSplit(pomodoroQueue.first().type).color,
                              0, pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment )
                     } else {
@@ -332,7 +264,7 @@ Window {
                             splitVisibleStart = prevSplit + splitVisibleStart;
                             splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
 
-                            dial(fakeDialDiameter, fakeDialLine, false, getSplit(pomodoroQueue.get(i).type).color,
+                            dial(fakeDialDiameter, fakeDialLine, 0, getSplit(pomodoroQueue.get(i).type).color,
                                  splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
                                  splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd
                                  )
@@ -733,6 +665,8 @@ Window {
                             onReleased: {
                                 pomodoroQueue.infiniteMode = false;
                                 pomodoroQueue.clear();
+                                mouseArea._prevAngle = 0
+                                mouseArea._totalRotatedSecs = 0
                                 globalTimer.duration = 0
                                 globalTimer.stop()
                                 window.clockMode = "start"

@@ -14,5 +14,6 @@
         <file>img/bell.svg</file>
         <file>img/icon.icns</file>
         <file>img/trayicon.icns</file>
+        <file>Colors.qml</file>
     </qresource>
 </RCC>
