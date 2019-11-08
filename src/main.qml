@@ -104,9 +104,9 @@ Window {
                     window.clockMode = "start"
                     stop()
                 }
-            } else {
-                if (splitDuration === 1){ soundNotification.play() }
             }
+
+            if (splitDuration === 1){ soundNotification.play() }
             splitDuration = pomodoroQueue.first().duration
             pomodoroQueue.drainTime(secsInterval);
             time.updateTime()
@@ -164,29 +164,51 @@ Window {
                 onPaint: {
                     var ctx = getContext("2d");
                     ctx.save();
-
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    function dial(diameter, stroke, dashed, color, startSec, endSec) {
+                    function dial(diameter, stroke, color, startSec, endSec) {
                         ctx.beginPath();
                         ctx.lineWidth = stroke;
                         ctx.strokeStyle = color;
-                        if (dashed !== 0) {
-
-                            var clength = Math.PI * (diameter - stroke) / stroke;
-                            var devisions = dashed;
-//                            var dash = clength / devisions / 2
-                            var dash = 2.5 /stroke
-                            var space = clength / devisions - dash;
-
-                            ctx.setLineDash([dash, space]);
-
-                        } else {
-                            ctx.setLineDash([1,0]);
-                        }
-
+                        ctx.setLineDash([1, 0]);
                         ctx.arc(centreX, centreY, (diameter - stroke) / 2  , startSec / 10 * Math.PI / 180 + 1.5 *Math.PI,  endSec / 10 * Math.PI / 180 + 1.5 *Math.PI);
                         ctx.stroke();
+                    }
+
+                    function calibration(diameter, stroke, devisions) {
+
+                        var dashWidth = 1
+
+                        var clength = Math.PI * (diameter - stroke) / stroke;
+                        var dash =  dashWidth / stroke
+                        var space = clength / 180 - dash
+
+                        ctx.beginPath();
+                        ctx.lineWidth = stroke;
+                        ctx.strokeStyle = window.darkMode ? colors.fakeDark : colors.fakeLight;
+                        ctx.setLineDash([dash / 2, space, dash / 2, 0]);
+                        ctx.arc(centreX, centreY, (diameter - stroke) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
+                        ctx.stroke();
+
+                        if (devisions){
+
+                        var dashWidth2 = 2
+
+                        var stroke2 = 2
+                        var diameter2 = diameter - 2 * stroke - 5
+//                        var diameter2 = diameter
+
+                        var clength2 = Math.PI * (diameter2 - stroke2) / stroke2;
+                        var dash2 = dashWidth2 / stroke2
+                        var space2 = clength2 / devisions - dash2;
+
+                        ctx.beginPath();
+                        ctx.lineWidth = stroke2;
+                        ctx.strokeStyle = window.darkMode ? colors.accentDark : colors.accentLight;
+                        ctx.setLineDash([dash2 / 2, space2, dash2 / 2, 0]);
+                        ctx.arc(centreX, centreY, (diameter2 - stroke2) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
+                        ctx.stroke();
+                        }
                     }
 
 
@@ -205,16 +227,16 @@ Window {
                     var fakeDialPadding = 8
                     var fakeDialDiameter = mainDialDiameter - mainDialLine * 2 - fakeDialPadding
 
-                    dial(fakeDialDiameter, fakeDialLine, 12, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
-                    dial(fakeDialDiameter, fakeDialLine2, 60, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+//                    dial(fakeDialDiameter, fakeDialLine, 12, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+//                    dial(fakeDialDiameter, fakeDialLine2, 60, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
 
                     function mainDialTurn(){
                         var t;
                         for(t = mainDialTurns; t > 0; t--){
-                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, 0, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
                         }
 
-                        dial(mainDialDiameter, mainDialLine, 0, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
+                        dial(mainDialDiameter, mainDialLine, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
                     }
 
                     mainDialTurn()
@@ -247,8 +269,9 @@ Window {
                         return {duration: splitDuration, increment: splitIncrement, color: splitColor};
                     }
 
-                    if (pomodoroQueue.infiniteMode){
-                        dial(fakeDialDiameter, fakeDialLine, 0,
+                    if (globalTimer.running){
+                        calibration(fakeDialDiameter, fakeDialLine, getSplit(pomodoroQueue.first().type).duration / 60)
+                        dial(fakeDialDiameter, fakeDialLine,
                              getSplit(pomodoroQueue.first().type).color,
                              0, pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment )
                     } else {
@@ -258,13 +281,15 @@ Window {
                         var prevSplit;
                         var splitIncrement = 3600 / globalTimer.duration
 
+                        calibration(fakeDialDiameter, fakeDialLine, window.clockMode === "start" ? undefined : 12)
+
                         for(i = 0; i <= pomodoroQueue.count - 1; i++){
                             i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
 
                             splitVisibleStart = prevSplit + splitVisibleStart;
                             splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
 
-                            dial(fakeDialDiameter, fakeDialLine, 0, getSplit(pomodoroQueue.get(i).type).color,
+                            dial(fakeDialDiameter, fakeDialLine, getSplit(pomodoroQueue.get(i).type).color,
                                  splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
                                  splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd
                                  )
