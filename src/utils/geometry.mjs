@@ -7,15 +7,22 @@ export function mouseAngle(mousePoint, centerPoint) {
                 * (180 / Math.PI);
 
     if (mousePoint.x >= centerPoint.x)
-        return mousePoint.y <= centerPoint.y ? angle : 180 - angle;
+        return mousePoint.y <= centerPoint.y ? precision(angle) : 180 - precision(angle);
     else
-        return mousePoint.y <= centerPoint.y ? 360 - angle : 180 + angle;
+        return mousePoint.y <= centerPoint.y ? 360 - precision(angle) : 180 + precision(angle);
 }
 
 
 function modulo(num, denom) {
     const res = num % denom;
     return res >= 0 ? res : res + denom;
+}
+
+function precision(num){
+    var precision = 6
+    var y = Math.abs(num) + precision / 2;
+    y = y - y % precision;
+    return num < 0 ? -y : y
 }
 
 
@@ -30,5 +37,5 @@ export function lessDelta(newAngle, prevAngle) {
         delta = delta * (-1);
     }
 
-    return delta;
+    return precision(delta);
 }

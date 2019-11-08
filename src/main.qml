@@ -329,6 +329,14 @@ Window {
                     property real _totalRotated: 0
                     property real _totalRotatedSecs: 0
 
+//                    function roundToPrecision(value, maxValue, precision) {
+//                        var y = value + precision / 2;
+//                        return y - y % +precision;
+//                        var y = 1 / (1 + Math.exp(-Math.abs(value)))
+//                        var y = Math.atan(value) * maxValue / precision
+//                        return value * y
+//                    }
+
                     onReleased: {
                         if (globalTimer.duration > 0) {
                             globalTimer.start()
@@ -347,10 +355,10 @@ Window {
 
                         pomodoroQueue.changeQueue(deltaSecs);
 
-                        console.log(deltaSecs)
+                        console.log(delta)
 
-                        if (_totalRotatedSecs > 0) {
-                            globalTimer.duration = Math.trunc(_totalRotatedSecs);
+                        if (_totalRotatedSecs >= 0) {
+                            globalTimer.duration = _totalRotatedSecs;
                         } else {
                             _totalRotatedSecs = 0;
                         }
