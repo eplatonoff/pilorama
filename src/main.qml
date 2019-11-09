@@ -356,7 +356,7 @@ Window {
                         }  else {
                             globalTimer.stop();
                             window.clockMode = "start"
-                            soundNotification.stop()
+                            notifications.stopSound()
                         }
                     }
 
