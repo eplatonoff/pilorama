@@ -15,5 +15,6 @@
         <file>img/icon.icns</file>
         <file>img/trayicon.icns</file>
         <file>Colors.qml</file>
+        <file>NotificationSystem.qml</file>
     </qresource>
 </RCC>
