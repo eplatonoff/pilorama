@@ -135,7 +135,11 @@ ListModel {
             throw "pomodoro queue is empty";
         }
 
-        switch (last().type) {
+        return itemDurationBound(last());
+    }
+
+    function itemDurationBound(item) {
+        switch (item.type) {
         case "pomodoro":
             return durationSettings.pomodoro;
         case "pause":

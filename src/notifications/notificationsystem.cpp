@@ -7,6 +7,7 @@
 #include <QSystemTrayIcon>
 #include <QDebug>
 
+
 NotificationSystem::NotificationSystem(QObject *parent) : QObject(parent) {
 	if (QSystemTrayIcon::isSystemTrayAvailable())
 		if (QSystemTrayIcon::supportsMessages())
@@ -19,7 +20,7 @@ void NotificationSystem::_createTrayIcon() {
 	trayIcon->show();
 }
 
-void NotificationSystem::sendNotification(Type type) {
+void NotificationSystem::send(Type type) {
 	if (trayIcon) {
 		switch (type) {
 			case Type::POMODORO:
@@ -31,6 +32,9 @@ void NotificationSystem::sendNotification(Type type) {
 			case Type::BREAK:
 				trayIcon->showMessage("Pomodoro timer", "Break started");
 				break;
+            case Type::STOP:
+                trayIcon->showMessage("Pomodoro timer", "Timer stopped");
+                break;
 		}
 	}
 

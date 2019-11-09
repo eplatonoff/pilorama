@@ -37,6 +37,36 @@ Window {
 
     NotificationSystem {
         id: notifications
+
+        default property bool soundMuted: false
+
+        property SoundEffect sound: SoundEffect {
+            id: soundNotification
+            muted: notifications.soundMuted
+            source: "./sound/piano-low.wav"
+        }
+
+        function stopSound() {
+            soundNotification.stop();
+        }
+
+        function sendWithSound(type) {
+            soundNotification.play();
+            send(type);
+        }
+
+        function sendFromItem(item) {
+            switch (item.type) {
+            case "pomodoro":
+                sendWithSound(NotificationSystem.POMODORO); break;
+            case "pause":
+                sendWithSound(NotificationSystem.PAUSE); break;
+            case "break":
+                sendWithSound(NotificationSystem.BREAK); break;
+            default:
+                throw "unknown time segment type";
+            }
+        }
     }
 
 
@@ -86,9 +116,9 @@ Window {
         property int secsInterval: Math.trunc(interval / 1000)
 
         onDurationChanged: {
-            window.checkClockMode()
-            time.updateTime()
-            canvas.requestPaint()
+            window.checkClockMode();
+            time.updateTime();
+            canvas.requestPaint();
         }
 
         interval: 1000
@@ -96,21 +126,33 @@ Window {
         repeat: true
 
         onTriggered: {
-            if(!pomodoroQueue.infiniteMode) {
-                if(duration >= 1){
-                    duration--
+
+            if (!pomodoroQueue.infiniteMode) {
+                if (duration >= 1){
+                    duration--;
                 } else {
-                    soundNotification.play()
-                    window.clockMode = "start"
-                    stop()
+                    notifications.sendWithSound(NotificationSystem.STOP);
+                    window.clockMode = "start";
+                    stop();
                 }
             }
 
-            if (splitDuration === 1){ soundNotification.play() }
-            splitDuration = pomodoroQueue.first().duration
+            const firstItem = pomodoroQueue.first();
+
+            if (firstItem) {
+                splitDuration = firstItem.duration;
+
+                if (splitDuration === pomodoroQueue.itemDurationBound(firstItem)) {
+                    notifications.sendFromItem(firstItem);
+                }
+            } else
+                splitDuration = 0;
+
             pomodoroQueue.drainTime(secsInterval);
-            time.updateTime()
-            canvas.requestPaint()
+
+            time.updateTime();
+
+            canvas.requestPaint();
         }
     }
 
@@ -705,7 +747,7 @@ Window {
                                 globalTimer.duration = 0
                                 globalTimer.stop()
                                 window.clockMode = "start"
-                                soundNotification.stop()
+                                notifications.stopSound();
                             }
                         }
                     }
@@ -734,12 +776,12 @@ Window {
 
                 onSoundOnChanged: {
                     if ( soundOn ){
-                        soundIcon.source = iconSound
-                        soundNotification.muted = false
+                        soundIcon.source = iconSound;
+                        notifications.soundMuted = false;
                     } else {
-                        soundNotification.stop()
-                        soundIcon.source = iconNoSound
-                        soundNotification.muted = true
+                        notifications.stopSound()
+                        soundIcon.source = iconNoSound;
+                        notifications.soundMuted = true;
                     }
 
                 }
@@ -750,12 +792,6 @@ Window {
                     source: parent
                     color: window.darkMode ? colors.fakeDark : colors.fakeLight
                     antialiasing: true
-                }
-
-                SoundEffect {
-                    id: soundNotification
-                    muted: false
-                    source: "./sound/piano-low.wav"
                 }
 
                 MouseArea {

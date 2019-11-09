@@ -22,12 +22,13 @@ public:
 		POMODORO,
 		PAUSE,
 		BREAK,
+        STOP
 	};
 
 	Q_ENUM(Type)
 
 public slots:
-	void sendNotification(Type type);
+    void send(Type type);
 
 
 private:
