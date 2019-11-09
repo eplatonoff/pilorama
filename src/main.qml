@@ -3,6 +3,8 @@ import QtQuick.Window 2.13
 import QtGraphicalEffects 1.12
 import QtMultimedia 5.13
 
+import Qt.labs.settings 1.0
+
 import "utils/geometry.mjs" as GeometryScripts
 
 
@@ -43,7 +45,7 @@ Window {
         durationSettings: durationSettings
     }
 
-    QtObject {
+    Settings {
         id: durationSettings
 
         property real pomodoro: 25 * 60
