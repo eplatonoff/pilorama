@@ -194,8 +194,8 @@ Window {
 
                         var dashWidth2 = 2
 
-                        var stroke2 = 2
-                        var diameter2 = diameter - 2 * stroke - 5
+                        var stroke2 = 4
+                        var diameter2 = diameter - 2 * stroke - 7
 //                        var diameter2 = diameter
 
                         var clength2 = Math.PI * (diameter2 - stroke2) / stroke2;
@@ -343,6 +343,8 @@ Window {
 
                         }  else {
                             globalTimer.stop();
+                            window.clockMode = "start"
+                            soundNotification.stop()
                         }
                     }
 
