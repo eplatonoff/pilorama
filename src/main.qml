@@ -3,7 +3,6 @@ import QtQuick.Window 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.12
 import QtMultimedia 5.13
-
 import Qt.labs.settings 1.0
 
 import "utils/geometry.mjs" as GeometryScripts
@@ -327,7 +326,7 @@ Window {
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: Qt.OpenHandCursor
                     propagateComposedEvents: true
 
                     signal rotated(real delta)
@@ -350,6 +349,7 @@ Window {
 //                    }
 
                     onReleased: {
+                        cursorShape = Qt.OpenHandCursor
                         if (globalTimer.duration > 0) {
                             globalTimer.start()
 
@@ -379,6 +379,7 @@ Window {
                     }
 
                     onPressed: {
+                        cursorShape = Qt.ClosedHandCursor
 
                         const angle = GeometryScripts.mouseAngle(
                                         Qt.point(mouse.x, mouse.y),
@@ -680,22 +681,22 @@ Window {
 
                 Rectangle {
                     id: rectangle
-                    height: 38
+                    height: 36
                     color: "transparent"
                     border.color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
                     border.width: 2
                     radius: 22.5
 
                     anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 0
+                    anchors.bottomMargin: 7
                     anchors.right: parent.right
-                    anchors.rightMargin: 15
+                    anchors.rightMargin: 25
                     anchors.left: parent.left
-                    anchors.leftMargin: 15
+                    anchors.leftMargin: 25
 
                     Text {
                         id: digitalClockReset
-                        text: qsTr("reset timer")
+                        text: qsTr("Reset")
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         anchors.fill: parent
@@ -1101,20 +1102,21 @@ Window {
 /*##^##
 Designer {
     D{i:1;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:3;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
-D{i:5;anchors_x:99;anchors_y:54}D{i:6;anchors_x:99;anchors_y:54}D{i:7;anchors_x:104;invisible:true}
-D{i:15;anchors_width:200;invisible:true}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}
-D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:21;anchors_x:99;anchors_y:54}
-D{i:22;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}D{i:24;anchors_x:245;anchors_y:245}
-D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}
-D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:27;anchors_x:99;anchors_y:54;invisible:true}
-D{i:29;anchors_x:99;anchors_y:54}D{i:31;invisible:true}D{i:33;anchors_height:22}D{i:32;anchors_x:99;anchors_y:54;invisible:true}
-D{i:26;anchors_x:99;anchors_y:54;invisible:true}D{i:37;anchors_x:99;anchors_y:54}
-D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:41;anchors_x:99;anchors_y:54}
-D{i:42;anchors_x:99;anchors_y:54}D{i:43;anchors_x:99;anchors_y:54}D{i:44;anchors_x:99;anchors_y:54}
-D{i:40;anchors_x:99;anchors_y:54}D{i:46;invisible:true}D{i:47;invisible:true}D{i:48;invisible:true}
-D{i:49;invisible:true}D{i:45;anchors_x:99;anchors_y:54}D{i:39;anchors_x:99;anchors_y:54}
-D{i:38;anchors_x:99;anchors_y:54}D{i:56;invisible:true}D{i:57;invisible:true}D{i:55;invisible:true}
-D{i:58;invisible:true}D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+D{i:5;anchors_x:99;anchors_y:54}D{i:7;anchors_x:104;invisible:true}D{i:6;anchors_x:99;anchors_y:54}
+D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:12;invisible:true}
+D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}D{i:15;anchors_width:200;invisible:true}
+D{i:20;anchors_x:99;anchors_y:54}D{i:21;anchors_x:99;anchors_y:54}D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}
+D{i:24;anchors_x:245;anchors_y:245}D{i:22;anchors_x:99;anchors_y:54}D{i:26;anchors_x:99;anchors_y:54}
+D{i:27;anchors_x:99;anchors_y:54}D{i:25;anchors_x:99;anchors_y:54;invisible:true}
+D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}D{i:29;anchors_x:99;anchors_y:54}
+D{i:32;anchors_x:99;anchors_y:54}D{i:33;anchors_height:22}D{i:28;anchors_x:99;anchors_y:54;invisible:true}
+D{i:38;anchors_x:99;anchors_y:54}D{i:39;anchors_x:99;anchors_y:54}D{i:37;anchors_x:99;anchors_y:54}
+D{i:43;anchors_x:99;anchors_y:54}D{i:44;anchors_x:99;anchors_y:54}D{i:45;anchors_x:99;anchors_y:54}
+D{i:46;invisible:true}D{i:42;anchors_x:99;anchors_y:54}D{i:48;invisible:true}D{i:49;invisible:true}
+D{i:47;invisible:true}D{i:55;invisible:true}D{i:56;invisible:true}D{i:58;invisible:true}
+D{i:59;invisible:true}D{i:60;invisible:true}D{i:57;invisible:true}D{i:41;anchors_x:99;anchors_y:54}
+D{i:40;anchors_x:99;anchors_y:54}D{i:62;invisible:true}D{i:61;invisible:true}
 }
 ##^##*/
 
