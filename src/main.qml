@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Window 2.13
+import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.12
 import QtMultimedia 5.13
 
@@ -13,16 +14,11 @@ Window {
     visible: true
     width: 300
     height: 300
-    color: darkMode ? colors.bgDark : colors.bgLight
+    color: appSettings.darkMode ? colors.bgDark : colors.bgLight
     title: qsTr("qml timer")
 
     property string clockMode: "start"
-    property bool darkMode: false
-    property bool soundOn: true
-    property bool showPrefs: false
 
-    onDarkModeChanged: { canvas.requestPaint()}
-    onShowPrefsChanged: { canvas.requestPaint()}
     onClockModeChanged: { canvas.requestPaint()}
 
     function checkClockMode (){
@@ -52,6 +48,15 @@ Window {
         property real pause: 10 * 60
         property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
+    }
+
+    Settings {
+        id: appSettings
+
+        property bool darkMode: false
+        property bool soundMuted: notifications.soundMuted
+
+        onDarkModeChanged: { canvas.requestPaint()}
     }
 
     Item {
@@ -140,10 +145,10 @@ Window {
         }
     }
 
-
-
-    Item {
+    StackView {
         id: content
+        initialItem: timerLayout
+
         anchors.rightMargin: 16
         anchors.leftMargin: 16
         anchors.bottomMargin: 16
@@ -153,7 +158,6 @@ Window {
         Item {
             id: timerLayout
             anchors.fill: parent
-            visible: !window.showPrefs
 
             Canvas {
 
@@ -197,7 +201,7 @@ Window {
 
                         ctx.beginPath();
                         ctx.lineWidth = stroke;
-                        ctx.strokeStyle = window.darkMode ? colors.fakeDark : colors.fakeLight;
+                        ctx.strokeStyle = appSettings.darkMode ? colors.fakeDark : colors.fakeLight;
                         ctx.setLineDash([dash / 2, space, dash / 2, 0]);
                         ctx.arc(centreX, centreY, (diameter - stroke) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
                         ctx.stroke();
@@ -208,7 +212,6 @@ Window {
 
                         var stroke2 = 4
                         var diameter2 = diameter - 2 * stroke - 7
-//                        var diameter2 = diameter
 
                         var clength2 = Math.PI * (diameter2 - stroke2) / stroke2;
                         var dash2 = dashWidth2 / stroke2
@@ -216,7 +219,7 @@ Window {
 
                         ctx.beginPath();
                         ctx.lineWidth = stroke2;
-                        ctx.strokeStyle = window.darkMode ? colors.accentDark : colors.accentLight;
+                        ctx.strokeStyle = appSettings.darkMode ? colors.accentDark : colors.accentLight;
                         ctx.setLineDash([dash2 / 2, space2, dash2 / 2, 0]);
                         ctx.arc(centreX, centreY, (diameter2 - stroke2) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
                         ctx.stroke();
@@ -239,16 +242,13 @@ Window {
                     var fakeDialPadding = 8
                     var fakeDialDiameter = mainDialDiameter - mainDialLine * 2 - fakeDialPadding
 
-//                    dial(fakeDialDiameter, fakeDialLine, 12, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
-//                    dial(fakeDialDiameter, fakeDialLine2, 60, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
-
                     function mainDialTurn(){
                         var t;
                         for(t = mainDialTurns; t > 0; t--){
-                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, window.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                            dial(width - (t - 1) * (turnsDialLine * 2 + turnsDialPadding) , turnsDialLine, appSettings.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
                         }
 
-                        dial(mainDialDiameter, mainDialLine, window.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
+                        dial(mainDialDiameter, mainDialLine, appSettings.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
                     }
 
                     mainDialTurn()
@@ -263,17 +263,17 @@ Window {
                         case "pomodoro":
                             splitDuration = durationSettings.pomodoro
                             splitIncrement = 3600 / durationSettings.pomodoro ;
-                            splitColor = window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                            splitColor = appSettings.darkMode ? colors.pomodoroDark : colors.pomodoroLight
                             break;
                         case "pause":
                             splitDuration = durationSettings.pause
                             splitIncrement = 3600 / durationSettings.pause;
-                            splitColor = window.darkMode ? colors.shortBreakDark : colors.shortBreakLight
+                            splitColor = appSettings.darkMode ? colors.shortBreakDark : colors.shortBreakLight
                             break;
                         case "break":
                             splitDuration = durationSettings.breakTime
                             splitIncrement = 3600 / durationSettings.breakTime;
-                            splitColor = window.darkMode ? colors.longBreakDark : colors.longBreakLight
+                            splitColor = appSettings.darkMode ? colors.longBreakDark : colors.longBreakLight
                             break;
                         default:
                             throw "can't calculate split time values";
@@ -430,7 +430,7 @@ Window {
                         id: startPomoOverlay
                         anchors.fill: parent
                         source: parent
-                        color: window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                        color: appSettings.darkMode ? colors.pomodoroDark : colors.pomodoroLight
                         antialiasing: true
                     }
 
@@ -473,14 +473,14 @@ Window {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 0
-                            color: window.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                            color: appSettings.darkMode ? colors.pomodoroDark : colors.pomodoroLight
                         }
 
                         Text {
                             height: 11
                             text: (durationSettings.pomodoro / 60) + " min"
                             verticalAlignment: Text.AlignVCenter
-                            color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
+                            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 10
@@ -502,14 +502,14 @@ Window {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 0
-                            color: window.darkMode ? colors.shortBreakDark : colors.shortBreakLight
+                            color: appSettings.darkMode ? colors.shortBreakDark : colors.shortBreakLight
                         }
 
                         Text {
                             height: 11
                             text: (durationSettings.pause / 60) + " min"
                             verticalAlignment: Text.AlignVCenter
-                            color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
+                            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 10
@@ -531,14 +531,14 @@ Window {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 0
-                            color: window.darkMode ? colors.longBreakDark : colors.longBreakLight
+                            color: appSettings.darkMode ? colors.longBreakDark : colors.longBreakLight
                         }
 
                         Text {
                             height: 11
                             text: (durationSettings.breakTime / 60) + " min"
                             verticalAlignment: Text.AlignVCenter
-                            color: window.darkMode ? colors.accentTextDark : colors.accentTextLight
+                            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 10
@@ -581,7 +581,7 @@ Window {
                         id: bellIconOverlay
                         anchors.fill: parent
                         source: parent
-                        color: darkMode ? colors.accentDark : colors.accentLight
+                        color: appSettings.darkMode ? colors.accentDark : colors.accentLight
                         antialiasing: true
                     }
                 }
@@ -600,7 +600,7 @@ Window {
                     anchors.bottom: digitalMin.top
                     anchors.bottomMargin: 5
                     horizontalAlignment: Text.AlignLeft
-                    color: darkMode ? colors.accentDark : colors.accentLight
+                    color: appSettings.darkMode ? colors.accentDark : colors.accentLight
 
                     function showFuture() {
                         var extraTime;
@@ -641,7 +641,7 @@ Window {
                     anchors.left: digitalMin.right
                     anchors.leftMargin: 3
                     font.pixelSize: 22
-                    color: darkMode ? colors.accentTextDark : colors.accentTextLight
+                    color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
 
                     function seconds(){
                         if (pomodoroQueue.infiniteMode === true){
@@ -665,7 +665,7 @@ Window {
                     anchors.left: parent.left
                     anchors.leftMargin: 26
                     font.pixelSize: 44
-                    color: darkMode ? colors.accentTextDark : colors.accentTextLight
+                    color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
 
                     function minutes(){
                         if (pomodoroQueue.infiniteMode){
@@ -682,7 +682,7 @@ Window {
                     id: rectangle
                     height: 38
                     color: "transparent"
-                    border.color: darkMode ? colors.fakeDark : colors.fakeLight
+                    border.color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
                     border.width: 2
                     radius: 22.5
 
@@ -700,7 +700,7 @@ Window {
                         horizontalAlignment: Text.AlignHCenter
                         anchors.fill: parent
                         font.pixelSize: 14
-                        color: darkMode ? colors.accentDark : colors.accentLight
+                        color: appSettings.darkMode ? colors.accentDark : colors.accentLight
 
                         MouseArea {
                             id: digitalClockResetTrigger
@@ -760,7 +760,7 @@ Window {
                     id: soundIconOverlay
                     anchors.fill: parent
                     source: parent
-                    color: window.darkMode ? colors.fakeDark : colors.fakeLight
+                    color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
                     antialiasing: true
                 }
 
@@ -785,136 +785,251 @@ Window {
             id: prefsLayout
             anchors.bottomMargin: 0
             anchors.topMargin: 40
-
             anchors.fill: parent
-            visible: window.showPrefs
+            visible: false
 
-            Rectangle {
-                id: lineDivider
-                height: 1
-                color: darkMode ? colors.fakeDark : colors.fakeLight
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.top: parent.top
-                anchors.topMargin: 0
-            }
 
-            Item {
-                id: sliceLine
-                height: 50
-                anchors.top: lineDivider.bottom
-                anchors.topMargin: 0
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
+//            Rectangle {
+//                id: lineDivider
+//                height: 1
+//                color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
+//                anchors.right: parent.right
+//                anchors.rightMargin: 0
+//                anchors.left: parent.left
+//                anchors.leftMargin: 0
+//                anchors.top: parent.top
+//                anchors.topMargin: 0
+//            }
+
+            Column {
+
+                id: prefs
+
+                spacing: 4
 
                 property real dotSize: 10
                 property real dotSpacing: 3
+                anchors.fill: parent
 
-                Rectangle {
-                    id: dotPomo
-                    width: parent.dotSize
-                    height: parent.dotSize
-                    color: darkMode ? colors.pomodoroDark : colors.pomodoroLight
-                    radius: 30
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Rectangle {
-                    id: dotShortBreak
-                    width: parent.dotSize
-                    height: parent.dotSize
-                    color: darkMode ? colors.shortBreakDark : colors.shortBreakLight
-                    radius: 30
-                    anchors.left: dotPomo.right
-                    anchors.leftMargin: parent.dotSpacing
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Rectangle {
-                    id: dotLongBreak
-                    width: parent.dotSize
-                    height: parent.dotSize
-                    color: darkMode ? colors.longBreakDark : colors.longBreakLight
-                    radius: 30
-                    anchors.left: dotShortBreak.right
-                    anchors.leftMargin: parent.dotSpacing
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                TextInput {
-                    id: timeSet
-                    width: 30
-                    color: darkMode ? colors.accentTextDark : colors.accentTextLight
-                    text: pomodoro.duration
-                    horizontalAlignment: Text.AlignRight
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 16
-
-                    onTextChanged: {pomodoro.duration = timeSet.text}
-                }
-
-                Text {
-                    id: minLabel
-                    width: 30
-                    text: qsTr("min")
-                    color: darkMode ? colors.accentTextDark : colors.accentTextLight
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: timeSet.right
-                    anchors.leftMargin: 3
-                    font.pixelSize: 16
-                }
-
-                Image {
-                    id: soundLineIcon
-                    sourceSize.height: 23
-                    sourceSize.width: 23
-                    source: "./img/sound.svg"
-                    antialiasing: true
-                    fillMode: Image.PreserveAspectFit
-
-                    property bool soundOn: true
-                    property color color: colors.fakeLight
-
-                    property string iconSound: "./img/sound.svg"
-                    property string iconNoSound: "./img/nosound.svg"
-                    x: 99
-                    anchors.verticalCenter: parent.verticalCenter
+                Item {
+                    id: pomoLine
+                    y: 54
+                    height: 50
                     anchors.right: parent.right
                     anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
 
-
-                    onSoundOnChanged: {
-                        soundOn ? source = iconSound : source = iconNoSound
+                    Rectangle {
+                        id: pomoDot
+                        width: prefs.dotSize
+                        height: prefs.dotSize
+                        color: appSettings.darkMode ? colors.pomodoroDark : colors.pomodoroLight
+                        radius: 30
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    ColorOverlay{
-                        anchors.fill: parent
-                        source: parent
-                        color: window.darkMode ? colors.fakeDark : colors.fakeLight
-                        antialiasing: true
+                    Text {
+                        width: 115
+                        height: 19
+                        text: qsTr("pomodoro:")
+                        color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: pomoDot.right
+                        anchors.leftMargin: 7
+                        font.pixelSize: 16
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        propagateComposedEvents: true
-                        cursorShape: Qt.PointingHandCursor
 
-                        onReleased: {
-                            parent.soundOn = !parent.soundOn
-                        }
+                    TextInput {
+                        id: pomoTime
+                        width: 30
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        text: durationSettings.pomodoro / 60
+                        anchors.left: pomoDot.right
+                        anchors.leftMargin: 120
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 16
+
+                        onTextChanged: {durationSettings.pomodoro = pomoTime.text * 60}
                     }
+
+                    Text {
+                        width: 30
+                        text: qsTr("min")
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: pomoTime.right
+                        anchors.leftMargin: 3
+                        font.pixelSize: 16
+                    }
+
                 }
 
-            }
+                Item {
+                    id: pauseLine
+                    y: 54
+                    height: 50
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
 
+                    Rectangle {
+                        id: pauseDot
+                        width: prefs.dotSize
+                        height: prefs.dotSize
+                        color: appSettings.darkMode ? colors.shortBreakDark : colors.shortBreakLight
+                        radius: 30
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Text {
+                        width: 115
+                        height: 19
+                        text: qsTr("short break:")
+                        color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: pauseDot.right
+                        anchors.leftMargin: 7
+                        font.pixelSize: 16
+                    }
+
+
+                    TextInput {
+                        id: pauseTime
+                        width: 30
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        text: durationSettings.pause / 60
+                        anchors.left: pauseDot.right
+                        anchors.leftMargin: 120
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 16
+
+                        onTextChanged: {durationSettings.pause = pauseTime.text * 60}
+                    }
+
+                    Text {
+                        width: 30
+                        text: qsTr("min")
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: pauseTime.right
+                        anchors.leftMargin: 3
+                        font.pixelSize: 16
+                    }
+
+                }
+
+                Item {
+                    id: breakLine
+                    height: 50
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+
+                    Rectangle {
+                        id: breakDot
+                        width: prefs.dotSize
+                        height: prefs.dotSize
+                        color: appSettings.darkMode ? colors.longBreakDark : colors.longBreakLight
+                        radius: 30
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Text {
+                        width: 115
+                        height: 19
+                        text: qsTr("long break:")
+                        color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: breakDot.right
+                        anchors.leftMargin: 7
+                        font.pixelSize: 16
+                    }
+
+
+                    TextInput {
+                        id: breakTime
+                        width: 30
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        text: durationSettings.breakTime / 60
+                        anchors.left: breakDot.right
+                        anchors.leftMargin: 120
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 16
+
+                        onTextChanged: {durationSettings.breakTime = breakTime.text * 60}
+                    }
+
+                    Text {
+                        width: 30
+                        text: qsTr("min")
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: breakTime.right
+                        anchors.leftMargin: 3
+                        font.pixelSize: 16
+                    }
+
+                }
+
+                Item {
+                    id: repeatLine
+                    height: 50
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+
+                    Text {
+                        width: 115
+                        height: 19
+                        text: qsTr("long break every:")
+                        color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: breakDot.right
+                        anchors.leftMargin: 7
+                        font.pixelSize: 16
+                    }
+
+
+                    TextInput {
+                        id: repeatTime
+                        width: 30
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        text: durationSettings.repeatBeforeBreak
+                        anchors.left: parent.left
+                        anchors.leftMargin: 120 + prefs.dotSize
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 16
+
+                        onTextChanged: {durationSettings.repeatBeforeBreak = repeatTime.text}
+                    }
+
+                    Text {
+                        width: 30
+                        text: qsTr("pomodoro")
+                        color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: repeatTime.right
+                        anchors.leftMargin: 3
+                        font.pixelSize: 16
+                    }
+
+                }
+            }
         }
 
         Image {
@@ -932,7 +1047,7 @@ Window {
                 id: prefsIconOverlay
                 anchors.fill: parent
                 source: parent
-                color: window.darkMode ? colors.fakeDark : colors.fakeLight
+                color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
                 antialiasing: true
             }
 
@@ -944,7 +1059,7 @@ Window {
                 cursorShape: Qt.PointingHandCursor
 
                 onReleased: {
-                    window.showPrefs = !window.showPrefs
+                    content.currentItem === timerLayout ? content.push(prefsLayout) : content.pop()
                 }
             }
         }
@@ -963,13 +1078,13 @@ Window {
             anchors.top: parent.top
             anchors.topMargin: 0
 
-            source: window.darkMode ? iconDark : iconLight
+            source: appSettings.darkMode ? iconDark : iconLight
 
             ColorOverlay{
                 id: modeSwitchOverlay
                 anchors.fill: parent
                 source: parent
-                color: window.darkMode ? colors.fakeDark : colors.fakeLight
+                color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
                 antialiasing: true
             }
 
@@ -981,7 +1096,7 @@ Window {
                 cursorShape: Qt.PointingHandCursor
 
                 onReleased: {
-                    window.darkMode = !window.darkMode
+                    appSettings.darkMode = !appSettings.darkMode
                 }
             }
         }
@@ -998,20 +1113,19 @@ Window {
 Designer {
     D{i:1;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:3;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
 D{i:5;anchors_x:99;anchors_y:54}D{i:6;anchors_x:99;anchors_y:54}D{i:7;anchors_x:104;invisible:true}
-D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}
-D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}D{i:21;anchors_x:99;anchors_y:54}
+D{i:15;anchors_width:200;invisible:true}D{i:18;anchors_width:200;anchors_x:99;anchors_y:54}
+D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:21;anchors_x:99;anchors_y:54}
 D{i:22;anchors_x:99;anchors_y:54}D{i:20;anchors_x:99;anchors_y:54}D{i:24;anchors_x:245;anchors_y:245}
-D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:27;anchors_x:99;anchors_y:54;invisible:true}
-D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:26;anchors_x:99;anchors_y:54;invisible:true}
-D{i:19;anchors_width:200;anchors_x:99;anchors_y:54}D{i:15;anchors_width:200;invisible:true}
-D{i:31;invisible:true}D{i:32;anchors_x:99;anchors_y:54;invisible:true}D{i:33;anchors_height:22}
-D{i:37;anchors_x:99;anchors_y:54;invisible:true}D{i:29;anchors_x:99;anchors_y:54}
-D{i:39;anchors_x:99;anchors_y:54;invisible:true}D{i:40;anchors_x:99;anchors_y:54;invisible:true}
-D{i:41;anchors_x:99;anchors_y:54;invisible:true}D{i:38;anchors_x:99;anchors_y:54;invisible:true}
-D{i:43;anchors_x:99;anchors_y:54;invisible:true}D{i:45;anchors_x:99;anchors_y:54;invisible:true}
-D{i:46;invisible:true}D{i:47;invisible:true}D{i:48;invisible:true}D{i:49;invisible:true}
-D{i:44;anchors_x:99;anchors_y:54;invisible:true}D{i:42;anchors_x:99;anchors_y:54;invisible:true}
+D{i:25;anchors_x:99;anchors_y:54;invisible:true}D{i:16;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}
+D{i:28;anchors_x:99;anchors_y:54;invisible:true}D{i:27;anchors_x:99;anchors_y:54;invisible:true}
+D{i:29;anchors_x:99;anchors_y:54}D{i:31;invisible:true}D{i:33;anchors_height:22}D{i:32;anchors_x:99;anchors_y:54;invisible:true}
+D{i:26;anchors_x:99;anchors_y:54;invisible:true}D{i:37;anchors_x:99;anchors_y:54}
+D{i:9;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:41;anchors_x:99;anchors_y:54}
+D{i:42;anchors_x:99;anchors_y:54}D{i:43;anchors_x:99;anchors_y:54}D{i:44;anchors_x:99;anchors_y:54}
+D{i:40;anchors_x:99;anchors_y:54}D{i:46;invisible:true}D{i:47;invisible:true}D{i:48;invisible:true}
+D{i:49;invisible:true}D{i:45;anchors_x:99;anchors_y:54}D{i:39;anchors_x:99;anchors_y:54}
+D{i:38;anchors_x:99;anchors_y:54}D{i:56;invisible:true}D{i:57;invisible:true}D{i:55;invisible:true}
+D{i:58;invisible:true}D{i:8;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
 }
 ##^##*/
 
