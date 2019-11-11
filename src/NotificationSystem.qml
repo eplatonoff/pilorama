@@ -7,12 +7,21 @@ import notifications 1.0
 NotificationSystem {
     id: notifications
 
-    default property bool soundMuted: false
+    property bool soundMuted: false
 
     property SoundEffect sound: SoundEffect {
         id: soundNotification
         muted: notifications.soundMuted
         source: "./sound/piano-low.wav"
+    }
+
+    onSoundMutedChanged: {
+        if (soundMuted)
+            stopSound();
+    }
+
+    function toggleSoundNotifications() {
+        soundMuted = !soundMuted;
     }
 
     function stopSound() {

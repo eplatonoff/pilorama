@@ -54,9 +54,9 @@ Window {
         id: appSettings
 
         property bool darkMode: false
-        property bool soundMuted: notifications.soundMuted
+        property alias soundMuted: notifications.soundMuted
 
-        onDarkModeChanged: { canvas.requestPaint()}
+        onDarkModeChanged: { canvas.requestPaint(); }
     }
 
     Item {
@@ -725,16 +725,18 @@ Window {
             }
 
             Image {
+
+                property bool soundOn: !notifications.soundMuted
+
                 id: soundIcon
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 sourceSize.height: 23
                 sourceSize.width: 23
-                source: "./img/sound.svg"
+                source: soundOn ? iconSound : iconNoSound
                 antialiasing: true
                 fillMode: Image.PreserveAspectFit
 
-                property bool soundOn: true
                 property color color: colors.fakeLight
 
                 property string iconSound: "./img/sound.svg"
@@ -742,19 +744,6 @@ Window {
 
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
-
-
-                onSoundOnChanged: {
-                    if ( soundOn ){
-                        soundIcon.source = iconSound;
-                        notifications.soundMuted = false;
-                    } else {
-                        notifications.stopSound()
-                        soundIcon.source = iconNoSound;
-                        notifications.soundMuted = true;
-                    }
-
-                }
 
                 ColorOverlay{
                     id: soundIconOverlay
@@ -772,7 +761,7 @@ Window {
                     cursorShape: Qt.PointingHandCursor
 
                     onReleased: {
-                        soundIcon.soundOn = !soundIcon.soundOn
+                        notifications.toggleSoundNotifications();
                     }
                 }
             }
