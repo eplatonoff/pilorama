@@ -13,6 +13,10 @@ ListModel {
     }
 
     onCountChanged: {
+
+        if (count === 0)
+            totalPomodoros = 0;
+
         _tryToCreateBatch();
     }
 
