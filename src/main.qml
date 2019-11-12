@@ -369,8 +369,6 @@ Window {
 
                         pomodoroQueue.changeQueue(deltaSecs);
 
-                        console.log(delta)
-
                         if (_totalRotatedSecs >= 0) {
                             globalTimer.duration = _totalRotatedSecs;
                         } else {
@@ -386,6 +384,7 @@ Window {
                                         Qt.point(canvas.centreX, canvas.centreY));
                         this._prevAngle = angle;
 
+                        pomodoroQueue.restoreDuration(0)
                         pomodoroQueue.infiniteMode = false
                     }
 
