@@ -61,6 +61,15 @@ ListModel {
         remove(count - 1);
     }
 
+    function restoreDuration(index) {
+        const item = get(index);
+
+        if (!item)
+            throw "Item doesn't exists";
+
+        item.duration = itemDurationBound(item);
+    }
+
     function changeQueue(deltaSecs) {
 
         // change last item duration
