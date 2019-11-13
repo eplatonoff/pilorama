@@ -7,7 +7,7 @@ OBJECTIVE_SOURCES += mac/appnap.mm
 
 macx: {
     LIBS += -framework Foundation
-    ICON = img/icon.icns
+    ICON = assets/img/icon.icns
 }
 
 

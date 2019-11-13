@@ -1,20 +1,30 @@
 <RCC>
     <qresource prefix="/">
+        <file>assets/img/moon.svg</file>
+        <file>assets/img/sun.svg</file>
+        <file>assets/img/sound.svg</file>
+        <file>assets/img/prefs.svg</file>
+        <file>assets/img/nosound.svg</file>
+        <file>assets/img/play.svg</file>
+        <file>assets/img/bell.svg</file>
+        <file>assets/img/icon.icns</file>
+        <file>assets/img/trayicon.icns</file>
+        <file>assets/sound/piano-low.wav</file>
         <file>main.qml</file>
-        <file>img/moon.svg</file>
-        <file>img/sun.svg</file>
-        <file>img/sound.svg</file>
-        <file>img/prefs.svg</file>
-        <file>img/nosound.svg</file>
-        <file>sound/piano-low.wav</file>
-        <file>sound/danay.wav</file>
-        <file>img/play.svg</file>
         <file>utils/geometry.mjs</file>
         <file>PomodoroModel.qml</file>
-        <file>img/bell.svg</file>
-        <file>img/icon.icns</file>
-        <file>img/trayicon.icns</file>
-        <file>Colors.qml</file>
         <file>NotificationSystem.qml</file>
+        <file>QTimer.qml</file>
+        <file>MouseTracker.qml</file>
+        <file>Components/Colors.qml</file>
+        <file>Components/ResetButton.qml</file>
+        <file>Components/SoundButton.qml</file>
+        <file>Components/StartScreen.qml</file>
+        <file>Components/Dials.qml</file>
+        <file>Components/TimerScreen.qml</file>
+        <file>Components/InfiniteScreen.qml</file>
+        <file>Components/Preferences.qml</file>
+        <file>Components/DarkModeButton.qml</file>
+        <file>Components/PrefsButton.qml</file>
     </qresource>
 </RCC>
