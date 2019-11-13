@@ -33,7 +33,7 @@ void NotificationSystem::send(Type type) {
 				trayIcon->showMessage("Pomodoro timer", "Break started");
 				break;
             case Type::STOP:
-                trayIcon->showMessage("Pomodoro timer", "Timer stopped");
+                trayIcon->showMessage("Pomodoro timer", "Time ran out");
                 break;
 		}
 	}

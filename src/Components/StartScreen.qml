@@ -38,6 +38,7 @@ Item {
                 window.clockMode = "pomodoro"
                 pomodoroQueue.infiniteMode = true
                 globalTimer.start()
+
             }
         }
     }

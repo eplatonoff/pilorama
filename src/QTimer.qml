@@ -5,8 +5,6 @@ Timer {
     property real duration: 0
     property real splitDuration: 0
 
-    property int secsInterval: Math.trunc(interval / 1000)
-
     onDurationChanged: {
         window.checkClockMode();
         time.updateTime();
@@ -25,31 +23,23 @@ Timer {
             } else {
                 notifications.sendWithSound(NotificationSystem.STOP);
                 window.clockMode = "start";
-                stop();
-
                 pomodoroQueue.clear();
                 mouseArea._prevAngle = 0
                 mouseArea._totalRotatedSecs = 0
-
+                stop();
             }
         }
+
+        pomodoroQueue.drainTime(1);
 
         const firstItem = pomodoroQueue.first();
+        firstItem ? splitDuration = firstItem.duration : splitDuration = 0
 
-        if (firstItem) {
-            splitDuration = firstItem.duration;
-
-            if (splitDuration === pomodoroQueue.itemDurationBound(firstItem)) {
+        if(splitDuration === pomodoroQueue.itemDurationBound(firstItem)){
+            if (pomodoroQueue.infiniteMode || appSettings.splitToSequence){
                 notifications.sendFromItem(firstItem);
             }
-
-        } else {
-            splitDuration = 0;
         }
-
-        pomodoroQueue.drainTime(secsInterval);
-
-        time.updateTime();
 
         canvas.requestPaint();
     }

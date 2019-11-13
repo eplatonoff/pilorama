@@ -19,7 +19,7 @@ MouseArea {
     property real _totalRotated: 0
     property real _totalRotatedSecs: 0
 
-    property real _totalRotatedSecsLimit: 14400
+    property real _totalRotatedSecsLimit: 18000
 
     onReleased: {
         cursorShape = Qt.OpenHandCursor
@@ -40,10 +40,9 @@ MouseArea {
         this._totalRotated += delta;
         this._totalRotatedSecs += deltaSecs;
 
-        pomodoroQueue.changeQueue(deltaSecs);
-
         if (_totalRotatedSecs >= 0 && _totalRotatedSecs <= _totalRotatedSecsLimit) {
             globalTimer.duration = _totalRotatedSecs;
+            pomodoroQueue.changeQueue(deltaSecs);
         } else if (_totalRotatedSecs > _totalRotatedSecsLimit) {
              _totalRotatedSecs = _totalRotatedSecsLimit
         } else {

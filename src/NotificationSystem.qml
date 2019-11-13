@@ -41,6 +41,8 @@ NotificationSystem {
             sendWithSound(NotificationSystem.PAUSE); break;
         case "break":
             sendWithSound(NotificationSystem.BREAK); break;
+        case "timer":
+            sendWithSound(NotificationSystem.TIMER); break;
         default:
             throw "unknown time segment type";
         }
