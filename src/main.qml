@@ -98,7 +98,6 @@ Window {
 
         Item {
             id: timerLayout
-            anchors.fill: parent
 
             Dials {
                 id: canvas
@@ -121,7 +120,7 @@ Window {
         }
 
         Preferences {
-            id: preferences
+            id: prefsLayout
             visible: false
         }
 

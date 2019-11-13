@@ -27,7 +27,7 @@ Image {
         cursorShape: Qt.PointingHandCursor
 
         onReleased: {
-            content.currentItem === timerLayout ? content.push(preferences) : content.pop()
+            content.currentItem === timerLayout ? content.push(prefsLayout) : content.pop()
         }
     }
 }

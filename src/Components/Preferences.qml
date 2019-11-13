@@ -2,10 +2,6 @@ import QtQuick 2.0
 
 Item {
 
-    anchors.bottomMargin: 0
-    anchors.topMargin: 40
-    anchors.fill: parent
-
     Column {
 
         id: prefs
@@ -15,6 +11,8 @@ Item {
         property real dotSize: 10
         property real dotSpacing: 3
         property real cellHeight: 19
+
+        anchors.topMargin: 40
         anchors.fill: parent
 
         Item {
@@ -53,9 +51,9 @@ Item {
                 width: 30
                 color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                 text: durationSettings.pomodoro / 60
-                anchors.left: pomoDot.right
-                anchors.leftMargin: 120
-                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.leftMargin: 150
+                horizontalAlignment: Text.AlignHCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
 
@@ -110,9 +108,9 @@ Item {
                 width: 30
                 color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                 text: durationSettings.pause / 60
-                anchors.left: pauseDot.right
-                anchors.leftMargin: 120
-                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.leftMargin: 150
+                horizontalAlignment: Text.AlignHCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
 
@@ -167,9 +165,9 @@ Item {
                 width: 30
                 color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                 text: durationSettings.breakTime / 60
-                anchors.left: breakDot.right
-                anchors.leftMargin: 120
-                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.leftMargin: 150
+                horizontalAlignment: Text.AlignHCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
 
@@ -202,8 +200,6 @@ Item {
                 text: qsTr("long break every:")
                 color: appSettings.darkMode ? colors.accentDark : colors.accentLight
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: breakDot.right
-                anchors.leftMargin: 7
                 font.pixelSize: 16
             }
 
@@ -213,9 +209,9 @@ Item {
                 width: 30
                 color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
                 text: durationSettings.repeatBeforeBreak
+                anchors.leftMargin: 150
                 anchors.left: parent.left
-                anchors.leftMargin: 120 + prefs.dotSize
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
 

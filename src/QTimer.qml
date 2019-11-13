@@ -39,7 +39,7 @@ Timer {
         if (firstItem) {
             splitDuration = firstItem.duration;
 
-            if (splitDuration === pomodoroQueue.itemDurationBound(firstItem) && appSettings.splitToSequence) {
+            if (splitDuration === pomodoroQueue.itemDurationBound(firstItem)) {
                 notifications.sendFromItem(firstItem);
             }
 
