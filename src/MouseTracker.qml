@@ -55,7 +55,7 @@ MouseArea {
                         Qt.point(canvas.centreX, canvas.centreY));
         this._prevAngle = angle;
 
-        pomodoroQueue.restoreDuration(0)
+        pomodoroQueue.count > 1 ? pomodoroQueue.restoreDuration(0) : undefined
         pomodoroQueue.infiniteMode = false
     }
 
