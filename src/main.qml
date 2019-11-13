@@ -108,6 +108,11 @@ Window {
                     notifications.sendWithSound(NotificationSystem.STOP);
                     window.clockMode = "start";
                     stop();
+
+                    pomodoroQueue.clear();
+                    mouseArea._prevAngle = 0
+                    mouseArea._totalRotatedSecs = 0
+
                 }
             }
 
@@ -280,7 +285,7 @@ Window {
                         return {duration: splitDuration, increment: splitIncrement, color: splitColor};
                     }
 
-                    if (globalTimer.running){
+                    if (pomodoroQueue.infiniteMode && globalTimer.running){
                         calibration(fakeDialDiameter, fakeDialLine, getSplit(pomodoroQueue.first().type).duration / 60)
                         dial(fakeDialDiameter, fakeDialLine,
                              getSplit(pomodoroQueue.first().type).color,
