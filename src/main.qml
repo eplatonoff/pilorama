@@ -13,6 +13,13 @@ Window {
     visible: true
     width: 300
     height: 300
+
+    maximumWidth: width
+    maximumHeight: height
+
+    minimumWidth: width
+    minimumHeight: height
+
     color: appSettings.darkMode ? colors.bgDark : colors.bgLight
     title: qsTr("qml timer")
 
