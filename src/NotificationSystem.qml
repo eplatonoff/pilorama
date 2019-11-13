@@ -12,7 +12,7 @@ NotificationSystem {
     property SoundEffect sound: SoundEffect {
         id: soundNotification
         muted: notifications.soundMuted
-        source: "../assets/sound/piano-low.wav"
+        source: "../assets/sound/drum_roll.wav"
     }
 
     onSoundMutedChanged: {

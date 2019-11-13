@@ -10,6 +10,7 @@
         <file>assets/img/icon.icns</file>
         <file>assets/img/trayicon.icns</file>
         <file>assets/sound/piano-low.wav</file>
+        <file>assets/sound/drum_roll.wav</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
         <file>PomodoroModel.qml</file>
