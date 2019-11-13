@@ -23,7 +23,7 @@ Timer {
             if (duration >= 1){
                 duration--;
             } else {
-                appSettings.splitToPomo ? undefined : notifications.sendWithSound(NotificationSystem.STOP);
+                notifications.sendWithSound(NotificationSystem.STOP);
                 window.clockMode = "start";
                 stop();
 
@@ -39,11 +39,13 @@ Timer {
         if (firstItem) {
             splitDuration = firstItem.duration;
 
-            if (splitDuration === pomodoroQueue.itemDurationBound(firstItem)) {
+            if (splitDuration === pomodoroQueue.itemDurationBound(firstItem) && appSettings.splitToSequence) {
                 notifications.sendFromItem(firstItem);
             }
-        } else
+
+        } else {
             splitDuration = 0;
+        }
 
         pomodoroQueue.drainTime(secsInterval);
 

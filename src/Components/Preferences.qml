@@ -246,7 +246,7 @@ Item {
                 id: splitToSequenceLabel
                 width: 115
                 height: 19
-                text: qsTr("split to sequence:")
+                text: qsTr("split to pomodoro:")
                 color: appSettings.darkMode ? colors.accentDark : colors.accentLight
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
