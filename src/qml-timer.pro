@@ -1,4 +1,4 @@
-QT += quick widgets
+QT += quick widgets svg xml
 
 CONFIG += c++17
 
