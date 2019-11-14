@@ -32,14 +32,19 @@ Timer {
 
         pomodoroQueue.drainTime(1);
 
-        const firstItem = pomodoroQueue.first();
-        firstItem ? splitDuration = firstItem.duration : splitDuration = 0
+        const first = pomodoroQueue.first();
 
-        if(splitDuration === pomodoroQueue.itemDurationBound(firstItem)){
-            if (pomodoroQueue.infiniteMode || appSettings.splitToSequence){
-                notifications.sendFromItem(firstItem);
-            }
-        }
+        if (first) {
+            splitDuration = first.duration;
+
+            const notificationsEnabled = pomodoroQueue.infiniteMode || appSettings.splitToSequence;
+
+            if (notificationsEnabled)
+                if (splitDuration === pomodoroQueue.itemDurationBound(first))
+                    notifications.sendFromItem(first);
+
+        } else
+            splitDuration = 0;
 
         canvas.requestPaint();
     }
