@@ -10,7 +10,6 @@
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
-        <file>assets/sound/piano-low.wav</file>
         <file>assets/sound/drum_roll.wav</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
