@@ -20,6 +20,7 @@ Timer {
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
                 duration--;
+
             } else {
                 notifications.sendWithSound(NotificationSystem.STOP);
                 window.clockMode = "start";
@@ -31,6 +32,8 @@ Timer {
         }
 
         pomodoroQueue.drainTime(1);
+
+        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
 
         const first = pomodoroQueue.first();
 

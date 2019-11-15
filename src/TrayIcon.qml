@@ -11,8 +11,10 @@ SystemTrayIcon {
     property string soundItemText: "Turn sound " + checkSoundItemText()
 
     property real dialTime: 0
+    property real runningTime: 0
 
     onDialTimeChanged: {trayIconPath()}
+    onRunningTimeChanged: {updateTrayTime()}
 
     onMessageClicked: window.visible
     onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
@@ -53,8 +55,26 @@ SystemTrayIcon {
       }
     }
 
+    function pad(value){
+        if (value < 10) {return "0" + value
+        } else {return value}
+    }
+
+    function updateTrayTime(){
+        let min = pad(Math.trunc(runningTime / 60))
+        let sec = pad(Math.trunc(runningTime % 60))
+        return "Time left: " + min + ":" + sec
+    }
 
     menu: Menu {
+
+       MenuItem {
+           text: updateTrayTime()
+           onTriggered: {window.active}
+       }
+
+        MenuSeparator {}
+
         MenuItem {
             text: tray.menuItemText
             onTriggered: {
@@ -83,17 +103,20 @@ SystemTrayIcon {
             }
         }
         MenuItem {
-            text: qsTr("Settings")
-            onTriggered: {
-               if (content.currentItem === timerLayout) {content.push(prefsLayout)}
-            }
-        }
-        MenuItem {
             text: tray.soundItemText
             onTriggered: {
                 notifications.toggleSoundNotifications();
             }
         }
+        MenuItem {
+            text: qsTr("Settings")
+            onTriggered: {
+               if (content.currentItem === timerLayout) {content.push(prefsLayout)}
+            }
+        }
+
+        MenuSeparator {}
+
         MenuItem {
             text: qsTr("Quit")
             onTriggered: Qt.quit()
