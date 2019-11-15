@@ -70,6 +70,10 @@ Window {
 
     }
 
+    TrayIcon {
+        id: tray
+    }
+
     NotificationSystem {
         id: notifications
     }

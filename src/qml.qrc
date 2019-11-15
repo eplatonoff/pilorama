@@ -27,5 +27,59 @@
         <file>Components/Preferences.qml</file>
         <file>Components/DarkModeButton.qml</file>
         <file>Components/PrefsButton.qml</file>
+        <file>assets/tray/static.svg</file>
+        <file>assets/tray/break-0.svg</file>
+        <file>assets/tray/break-5.svg</file>
+        <file>assets/tray/break-10.svg</file>
+        <file>assets/tray/break-15.svg</file>
+        <file>assets/tray/break-20.svg</file>
+        <file>assets/tray/break-25.svg</file>
+        <file>assets/tray/break-30.svg</file>
+        <file>assets/tray/break-35.svg</file>
+        <file>assets/tray/break-40.svg</file>
+        <file>assets/tray/break-45.svg</file>
+        <file>assets/tray/break-50.svg</file>
+        <file>assets/tray/break-55.svg</file>
+        <file>assets/tray/break-60.svg</file>
+        <file>assets/tray/pause-0.svg</file>
+        <file>assets/tray/pause-5.svg</file>
+        <file>assets/tray/pause-10.svg</file>
+        <file>assets/tray/pause-15.svg</file>
+        <file>assets/tray/pause-20.svg</file>
+        <file>assets/tray/pause-25.svg</file>
+        <file>assets/tray/pause-30.svg</file>
+        <file>assets/tray/pause-35.svg</file>
+        <file>assets/tray/pause-40.svg</file>
+        <file>assets/tray/pause-45.svg</file>
+        <file>assets/tray/pause-50.svg</file>
+        <file>assets/tray/pause-55.svg</file>
+        <file>assets/tray/pause-60.svg</file>
+        <file>assets/tray/pomodoro-0.svg</file>
+        <file>assets/tray/pomodoro-5.svg</file>
+        <file>assets/tray/pomodoro-10.svg</file>
+        <file>assets/tray/pomodoro-15.svg</file>
+        <file>assets/tray/pomodoro-20.svg</file>
+        <file>assets/tray/pomodoro-25.svg</file>
+        <file>assets/tray/pomodoro-30.svg</file>
+        <file>assets/tray/pomodoro-35.svg</file>
+        <file>assets/tray/pomodoro-40.svg</file>
+        <file>assets/tray/pomodoro-45.svg</file>
+        <file>assets/tray/pomodoro-50.svg</file>
+        <file>assets/tray/pomodoro-55.svg</file>
+        <file>assets/tray/pomodoro-60.svg</file>
+        <file>assets/tray/timer-0.svg</file>
+        <file>assets/tray/timer-5.svg</file>
+        <file>assets/tray/timer-10.svg</file>
+        <file>assets/tray/timer-15.svg</file>
+        <file>assets/tray/timer-20.svg</file>
+        <file>assets/tray/timer-25.svg</file>
+        <file>assets/tray/timer-30.svg</file>
+        <file>assets/tray/timer-35.svg</file>
+        <file>assets/tray/timer-40.svg</file>
+        <file>assets/tray/timer-45.svg</file>
+        <file>assets/tray/timer-50.svg</file>
+        <file>assets/tray/timer-55.svg</file>
+        <file>assets/tray/timer-60.svg</file>
+        <file>TrayIcon.qml</file>
     </qresource>
 </RCC>

@@ -86,6 +86,7 @@ Canvas {
             }
 
             dial(mainDialDiameter, mainWidth, appSettings.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
+            tray.dialTime = globalTimer.duration - (mainDialTurns * 3600)
         }
 
         mainDialTurn()
@@ -133,6 +134,7 @@ Canvas {
             dial(width, fakeWidth,
                  getSplit(pomodoroQueue.first().type).color,
                  0, pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment )
+            tray.dialTime = pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment
         } else if (!pomodoroQueue.infiniteMode && appSettings.splitToSequence && globalTimer.duration){
             var i;
             var splitVisibleEnd = 0;
