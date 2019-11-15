@@ -10,9 +10,10 @@ macx: {
     ICON = assets/app_icons/icon.icns
 }
 
-win: {
+win*: {
     RC_ICONS = assets/app_icons/icon.ico
 }
+
 
 
 # The following define makes your compiler emit warnings if you use

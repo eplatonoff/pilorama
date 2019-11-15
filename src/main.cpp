@@ -24,6 +24,10 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
+    app.setOrganizationName("Some Humans");
+    app.setOrganizationDomain("somehumans.com");
+    app.setApplicationName("QML Timer");
+
     qmlRegisterType<NotificationSystem>("notifications", 1, 0, "NotificationSystem");
 
     QQmlApplicationEngine engine;
