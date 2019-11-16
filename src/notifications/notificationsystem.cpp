@@ -16,8 +16,6 @@ NotificationSystem::NotificationSystem(QObject *parent) : QObject(parent) {
 
 void NotificationSystem::_createTrayIcon() {
     trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setIcon(QIcon(":assets/app_icons/trayicon.icns"));
-    trayIcon->show();
 }
 
 void NotificationSystem::send(Type type) {

@@ -55,8 +55,6 @@ Item {
             font.bold: true
             font.pixelSize: 14
             verticalAlignment: Text.AlignVCenter
-            anchors.bottom: digitalMin.top
-            anchors.bottomMargin: 5
             horizontalAlignment: Text.AlignLeft
             color: appSettings.darkMode ? colors.accentDark : colors.accentLight
 
