@@ -42,6 +42,7 @@ MouseArea {
 
         if (_totalRotatedSecs >= 0 && _totalRotatedSecs <= _totalRotatedSecsLimit) {
             globalTimer.duration = _totalRotatedSecs;
+            durationSettings.timer = _totalRotatedSecs
             pomodoroQueue.changeQueue(deltaSecs);
         } else if (_totalRotatedSecs > _totalRotatedSecsLimit) {
              _totalRotatedSecs = _totalRotatedSecsLimit

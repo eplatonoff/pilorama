@@ -113,6 +113,8 @@ Window {
     Settings {
         id: durationSettings
 
+        property real timer: 0
+
         property real pomodoro: 25 * 60
         property real pause: 10 * 60
         property real breakTime: 15 * 60

@@ -86,7 +86,7 @@ Canvas {
             }
 
             dial(mainDialDiameter, mainWidth, appSettings.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
-            tray.dialTime = globalTimer.duration - (mainDialTurns * 3600)
+            tray.dialTime = globalTimer.duration * 3600 / durationSettings.timer
         }
 
         mainDialTurn()
