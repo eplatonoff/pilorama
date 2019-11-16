@@ -4,7 +4,9 @@ import Qt.labs.platform 1.1
 SystemTrayIcon {
     id: tray
     visible: true
-    icon.source: "./assets/tray/" + trayIconPath()
+    iconSource: "./assets/tray/" + trayIconPath()
+    iconName: qsTr("test")
+    tooltip : window.title
     property string appTitle: "QML Timer"
     property string messageText: ""
     property string menuItemText: checkMenuItemText()
