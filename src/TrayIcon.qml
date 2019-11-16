@@ -61,9 +61,11 @@ SystemTrayIcon {
     }
 
     function updateTrayTime(){
-        let min = pad(Math.trunc(runningTime / 60))
+        let h = Math.trunc(runningTime / 3600)
+        let hour = h > 0 ? h + ":" : ""
+        let min = pad(Math.trunc(runningTime / 60) - Math.trunc(runningTime / 3600) * 60)
         let sec = pad(Math.trunc(runningTime % 60))
-        return "Time left: " + min + ":" + sec
+        return "Time left: " + hour + min + ":" + sec
     }
 
     menu: Menu {
