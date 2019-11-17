@@ -5,17 +5,15 @@ import Qt.labs.settings 1.0
 
 import "Components"
 
-Window {
+ApplicationWindow {
     id: window
     visible: true
-    width: 300
-    height: 300
+    width: 320
+    height: 650
+    minimumHeight: 320
 
     maximumWidth: width
-    maximumHeight: height
-
     minimumWidth: width
-    minimumHeight: height
 
     color: appSettings.darkMode ? colors.bgDark : colors.bgLight
     title: qsTr("qml timer")
@@ -25,6 +23,13 @@ Window {
     onClockModeChanged: { canvas.requestPaint()}
 
     function checkClockMode (){
+        // temporary Settings
+        appSettings.splitToSequence = true
+        durationSettings.pomodoro = 900
+        durationSettings.pause = 300
+        durationSettings.breakTime = 600
+        durationSettings.repeatBeforeBreak = 2
+
         if (pomodoroQueue.infiniteMode && globalTimer.running){
             clockMode = "pomodoro"
         } else if (!pomodoroQueue.infiniteMode){
@@ -34,9 +39,8 @@ Window {
         }
     }
 
-    StackView {
+    Item {
         id: content
-        initialItem: timerLayout
 
         anchors.rightMargin: 16
         anchors.leftMargin: 16
@@ -46,6 +50,11 @@ Window {
 
         Item {
             id: timerLayout
+            width: 288
+            height: width
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.top: parent.top
 
             Dials {
                 id: canvas
@@ -63,10 +72,46 @@ Window {
             }
         }
 
-        Preferences {
-            id: prefsLayout
-            visible: false
+        DarkModeButton {
+            id: darkModeButton
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            anchors.right: parent.right
+            anchors.rightMargin: 0
         }
+
+        PrefsButton {
+            id: prefsButton
+            anchors.bottom: timerLayout.bottom
+            anchors.bottomMargin: 0
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+        }
+
+        SoundButton {
+            id: soundButton
+            x: -16
+            y: 486
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.bottom: timerLayout.bottom
+            anchors.bottomMargin: 0
+        }
+
+
+        Sequence {
+            id: sequence
+            visible: true
+            height: 350
+            anchors.top: timerLayout.bottom
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 10
+        }
+
+
+
 
     }
 
@@ -79,36 +124,33 @@ Window {
     }
 
 
-    SoundButton {
-        id: soundButton
-        y: 16
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-    }
-
-    PrefsButton {
-        id: prefsButton
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.topMargin: 0
-    }
-
-    DarkModeButton {
-        id: darkModeButton
-        x: 16
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-    }
-
     PomodoroModel {
         id: pomodoroQueue
         durationSettings: durationSettings
     }
+
+//    property string datastore: ""
+
+//     Component.onCompleted: {
+//       if (datastore) {
+//         sequenceModel.clear()
+//         var datamodel = JSON.parse(datastore)
+//         for (var i = 0; i < datamodel.length; ++i) sequenceModel.append(datamodel[i])
+//         console.log(datastore)
+//       }
+//     }
+
+//     onClosing: {
+//       var datamodel = []
+//       for (var i = 0; i < sequenceModel.count; ++i) datamodel.push(sequenceModel.get(i))
+//       datastore = JSON.stringify(datamodel)
+//       console.log(datastore)
+//     }
+
+//     Settings {
+//       property alias datastore: window.datastore
+//     }
+
 
     Settings {
         id: durationSettings
@@ -119,6 +161,7 @@ Window {
         property real pause: 10 * 60
         property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
+
     }
 
     Settings {
@@ -126,7 +169,7 @@ Window {
 
         property bool darkMode: false
         property alias soundMuted: notifications.soundMuted
-        property bool splitToSequence: false
+        property bool splitToSequence: true
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
@@ -166,13 +209,14 @@ Window {
 
 /*##^##
 Designer {
-    D{i:6;anchors_width:200;invisible:true}D{i:2;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
-D{i:7;anchors_width:200;invisible:true}D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:8;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:9;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}
-D{i:10;anchors_height:40;anchors_x:16;anchors_y:16;invisible:true}D{i:11;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
-D{i:13;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}D{i:14;anchors_x:99;anchors_y:54}
+    D{i:6;anchors_width:200}D{i:2;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
+D{i:7;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}D{i:8;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
+D{i:9;anchors_height:40;anchors_x:16;anchors_y:16}D{i:10;anchors_width:200}D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
+D{i:11;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:12;anchors_height:40;anchors_width:200;anchors_x:99;anchors_y:54;invisible:true}
+D{i:13;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}D{i:14;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}
 D{i:15;anchors_x:104;anchors_y:54;invisible:true}D{i:16;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
 D{i:17;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+D{i:18;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
 }
 ##^##*/
 

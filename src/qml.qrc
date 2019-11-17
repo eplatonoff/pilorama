@@ -7,6 +7,7 @@
         <file>assets/img/nosound.svg</file>
         <file>assets/img/play.svg</file>
         <file>assets/img/bell.svg</file>
+        <file>assets/img/dragger.svg</file>
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
@@ -17,6 +18,7 @@
         <file>NotificationSystem.qml</file>
         <file>QTimer.qml</file>
         <file>MouseTracker.qml</file>
+        <file>TrayIcon.qml</file>
         <file>Components/Colors.qml</file>
         <file>Components/ResetButton.qml</file>
         <file>Components/SoundButton.qml</file>
@@ -27,6 +29,7 @@
         <file>Components/Preferences.qml</file>
         <file>Components/DarkModeButton.qml</file>
         <file>Components/PrefsButton.qml</file>
+        <file>Components/Sequence.qml</file>
         <file>assets/tray/static.svg</file>
         <file>assets/tray/break-0.svg</file>
         <file>assets/tray/break-5.svg</file>
@@ -80,6 +83,12 @@
         <file>assets/tray/timer-50.svg</file>
         <file>assets/tray/timer-55.svg</file>
         <file>assets/tray/timer-60.svg</file>
-        <file>TrayIcon.qml</file>
+        <file>Components/Sequence/SequenceItem.qml</file>
+        <file>assets/img/close.svg</file>
+        <file>assets/img/copy.svg</file>
+        <file>assets/img/add.svg</file>
+        <file>Components/Sequence/Header.qml</file>
+        <file>Components/Sequence/Tools.qml</file>
+        <file>Components/Sequence/SequenceModel.qml</file>
     </qresource>
 </RCC>
