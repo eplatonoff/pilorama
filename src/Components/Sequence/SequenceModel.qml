@@ -3,6 +3,9 @@ import Qt.labs.settings 1.0
 
 ListModel {
 
+    Component.onCompleted: load()
+    Component.onDestruction: save()
+
     ListElement {
         name: "pomodoro"
         color: "red"
@@ -46,7 +49,19 @@ ListModel {
     function save(){
         var datamodel = []
         for (var i = 0; i < count; ++i) datamodel.push(get(i))
-        datastore = JSON.stringify(datamodel)
+        sequenceSettings.data = JSON.stringify(datamodel)
+        console.log("saved:" + sequenceSettings.data)
+    }
+
+    function load(){
+        if (sequenceSettings.data) {
+          clear()
+          var datamodel = JSON.parse(sequenceSettings.data)
+          for (var i = 0; i < datamodel.length; ++i) {
+              append(datamodel[i])
+          }
+        }
+       console.log("loaded:" + sequenceSettings.data)
     }
 }
 

@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.12
 import QtQml.Models 2.13
 
-Item {
+Rectangle {
     id: sequenceItem
     height: 38
     width: parent.width
@@ -10,12 +10,35 @@ Item {
     z: itemDragTrigger.held ? 2 : 1
     Drag.active: itemDragTrigger.held
     Drag.source: sequenceItem
-    Drag.hotSpot: Qt.point(0, height)
 
     MouseArea {
-        id: itemHover
-        anchors.fill: parent
+        id: itemDragTrigger
+
+        width: parent.width
+        height: parent.height
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
         hoverEnabled: true
+        propagateComposedEvents: true
+//        cursorShape: Qt.OpenHandCursor
+
+        property bool held: false
+
+//        Drag.hotSpot.x: 0
+//        Drag.hotSpot.y: height/2
+
+        drag.target: held ? parent : undefined
+        drag.axis: Drag.YAxis
+        drag.smoothed: false
+
+        onPressed: {
+//            cursorShape = Qt.ClosedHandCursor
+            held = true
+        }
+        onReleased: {
+//            cursorShape = Qt.OpenHandCursor
+            held = false
+        }
 
         onEntered: {
             itemControls.visible = true
@@ -28,52 +51,15 @@ Item {
         }
     }
 
-    MouseArea {
-        id: itemDragTrigger
-
-        width: 40
-        height: parent.height
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        propagateComposedEvents: true
-        cursorShape: Qt.OpenHandCursor
-
-        property bool held: false
-
-        drag.target: held ? parent : undefined
-        drag.axis: Drag.YAxis
-
-        onPressed: {
-            cursorShape = Qt.ClosedHandCursor
-            held = true
-
-
-//            var datamodel = []
-//            for (var i = 0; i < DelegateModel.count; ++i) datamodel.push(DelegateModel.get(i))
-//                        console.log(JSON.stringify(datamodel))
-        }
-        onReleased: {
-            cursorShape = Qt.OpenHandCursor
-            held = false
-
-//            var datamodel = []
-//            for (var i = 0; i < DelegateModel.count; ++i) datamodel.push(DelegateModel.get(i))
-//                        console.log(JSON.stringify(datamodel))
-        }
-    }
-
     DropArea {
+        anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.left: parent.left
-        height: 5
-        anchors.verticalCenter: parent.verticalCenter
 
         onEntered: {
-            console.log("new position:" + index, drag.source.DelegateModel.itemsIndex)
-            visualModel.items.move(
-                            drag.source.DelegateModel.itemsIndex,
-                            index
-                           )
+            console.log("item id" + drag.source.DelegateModel.itemsIndex + "to:" + index )
+            var draggedId = drag.source.DelegateModel.itemsIndex
+            sequenceModel.move(draggedId, index, 1)
         }
     }
 

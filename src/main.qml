@@ -4,6 +4,8 @@ import QtQuick.Controls 2.13
 import Qt.labs.settings 1.0
 
 import "Components"
+import "Components/Sequence"
+
 
 ApplicationWindow {
     id: window
@@ -147,27 +149,11 @@ ApplicationWindow {
         durationSettings: durationSettings
     }
 
-//    property string datastore: ""
 
-//     Component.onCompleted: {
-//       if (datastore) {
-//         sequenceModel.clear()
-//         var datamodel = JSON.parse(datastore)
-//         for (var i = 0; i < datamodel.length; ++i) sequenceModel.append(datamodel[i])
-//         console.log(datastore)
-//       }
-//     }
-
-//     onClosing: {
-//       var datamodel = []
-//       for (var i = 0; i < sequenceModel.count; ++i) datamodel.push(sequenceModel.get(i))
-//       datastore = JSON.stringify(datamodel)
-//       console.log(datastore)
-//     }
-
-//     Settings {
-//       property alias datastore: window.datastore
-//     }
+     Settings {
+       id: sequenceSettings
+       property string data: ''
+     }
 
 
     Settings {

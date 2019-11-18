@@ -24,7 +24,7 @@ Item {
            id: patternSet
            anchors.fill: parent
            spacing: 0
-           cacheBuffer: 50
+           cacheBuffer: 40
            orientation: ListView.Vertical
            model: patternModel
            delegate: PatternItem {
