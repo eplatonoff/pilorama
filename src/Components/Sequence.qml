@@ -10,10 +10,6 @@ import "Sequence"
 Item {
     id: sequence
 
-    SequenceModel {
-        id: sequenceModel
-    }
-
     Rectangle {
 
         color: colors.get()
@@ -26,15 +22,19 @@ Item {
         anchors.topMargin: 5
         anchors.bottomMargin: 45
 
+        DelegateModel {
+            id: visualModel
+            model: SequenceModel{ id: sequenceModel }
+            delegate: SequenceItem { id: sequenceItem}
+            }
+
         ListView {
             id: sequenceSet
             anchors.fill: parent
             spacing: 0
             cacheBuffer: 50
             orientation: ListView.Vertical
-            model: sequenceModel
-            delegate: SequenceItem {
-            }
+            model: visualModel
         }
     }
 

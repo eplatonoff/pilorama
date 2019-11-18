@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtGraphicalEffects 1.12
+import QtQml.Models 2.13
 
 Item {
     id: sequenceItem
@@ -9,8 +10,7 @@ Item {
     z: itemDragTrigger.held ? 2 : 1
     Drag.active: itemDragTrigger.held
     Drag.source: sequenceItem
-    Drag.hotSpot.x: width / 2
-    Drag.hotSpot.y: height / 2
+    Drag.hotSpot: Qt.point(0, height)
 
     MouseArea {
         id: itemHover
@@ -46,26 +46,41 @@ Item {
         onPressed: {
             cursorShape = Qt.ClosedHandCursor
             held = true
-            console.log("drag")
+
+
+//            var datamodel = []
+//            for (var i = 0; i < DelegateModel.count; ++i) datamodel.push(DelegateModel.get(i))
+//                        console.log(JSON.stringify(datamodel))
         }
         onReleased: {
             cursorShape = Qt.OpenHandCursor
             held = false
-            console.log("drop")
+
+//            var datamodel = []
+//            for (var i = 0; i < DelegateModel.count; ++i) datamodel.push(DelegateModel.get(i))
+//                        console.log(JSON.stringify(datamodel))
         }
     }
 
+    DropArea {
+        anchors.right: parent.right
+        anchors.left: parent.left
+        height: 5
+        anchors.verticalCenter: parent.verticalCenter
 
+        onEntered: {
+            console.log("new position:" + index, drag.source.DelegateModel.itemsIndex)
+            visualModel.items.move(
+                            drag.source.DelegateModel.itemsIndex,
+                            index
+                           )
+        }
+    }
 
     Rectangle {
         id: sqeuenceLine
         anchors.fill: parent
         color: colors.get()
-
-        Drag.active: itemDragTrigger.held
-        Drag.source: itemDragTrigger
-        Drag.hotSpot.x: width / 2
-        Drag.hotSpot.y: height / 2
 
         property real fontSize: 14
 
@@ -220,25 +235,8 @@ Item {
                 }
             }
         }
-
-
-
-//        DropArea {
-//            anchors.fill: parent
-
-//            onEntered: {
-//                visualModel.items.move(
-//                        drag.source.DelegateModel.itemsIndex,
-//                        dragArea.DelegateModel.itemsIndex)
-//            }
-//        }
     }
 
 }
 
-/*##^##
-Designer {
-    D{i:6;invisible:true}D{i:8;invisible:true}D{i:14;invisible:true}D{i:17;invisible:true}
-D{i:16;invisible:true}D{i:3;invisible:true}
-}
-##^##*/
+
