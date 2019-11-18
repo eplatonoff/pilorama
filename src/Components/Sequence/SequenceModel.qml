@@ -13,6 +13,16 @@ ListModel {
         color: "green"
         duration: 400
     }
+    ListElement {
+        name: "pomodoro"
+        color: "red"
+        duration: 1500
+    }
+    ListElement {
+        name: "break"
+        color: "blue"
+        duration: 600
+    }
 
     function add(name, color, duration){
         const defaultName = "Split " + count

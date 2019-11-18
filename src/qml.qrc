@@ -90,5 +90,11 @@
         <file>Components/Sequence/Header.qml</file>
         <file>Components/Sequence/Tools.qml</file>
         <file>Components/Sequence/SequenceModel.qml</file>
+        <file>Components/Pattern.qml</file>
+        <file>Components/Pattern/PatternItem.qml</file>
+        <file>Components/Pattern/Header.qml</file>
+        <file>assets/img/back.svg</file>
+        <file>assets/img/library.svg</file>
+        <file>Components/Pattern/PatternModel.qml</file>
     </qresource>
 </RCC>

@@ -9,7 +9,7 @@ Rectangle {
     property real fontSize: 18
 
     Text {
-        text: qsTr('Classic Pomodoro')
+        text: qsTr('Presets')
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: fontSize
@@ -17,24 +17,22 @@ Rectangle {
     }
 
     Item {
-        id: libraryButton
+        id: backButton
         height: parent.height
         width: 40
 
-        anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.verticalCenter: parent.verticalCenter
 
         Image {
-            id: libraryIcon
+            id: backIcon
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            source: "../../assets/img/library.svg"
+            source: "../../assets/img/back.svg"
             fillMode: Image.PreserveAspectFit
 
 
             ColorOverlay{
-                id: libraryOverlay
+                id: backOverlay
                 source: parent
                 color: colors.get('light')
                 anchors.fill: parent
@@ -42,11 +40,11 @@ Rectangle {
             }
         }
         MouseArea {
-            id: libraryTrigger
+            id: backTrigger
             anchors.fill: parent
             propagateComposedEvents: true
             cursorShape: Qt.PointingHandCursor
-            onReleased: views.push(pattern)
+            onReleased: views.pop()
         }
     }
 }

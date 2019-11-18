@@ -13,12 +13,30 @@ Item {
     Drag.hotSpot.y: height / 2
 
     MouseArea {
+        id: itemHover
+        anchors.fill: parent
+        hoverEnabled: true
+
+        onEntered: {
+            itemControls.visible = true
+            itemControls.width = 40
+        }
+
+        onExited: {
+            itemControls.visible = false
+            itemControls.width = 0
+        }
+    }
+
+    MouseArea {
         id: itemDragTrigger
 
         width: 40
         height: parent.height
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
+        propagateComposedEvents: true
+        cursorShape: Qt.OpenHandCursor
 
         property bool held: false
 
@@ -26,14 +44,18 @@ Item {
         drag.axis: Drag.YAxis
 
         onPressed: {
+            cursorShape = Qt.ClosedHandCursor
             held = true
             console.log("drag")
         }
         onReleased: {
+            cursorShape = Qt.OpenHandCursor
             held = false
             console.log("drop")
         }
     }
+
+
 
     Rectangle {
         id: sqeuenceLine
@@ -81,6 +103,7 @@ Item {
         TextInput {
             id: itemName
             text: model.name
+            horizontalAlignment: Text.AlignLeft
             anchors.left: colordot.right
             anchors.leftMargin: 7
             font.pointSize: parent.fontSize
@@ -94,10 +117,11 @@ Item {
         TextInput {
             id: itemtime
             width: 20
-            color: colors.get('mid')
+            color: colors.get('dark')
             text: Math.trunc( model.duration / 60 )
+            horizontalAlignment: Text.AlignRight
             anchors.right: itemtimeMin.left
-            anchors.rightMargin: 3
+            anchors.rightMargin: 18
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: parent.fontSize
 
@@ -108,100 +132,113 @@ Item {
             id: itemtimeMin
             width: 30
             text: qsTr("min")
-            anchors.right: copy.left
-            anchors.rightMargin: 5
+            anchors.right: parent.right
+            anchors.rightMargin: 0
             anchors.verticalCenter: parent.verticalCenter
             color: colors.get('mid')
             font.pixelSize: parent.fontSize
         }
 
-        Item {
-            id: copy
+        Rectangle {
+            id: itemControls
+            visible: false
+            color: colors.get()
+
             height: parent.height
-            width: 20
-            anchors.right: close.left
-            anchors.rightMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
+            width: 0
 
-
-            Image {
-                id: copyIcon
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                source: "../../assets/img/copy.svg"
-                fillMode: Image.PreserveAspectFit
-
-                ColorOverlay{
-                    id: copyOverlay
-                    anchors.fill: parent
-                    source: parent
-                    color: colors.get('light')
-                    antialiasing: true
-                }
-            }
-
-            MouseArea {
-                id: copyTrigger
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onReleased: sequenceModel.add(model.name + " copy", model.color, model.duration)
-            }
-        }
-
-
-
-        Item {
-            id: close
-            height: parent.height
-            width: 20
+            Behavior on width { PropertyAnimation { duration: 100 } }
 
             anchors.right: parent.right
             anchors.rightMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
 
-            Image {
-                id: closeIcon
-                anchors.horizontalCenter: parent.horizontalCenter
+            Item {
+                id: copy
+                height: parent.height
+                width: 20
+                anchors.right: close.left
+                anchors.rightMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
-                source: "../../assets/img/close.svg"
-                fillMode: Image.PreserveAspectFit
 
 
-                ColorOverlay{
-                    id: closeOverlay
-                    source: parent
-                    color: colors.get('light')
+                Image {
+                    id: copyIcon
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "../../assets/img/copy.svg"
+                    fillMode: Image.PreserveAspectFit
+
+                    ColorOverlay{
+                        id: copyOverlay
+                        anchors.fill: parent
+                        source: parent
+                        color: colors.get('light')
+                        antialiasing: true
+                    }
+                }
+
+                MouseArea {
+                    id: copyTrigger
                     anchors.fill: parent
-                    antialiasing: true
+                    propagateComposedEvents: true
+                    cursorShape: Qt.PointingHandCursor
+                    onReleased: sequenceModel.add(model.name + " copy", model.color, model.duration)
                 }
             }
-            MouseArea {
-                id: closeTrigger
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onReleased: sequenceModel.remove(index)
+
+            Item {
+                id: close
+                height: parent.height
+                width: 20
+
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.verticalCenter: parent.verticalCenter
+
+                Image {
+                    id: closeIcon
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "../../assets/img/close.svg"
+                    fillMode: Image.PreserveAspectFit
+
+
+                    ColorOverlay{
+                        id: closeOverlay
+                        source: parent
+                        color: colors.get('light')
+                        anchors.fill: parent
+                        antialiasing: true
+                    }
+                }
+                MouseArea {
+                    id: closeTrigger
+                    anchors.fill: parent
+                    propagateComposedEvents: true
+                    cursorShape: Qt.PointingHandCursor
+                    onReleased: sequenceModel.remove(index)
+                }
             }
         }
 
 
-        DropArea {
-            anchors.fill: parent
 
-            onEntered: {
-                visualModel.items.move(
-                        drag.source.DelegateModel.itemsIndex,
-                        dragArea.DelegateModel.itemsIndex)
-            }
-        }
+//        DropArea {
+//            anchors.fill: parent
+
+//            onEntered: {
+//                visualModel.items.move(
+//                        drag.source.DelegateModel.itemsIndex,
+//                        dragArea.DelegateModel.itemsIndex)
+//            }
+//        }
     }
 
 }
 
 /*##^##
 Designer {
-    D{i:3;invisible:true}D{i:6;invisible:true}D{i:8;invisible:true}D{i:14;invisible:true}
-D{i:16;invisible:true}D{i:17;invisible:true}
+    D{i:6;invisible:true}D{i:8;invisible:true}D{i:14;invisible:true}D{i:17;invisible:true}
+D{i:16;invisible:true}D{i:3;invisible:true}
 }
 ##^##*/
