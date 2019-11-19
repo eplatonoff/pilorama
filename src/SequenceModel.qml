@@ -1,44 +1,27 @@
 import QtQuick 2.0
-import Qt.labs.settings 1.0
 
 ListModel {
+
+    property string data: ''
 
     Component.onCompleted: load()
     Component.onDestruction: save()
 
-    // Demo list
 
-    ListElement {
-        name: "pomodoro"
-        color: "red"
-        duration: 1500
-    }
-    ListElement {
-        name: "pause"
-        color: "green"
-        duration: 400
-    }
-    ListElement {
-        name: "pomodoro"
-        color: "red"
-        duration: 1500
-    }
-    ListElement {
-        name: "break"
-        color: "blue"
-        duration: 600
-    }
+// Adds item to sequence
 
     function add(name, color, duration){
         const defaultName = "Split " + count
         const defaultColor = randomColor()
-        const defaultDuration = 25 * 60
+        const defaultSetting = 25 * 60
 
         const n = name ?  name : defaultName
         const c = color ? color : defaultColor
-        const d = duration ? duration : defaultDuration
-        append({"name": n, "color": c, "duration": d })
+        const s = duration ? duration : defaultSetting
+        append({"name": n, "color": c, "setting": s, "duration": s})
     }
+
+// Random color without repeats
 
     function randomColor(){
         const col = colors.list()
@@ -62,22 +45,24 @@ ListModel {
 
     }
 
+// Saves sequence to setting
+
     function save(){
         var datamodel = []
         for (var i = 0; i < count; ++i) datamodel.push(get(i))
-        sequenceSettings.data = JSON.stringify(datamodel)
-        console.log("saved:" + sequenceSettings.data)
+        data = JSON.stringify(datamodel)
     }
 
+// Loads sequence from setting
+
     function load(){
-        if (sequenceSettings.data) {
+        if (data) {
           clear()
-          var datamodel = JSON.parse(sequenceSettings.data)
+          var datamodel = JSON.parse(data)
           for (var i = 0; i < datamodel.length; ++i) {
               append(datamodel[i])
           }
         }
-       console.log("loaded:" + sequenceSettings.data)
     }
 }
 

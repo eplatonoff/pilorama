@@ -2,7 +2,6 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.12
 import QtQuick.Layouts 1.1
-import QtQml.Models 2.13
 
 import "Sequence"
 import ".."
@@ -38,7 +37,7 @@ Item {
             spacing: 0
             cacheBuffer: 40
             snapMode: ListView.SnapOneItem
-            model: SequenceModel{ id: sequenceModel }
+            model: sequenceModel
             delegate: SequenceItem { id: sequenceItem }
         }
     }

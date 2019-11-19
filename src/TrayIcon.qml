@@ -21,6 +21,15 @@ SystemTrayIcon {
     onMessageClicked: window.visible
     onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
 
+//    Canvas {
+//        onPaint: {
+//            var ctx = getContext("2d");
+//            ctx.save();
+//            ctx.clearRect(0, 0, width, height);
+//            ctx.save();
+//        }
+//    }
+
     function checkMenuItemText(){
         if (globalTimer.running && pomodoroQueue.infiniteMode) {
             return "Reset Pomodoro"

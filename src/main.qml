@@ -110,26 +110,14 @@ ApplicationWindow {
 
         }
 
-        StackView{
-            id: views
-            initialItem: sequence
+        Sequence {
+            id: sequence
             anchors.top: layoutDivider.bottom
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.topMargin: 5
+            anchors.topMargin: 0
 
-            Sequence {
-                id: sequence
-                visible: true
-
-            }
-
-            Pattern {
-                id: pattern
-                visible: false
-
-            }
         }
 
 
@@ -149,11 +137,11 @@ ApplicationWindow {
         durationSettings: durationSettings
     }
 
+    SequenceModel {
+        id: sequenceModel
+        data: data
+    }
 
-     Settings {
-       id: sequenceSettings
-       property string data: ''
-     }
 
 
     Settings {
@@ -165,6 +153,10 @@ ApplicationWindow {
         property real pause: 10 * 60
         property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
+
+        property alias sequenceData: sequenceModel.data
+
+        onSequenceDataChanged: console.log("Reloaded:" + sequenceData)
 
     }
 
@@ -215,9 +207,9 @@ ApplicationWindow {
 Designer {
     D{i:6;anchors_width:200}D{i:2;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
 D{i:7;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}D{i:8;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
-D{i:9;anchors_height:40;anchors_x:16;anchors_y:16}D{i:10;anchors_width:200}D{i:12;anchors_height:40;anchors_width:200;anchors_x:99;anchors_y:54;invisible:true}
-D{i:13;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}D{i:11;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}
-D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:14;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}
+D{i:9;anchors_height:40;anchors_x:16;anchors_y:16}D{i:10;anchors_width:200}D{i:11;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}
+D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:12;anchors_height:40;anchors_width:200;anchors_x:99;anchors_y:54;invisible:true}
+D{i:13;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}D{i:14;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}
 D{i:15;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
 D{i:16;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
 D{i:17;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
