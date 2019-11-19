@@ -35,7 +35,6 @@ Rectangle {
 
             onReleased: {
                 sequenceModel.add()
-                sequenceModel.save()
             }
         }
 

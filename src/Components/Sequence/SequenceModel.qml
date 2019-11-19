@@ -6,6 +6,8 @@ ListModel {
     Component.onCompleted: load()
     Component.onDestruction: save()
 
+    // Demo list
+
     ListElement {
         name: "pomodoro"
         color: "red"
@@ -39,10 +41,24 @@ ListModel {
     }
 
     function randomColor(){
-        var col = colors.list()
+        const col = colors.list()
         var cl = col.length
-        var rand = Math.floor(Math.random() * cl)
-        return col[rand]
+        var colMod = []
+        var remained
+
+        if (count < cl && count > 0){
+            for(var i=0; i<count; i++) colMod.push(this.get(i).color)
+            remained = col.filter(c => !colMod.includes(c))
+        }
+
+        else {
+            var color = count > 0 ? this.get(count-1).color : col[cl - 1]
+            remained = col.filter(c => c !== color)
+        }
+
+        var rand = Math.floor(Math.random() * remained.length)
+
+        return remained[rand]
 
     }
 

@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import QtQml.Models 2.13
 
 import "Sequence"
+import ".."
 
 
 Item {
@@ -36,7 +37,7 @@ Item {
             anchors.fill: parent
             spacing: 0
             cacheBuffer: 40
-//            snapMode: ListView.SnapOneItem
+            snapMode: ListView.SnapOneItem
             model: SequenceModel{ id: sequenceModel }
             delegate: SequenceItem { id: sequenceItem }
         }
