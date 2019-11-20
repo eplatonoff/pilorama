@@ -28,23 +28,12 @@ NotificationSystem {
         soundNotification.stop();
     }
 
-    function sendWithSound(type) {
+    function sendWithSound(name) {
         soundNotification.play();
-        send(type);
+        send(name);
     }
 
     function sendFromItem(item) {
-        switch (item.type) {
-        case "pomodoro":
-            sendWithSound(NotificationSystem.POMODORO); break;
-        case "pause":
-            sendWithSound(NotificationSystem.PAUSE); break;
-        case "break":
-            sendWithSound(NotificationSystem.BREAK); break;
-        case "timer":
-            sendWithSound(NotificationSystem.TIMER); break;
-        default:
-            throw "unknown time segment type";
-        }
+        sendWithSound(NotificationSystem.POMODORO)
     }
 }

@@ -63,19 +63,7 @@ Item {
                 if (!pomodoroQueue.infiniteMode){
                     extraTime = globalTimer.duration
                 } else {
-                    switch (pomodoroQueue.first().type) {
-                    case "pomodoro":
-                        extraTime = durationSettings.pomodoro
-                        break;
-                    case "pause":
-                        extraTime =  durationSettings.pause;
-                        break;
-                    case "break":
-                        extraTime = durationSettings.breakTime;
-                        break;
-                    default:
-                        throw "can't calculate notification time";
-                    }
+                    extraTime = masterModel.get(pomodoroQueue.first().id).duration
 
                 }
                 var future = time.hours * 3600 + time.minutes *60 + time.seconds + extraTime

@@ -22,7 +22,7 @@ ApplicationWindow {
 
     property string clockMode: "start"
 
-    onClockModeChanged: { canvas.requestPaint()}
+    onClockModeChanged: {canvas.requestPaint()}
 
     function checkClockMode (){
         // temporary Settings
@@ -52,7 +52,7 @@ ApplicationWindow {
 
         Item {
             id: timerLayout
-            width: 288
+            width: parent.width
             height: width
             anchors.right: parent.right
             anchors.left: parent.left
@@ -61,8 +61,10 @@ ApplicationWindow {
             Dials {
                 id: canvas
 
-                MouseTracker {
-                    id: mouseArea}
+            }
+
+            MouseTracker {
+                id: mouseArea
             }
 
             StartScreen {
@@ -72,32 +74,36 @@ ApplicationWindow {
             TimerScreen {
                 id: digitalClock
             }
-        }
 
-        DarkModeButton {
-            id: darkModeButton
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-        }
+            DarkModeButton {
+                id: darkModeButton
+                x: 238
+                y: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+            }
 
-        PrefsButton {
-            id: prefsButton
-            anchors.bottom: timerLayout.bottom
-            anchors.bottomMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-        }
+            PrefsButton {
+                id: prefsButton
+                x: 238
+                y: 0
+                anchors.bottom: timerLayout.bottom
+                anchors.bottomMargin: 0
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+            }
 
-        SoundButton {
-            id: soundButton
-            x: -16
-            y: 486
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            anchors.bottom: timerLayout.bottom
-            anchors.bottomMargin: 0
+            SoundButton {
+                id: soundButton
+                x: 0
+                y: 486
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.bottom: timerLayout.bottom
+                anchors.bottomMargin: 0
+            }
         }
 
         Rectangle {
@@ -123,24 +129,30 @@ ApplicationWindow {
 
     }
 
-    TrayIcon {
-        id: tray
-    }
+    //    TrayIcon {
+    //        id: tray
+    //    }
 
     NotificationSystem {
         id: notifications
     }
 
+    MasterModel {
+        id: masterModel
+        data: data
+    }
 
-    PomodoroModel {
+    ModelBurner {
         id: pomodoroQueue
         durationSettings: durationSettings
     }
 
-    SequenceModel {
-        id: sequenceModel
-        data: data
-    }
+//    PomodoroModel {
+//        id: pomodoroQueue
+//        durationSettings: durationSettings
+//    }
+
+
 
 
 
@@ -154,9 +166,9 @@ ApplicationWindow {
         property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
 
-        property alias sequenceData: sequenceModel.data
+        property alias masterData: masterModel.data
 
-        onSequenceDataChanged: console.log("Reloaded:" + sequenceData)
+        onMasterDataChanged: console.log("Reloaded:" + masterData)
 
     }
 
@@ -205,16 +217,8 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:6;anchors_width:200}D{i:2;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
-D{i:7;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}D{i:8;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
-D{i:9;anchors_height:40;anchors_x:16;anchors_y:16}D{i:10;anchors_width:200}D{i:11;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}
-D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:12;anchors_height:40;anchors_width:200;anchors_x:99;anchors_y:54;invisible:true}
-D{i:13;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}D{i:14;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}
-D{i:15;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
-D{i:16;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:17;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:18;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:19;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
+D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
 }
 ##^##*/
 

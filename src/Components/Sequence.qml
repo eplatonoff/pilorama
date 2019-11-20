@@ -37,7 +37,7 @@ Item {
             spacing: 0
             cacheBuffer: 40
             snapMode: ListView.SnapOneItem
-            model: sequenceModel
+            model: masterModel
             delegate: SequenceItem { id: sequenceItem }
         }
     }

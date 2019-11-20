@@ -60,7 +60,7 @@ Canvas {
 
                 ctx.beginPath();
                 ctx.lineWidth = calibrationWidth;
-                ctx.strokeStyle = appSettings.darkMode ? colors.accentDark : colors.accentLight;
+                ctx.strokeStyle = colors.get('mid');
                 ctx.setLineDash([dash2 / 2, space2, dash2 / 2, 0]);
                 ctx.arc(centreX, centreY, (diameter2 - calibrationWidth) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
                 ctx.stroke();
@@ -68,7 +68,7 @@ Canvas {
             } else if (devisions) {
                 ctx.beginPath();
                 ctx.lineWidth = calibrationWidth;
-                ctx.strokeStyle = appSettings.darkMode ? colors.fakeDark : colors.fakeLight;
+                ctx.strokeStyle = colors.get('light');
                 ctx.setLineDash([1, 0]);
                 ctx.arc(centreX, centreY, (diameter2 - calibrationWidth) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
                 ctx.stroke();
@@ -82,46 +82,17 @@ Canvas {
         function mainDialTurn(){
             var t;
             for(t = mainDialTurns; t > 0; t--){
-                dial(width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding) , mainTurnsWidth, appSettings.darkMode ? colors.fakeDark : colors.fakeLight, 0, 3600)
+                dial(width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding) , mainTurnsWidth, colors.get('light'), 0, 3600)
             }
 
-            dial(mainDialDiameter, mainWidth, appSettings.darkMode ? colors.accentDark : colors.accentLight, 0, globalTimer.duration - (mainDialTurns * 3600))
-            tray.dialTime = globalTimer.duration * 3600 / durationSettings.timer
+            dial(mainDialDiameter, mainWidth, colors.get('mid'), 0, globalTimer.duration - (mainDialTurns * 3600))
         }
 
         mainDialTurn()
 
 
-        function getSplit(type){
-            let splitIncrement;
-            let splitColor;
-            let splitDuration;
-
-            switch (type) {
-            case "pomodoro":
-                splitDuration = durationSettings.pomodoro
-                splitIncrement = 3600 / durationSettings.pomodoro ;
-                splitColor = appSettings.darkMode ? colors.pomodoroDark : colors.pomodoroLight
-                break;
-            case "pause":
-                splitDuration = durationSettings.pause
-                splitIncrement = 3600 / durationSettings.pause;
-                splitColor = appSettings.darkMode ? colors.shortBreakDark : colors.shortBreakLight
-                break;
-            case "break":
-                splitDuration = durationSettings.breakTime
-                splitIncrement = 3600 / durationSettings.breakTime;
-                splitColor = appSettings.darkMode ? colors.longBreakDark : colors.longBreakLight
-                break;
-            default:
-                throw "can't calculate split time values";
-            }
-            return {duration: splitDuration, increment: splitIncrement, color: splitColor};
-        }
-
-
         if (pomodoroQueue.infiniteMode){
-            calibration(width, fakeWidth, getSplit(pomodoroQueue.first().type).duration / 60)
+            calibration(width, fakeWidth, masterModel.get(pomodoroQueue.first().id).duration / 60)
         } else if (!pomodoroQueue.infiniteMode && !appSettings.splitToSequence && !globalTimer.running && globalTimer.duration){
             calibration(globalTimer.duration > 0 ? fakeDialDiameter : width, fakeWidth, 12)
         } else if (!pomodoroQueue.infiniteMode && appSettings.splitToSequence && globalTimer.duration){
@@ -131,32 +102,37 @@ Canvas {
         }
 
         if (pomodoroQueue.infiniteMode && globalTimer.running){
+
             dial(width, fakeWidth,
-                 getSplit(pomodoroQueue.first().type).color,
-                 0, pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment )
-            tray.dialTime = pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment
-        } else if (!pomodoroQueue.infiniteMode && appSettings.splitToSequence && globalTimer.duration){
-            var i;
+                 colors.get(masterModel.get(pomodoroQueue.get(0).id).color),
+                 0, pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration )
+
+//            tray.dialTime = pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment
+
+        } else if (!pomodoroQueue.infiniteMode && globalTimer.duration){
+
             var splitVisibleEnd = 0;
             var splitVisibleStart = 0;
-            var prevSplit;
+            var splitColor;
+            var prevSplit = 0
             var splitIncrement = 3600 / globalTimer.duration
 
             calibration(fakeDialDiameter, fakeWidth, calibrationGrades)
 
-            for(i = 0; i <= pomodoroQueue.count - 1; i++){
+            for(let i = 0; i <= pomodoroQueue.count - 1; i++){
                 i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
 
                 splitVisibleStart = prevSplit + splitVisibleStart;
                 splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
+                splitColor = masterModel.get(pomodoroQueue.get(i).id).color
 
-                dial(fakeDialDiameter, fakeWidth, getSplit(pomodoroQueue.get(i).type).color,
+                dial(fakeDialDiameter, fakeWidth, colors.get(splitColor),
                      splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
                      splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd
                      )
             }
-        } else if (!pomodoroQueue.infiniteMode && !appSettings.splitToSequence && globalTimer.duration && globalTimer.running){
-            dial(fakeDialDiameter, fakeWidth, appSettings.darkMode ? colors.fakeDark : colors.fakeLight,
+        } else if (!pomodoroQueue.infiniteMode && globalTimer.duration && globalTimer.running){
+            dial(fakeDialDiameter, fakeWidth, colors.get('light'),
                  0, (globalTimer.duration - Math.trunc(globalTimer.duration / 60) * 60) * 60 )
         } else {
         }

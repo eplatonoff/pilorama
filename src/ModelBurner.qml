@@ -23,6 +23,7 @@ ListModel {
     onInfiniteModeChanged: {
         clear();
         _tryToCreateBatch();
+
     }
 
     function _tryToCreateBatch() {
@@ -43,20 +44,12 @@ ListModel {
         if (!first()) {
             throw "first element doesn't exist";
         }
-
-        if (first().type === "pomodoro") {
-            totalPomodoros -= 1;
-        }
         remove(0);
     }
 
     function removeLast() {
         if (!last()) {
             throw "last element doesn't exist";
-        }
-
-        if (last().type === "pomodoro") {
-            totalPomodoros -= 1;
         }
         remove(count - 1);
     }
@@ -76,8 +69,7 @@ ListModel {
         // returns reminded time to assign
         function changeLastItemDuration(secs) {
 
-            if (count === 0)
-                return secs;
+            if (count == 0) { return secs; }
 
             const durationBound = _lastItemDurationBound();
 
@@ -144,7 +136,7 @@ ListModel {
 
     function _lastItemDurationBound() {
 
-        if (this.count === 0) {
+        if (count === 0) {
             throw "pomodoro queue is empty";
         }
 
@@ -152,55 +144,34 @@ ListModel {
     }
 
     function itemDurationBound(item) {
-        switch (item.type) {
-        case "pomodoro":
-            return durationSettings.pomodoro;
-        case "pause":
-            return durationSettings.pause;
-        case "break":
-            return durationSettings.breakTime;
-        default:
-            throw "unknown time segment type";
-        }
+        return masterModel.getSeqId(item.id).duration
     }
 
     function _createNext() {
 
-        function createPomodoro() {
-            append({"type": "pomodoro", "duration": 0});
-            totalPomodoros += 1;
+        if(masterModel.count === 0){
+            throw "master model is empty"
         }
 
-        function createPauseOrBreak() {
-            if (totalPomodoros % durationSettings.repeatBeforeBreak === 0 ) {
-                append({"type": "break", "duration": 0});
-            }
-            else
-                append({"type": "pause", "duration": 0});
+
+        // Break on sequence repeat
+
+        if(count === masterModel.count){
+            throw "no next item in master"
         }
 
-        if (count == 0) {
-            createPomodoro();
-            return;
-        }
+        const masterID = count
+        const masterDuration = masterModel.getSeqId(count).duration
 
-        switch (last().type) {
-        case "pomodoro": createPauseOrBreak(); break;
-        case "pause":
-        case "break":
-            createPomodoro(); break;
-        default:
-            throw "unknown time segment type";
-        }
+        append({"id": masterID,  "duration": masterDuration})
+
     }
 
 
     function _createBatch() {
-        changeQueue(
-            durationSettings.pomodoro * durationSettings.repeatBeforeBreak +
-            durationSettings.pause * (durationSettings.repeatBeforeBreak - 1) +
-            durationSettings.breakTime
-        );
+        changeQueue( masterModel.totalDuration() );
+        console.log("batch created")
+
     }
 
     function showQueue(){

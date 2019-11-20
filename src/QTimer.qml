@@ -31,9 +31,12 @@ Timer {
             }
         }
 
+        pomodoroQueue.showQueue()
+//        masterModel.showModel()
+
         pomodoroQueue.drainTime(1);
 
-        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
+//        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
 
         const first = pomodoroQueue.first();
 
@@ -48,6 +51,8 @@ Timer {
 
         } else
             splitDuration = 0;
+
+
 
         canvas.requestPaint();
     }

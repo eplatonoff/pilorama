@@ -59,7 +59,7 @@ Rectangle {
         onEntered: {
             console.log("item id" + drag.source.DelegateModel.itemsIndex + "to:" + index )
             var draggedId = drag.source.DelegateModel.itemsIndex
-            sequenceModel.move(draggedId, index, 1)
+            masterModel.move(draggedId, index, 1)
         }
     }
 
@@ -111,7 +111,9 @@ Rectangle {
             color: colors.get('dark')
             anchors.verticalCenter: parent.verticalCenter
 
-            onTextChanged: {model.name = itemName.text}
+            onTextChanged: {
+                model.name = itemName.text
+            }
 
         }
 
@@ -126,7 +128,9 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: parent.fontSize
 
-//            onTextChanged: {model.duration = itemtime.text * 60}
+            onTextChanged: {
+                model.duration = itemtime.text * 60
+            }
         }
 
         Text {
@@ -183,7 +187,7 @@ Rectangle {
                     anchors.fill: parent
                     propagateComposedEvents: true
                     cursorShape: Qt.PointingHandCursor
-                    onReleased: sequenceModel.add(model.name + " copy", model.color, model.duration)
+                    onReleased: masterModel.add(model.name + " copy", model.color, model.duration)
                 }
             }
 
@@ -217,7 +221,7 @@ Rectangle {
                     anchors.fill: parent
                     propagateComposedEvents: true
                     cursorShape: Qt.PointingHandCursor
-                    onReleased: sequenceModel.remove(index)
+                    onReleased: masterModel.remove(index)
                 }
             }
         }

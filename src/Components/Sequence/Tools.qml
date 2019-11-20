@@ -34,7 +34,7 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
 
             onReleased: {
-                sequenceModel.add()
+                masterModel.add()
             }
         }
 

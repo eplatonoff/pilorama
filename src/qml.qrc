@@ -91,6 +91,7 @@
         <file>Components/Sequence/Tools.qml</file>
         <file>assets/img/back.svg</file>
         <file>assets/img/library.svg</file>
-        <file>SequenceModel.qml</file>
+        <file>MasterModel.qml</file>
+        <file>ModelBurner.qml</file>
     </qresource>
 </RCC>

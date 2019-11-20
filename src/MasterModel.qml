@@ -3,22 +3,23 @@ import QtQuick 2.0
 ListModel {
 
     property string data: ''
+    property string defaultName: 'Split'
+    property string defaultColor: randomColor()
+    property real defaultDuration: 25
 
     Component.onCompleted: load()
     Component.onDestruction: save()
 
 
+
 // Adds item to sequence
 
-    function add(name, color, duration){
-        const defaultName = "Split " + count
-        const defaultColor = randomColor()
-        const defaultSetting = 25 * 60
-
-        const n = name ?  name : defaultName
+    function add(id, name, color, duration){
+        const i = id ?  id : index
+        const n = name ?  name : defaultName + " " + (count + 1)
         const c = color ? color : defaultColor
-        const s = duration ? duration : defaultSetting
-        append({"name": n, "color": c, "setting": s, "duration": s})
+        const d = duration ? duration : defaultDuration * 60
+        append({"id": i,"name": n, "color": c, "duration": d})
     }
 
 // Random color without repeats
@@ -63,6 +64,27 @@ ListModel {
               append(datamodel[i])
           }
         }
+    }
+
+
+    function totalDuration(){
+        let duration = 0
+        for(var i = 0; i<count; i++){
+           duration += get(i).duration
+        }
+        return duration
+    }
+
+    function getSeqId(seqId){
+        if( count == 0) { throw "no items in master" }
+        const id = seqId >= count ? seqId % count : seqId
+        return get(id)
+    }
+
+    function showModel(){
+        var datamodel = []
+        for (var i = 0; i < count; ++i) datamodel.push(get(i))
+        console.log("MASTER:", JSON.stringify(datamodel), "Total items: " + count)
     }
 }
 
