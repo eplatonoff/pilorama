@@ -186,7 +186,7 @@ Rectangle {
                     propagateComposedEvents: true
                     cursorShape: Qt.PointingHandCursor
                     onReleased: {
-                        masterModel.add(masterModel.count, model.name, model.color, model.duration)
+                        masterModel.add(model.name + " copy", model.color, model.duration)
                     }
                 }
             }

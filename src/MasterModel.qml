@@ -16,12 +16,11 @@ ListModel {
 
 // Adds item to sequence
 
-    function add(id, name, color, duration){
-        const i = id ?  id : index
+    function add(name, color, duration){
         const n = name ?  name : defaultName + " " + (count + 1)
         const c = color ? color : defaultColor
         const d = duration ? duration : defaultDuration * 60
-        append({"id": i,"name": n, "color": c, "duration": d})
+        append({"id": count,"name": n, "color": c, "duration": d})
     }
 
 // Random color without repeats

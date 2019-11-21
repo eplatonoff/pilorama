@@ -17,8 +17,7 @@ SystemTrayIcon {
     property var pixmap: undefined
 
     onPixmapChanged: {
-        icon.source = pixmap
-        icon.name = dialTime
+        iconSource = pixmap
         available
         console.log('tray icon changed')
     }

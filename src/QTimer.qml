@@ -31,7 +31,7 @@ Timer {
             }
         }
 
-        pomodoroQueue.showQueue()
+//        pomodoroQueue.showQueue()
 //        masterModel.showModel()
 
         pomodoroQueue.drainTime(1);
