@@ -53,7 +53,7 @@ Timer {
             splitDuration = 0;
 
 
-
+        pixmap.requestPaint();
         canvas.requestPaint();
     }
 }

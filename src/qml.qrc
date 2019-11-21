@@ -93,5 +93,7 @@
         <file>assets/img/library.svg</file>
         <file>MasterModel.qml</file>
         <file>ModelBurner.qml</file>
+        <file>IconGenerator.qml</file>
+        <file>Components/Sequence/ColorSelector.qml</file>
     </qresource>
 </RCC>

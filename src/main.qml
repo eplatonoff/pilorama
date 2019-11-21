@@ -41,6 +41,10 @@ ApplicationWindow {
         }
     }
 
+    Colors {
+        id: colors
+    }
+
     Item {
         id: content
 
@@ -110,7 +114,7 @@ ApplicationWindow {
             id: layoutDivider
             height: 1
             width: parent.width
-            color: colors.get("light")
+            color: colors.getColor("light")
             anchors.top: timerLayout.bottom
             anchors.topMargin: 18
 
@@ -129,13 +133,7 @@ ApplicationWindow {
 
     }
 
-    //    TrayIcon {
-    //        id: tray
-    //    }
 
-    NotificationSystem {
-        id: notifications
-    }
 
     MasterModel {
         id: masterModel
@@ -151,6 +149,18 @@ ApplicationWindow {
 //        id: pomodoroQueue
 //        durationSettings: durationSettings
 //    }
+
+    IconGenerator {
+        id: pixmap
+    }
+
+    TrayIcon {
+        id: tray
+    }
+
+    NotificationSystem {
+        id: notifications
+    }
 
 
 
@@ -179,12 +189,8 @@ ApplicationWindow {
         property alias soundMuted: notifications.soundMuted
         property bool splitToSequence: true
 
-        onDarkModeChanged: { canvas.requestPaint(); }
+        onDarkModeChanged: { canvas.requestPaint(); pixmap.requestPaint() }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
-    }
-
-    Colors {
-        id: colors
     }
 
     QTimer {

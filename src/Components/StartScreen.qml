@@ -23,7 +23,7 @@ Item {
             id: startPomoOverlay
             anchors.fill: parent
             source: parent
-            color: colors.get("mid")
+            color: colors.getColor("mid")
             antialiasing: true
         }
 

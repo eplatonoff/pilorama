@@ -41,7 +41,7 @@ Item {
             id: modeSwitchOverlay
             anchors.fill: parent
             source: parent
-            color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
+            color: colors.getColor('light')
             antialiasing: true
         }
     }

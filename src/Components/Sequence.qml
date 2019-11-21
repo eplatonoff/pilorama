@@ -12,15 +12,15 @@ Item {
 
     Rectangle {
 
-        color: colors.get()
+        color: colors.getColor("bg")
 //        Behavior on color { ColorAnimation { duration: 100 } }
 
         anchors.top: sequenceHeader.bottom
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.bottom: tools.top
         anchors.left: parent.left
-        anchors.topMargin: 5
-        anchors.bottomMargin: 45
+        anchors.topMargin: 0
+        anchors.bottomMargin: 0
 
 
 //        DelegateModel {

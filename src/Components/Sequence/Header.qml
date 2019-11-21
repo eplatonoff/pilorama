@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.12
 Rectangle {
     id: rectangle
     height: 40
-    color: colors.get()
+    color: colors.getColor("bg")
 
     property real fontSize: 18
 
@@ -13,7 +13,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: fontSize
-        color: colors.get("dark")
+        color: colors.getColor("dark")
     }
 
 }

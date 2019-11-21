@@ -2,6 +2,8 @@ import QtQuick 2.0
 
 ListModel {
 
+    id: masterModel
+
     property string data: ''
     property string defaultName: 'Split'
     property string defaultColor: randomColor()

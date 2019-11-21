@@ -4,7 +4,7 @@ import Qt.labs.platform 1.1
 SystemTrayIcon {
     id: tray
     visible: true
-    iconSource: "./assets/tray/" + trayIconPath()
+    iconSource: './assets/tray/static.svg'
     iconName: qsTr("test")
     tooltip : window.title
     property string appTitle: "QML Timer"
@@ -14,6 +14,14 @@ SystemTrayIcon {
 
     property real dialTime: 0
     property real runningTime: 0
+    property var pixmap: undefined
+
+    onPixmapChanged: {
+        icon.source = pixmap
+        icon.name = dialTime
+        available
+        console.log('tray icon changed')
+    }
 
     onDialTimeChanged: {trayIconPath()}
     onRunningTimeChanged: {updateTrayTime()}
@@ -21,14 +29,6 @@ SystemTrayIcon {
     onMessageClicked: window.visible
     onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
 
-//    Canvas {
-//        onPaint: {
-//            var ctx = getContext("2d");
-//            ctx.save();
-//            ctx.clearRect(0, 0, width, height);
-//            ctx.save();
-//        }
-//    }
 
     function checkMenuItemText(){
         if (globalTimer.running && pomodoroQueue.infiniteMode) {
@@ -82,7 +82,7 @@ SystemTrayIcon {
     menu: Menu {
 
        MenuItem {
-           text: updateTrayTime()
+           text: "text"
            onTriggered: {window.active}
        }
 
@@ -135,6 +135,4 @@ SystemTrayIcon {
             onTriggered: Qt.quit()
         }
     }
-
-
 }

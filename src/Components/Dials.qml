@@ -45,7 +45,7 @@ Canvas {
 
             ctx.beginPath();
             ctx.lineWidth = stroke;
-            ctx.strokeStyle = appSettings.darkMode ? colors.fakeDark : colors.fakeLight;
+            ctx.strokeStyle = colors.getColor("light")
             ctx.setLineDash([dash / 2, space, dash / 2, 0]);
             ctx.arc(centreX, centreY, (diameter - stroke) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
             ctx.stroke();
@@ -60,7 +60,7 @@ Canvas {
 
                 ctx.beginPath();
                 ctx.lineWidth = calibrationWidth;
-                ctx.strokeStyle = colors.get('mid');
+                ctx.strokeStyle = colors.getColor('mid');
                 ctx.setLineDash([dash2 / 2, space2, dash2 / 2, 0]);
                 ctx.arc(centreX, centreY, (diameter2 - calibrationWidth) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
                 ctx.stroke();
@@ -68,7 +68,7 @@ Canvas {
             } else if (devisions) {
                 ctx.beginPath();
                 ctx.lineWidth = calibrationWidth;
-                ctx.strokeStyle = colors.get('light');
+                ctx.strokeStyle = colors.getColor('light');
                 ctx.setLineDash([1, 0]);
                 ctx.arc(centreX, centreY, (diameter2 - calibrationWidth) / 2  , 1.5 * Math.PI,  3.5 * Math.PI);
                 ctx.stroke();
@@ -82,10 +82,10 @@ Canvas {
         function mainDialTurn(){
             var t;
             for(t = mainDialTurns; t > 0; t--){
-                dial(width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding) , mainTurnsWidth, colors.get('light'), 0, 3600)
+                dial(width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding) , mainTurnsWidth, colors.getColor('light'), 0, 3600)
             }
 
-            dial(mainDialDiameter, mainWidth, colors.get('mid'), 0, globalTimer.duration - (mainDialTurns * 3600))
+            dial(mainDialDiameter, mainWidth, colors.getColor('mid'), 0, globalTimer.duration - (mainDialTurns * 3600))
         }
 
         mainDialTurn()
@@ -104,10 +104,10 @@ Canvas {
         if (pomodoroQueue.infiniteMode && globalTimer.running){
 
             dial(width, fakeWidth,
-                 colors.get(masterModel.get(pomodoroQueue.get(0).id).color),
+                 colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color),
                  0, pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration )
 
-//            tray.dialTime = pomodoroQueue.first().duration * getSplit(pomodoroQueue.first().type).increment
+            pixmap.dialTime = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
 
         } else if (!pomodoroQueue.infiniteMode && globalTimer.duration){
 
@@ -126,13 +126,13 @@ Canvas {
                 splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
                 splitColor = masterModel.get(pomodoroQueue.get(i).id).color
 
-                dial(fakeDialDiameter, fakeWidth, colors.get(splitColor),
+                dial(fakeDialDiameter, fakeWidth, colors.getColor(splitColor),
                      splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
                      splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd
                      )
             }
         } else if (!pomodoroQueue.infiniteMode && globalTimer.duration && globalTimer.running){
-            dial(fakeDialDiameter, fakeWidth, colors.get('light'),
+            dial(fakeDialDiameter, fakeWidth, colors.getColor('light'),
                  0, (globalTimer.duration - Math.trunc(globalTimer.duration / 60) * 60) * 60 )
         } else {
         }

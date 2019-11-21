@@ -66,7 +66,7 @@ Rectangle {
     Rectangle {
         id: sqeuenceLine
         anchors.fill: parent
-        color: colors.get()
+        color: colors.getColor("bg")
 
         property real fontSize: 14
 
@@ -84,31 +84,20 @@ Rectangle {
                 id: prefsIconOverlay
                 anchors.fill: parent
                 source: parent
-//                color: colors.get(model.color)
-                color: colors.get('light')
+                color: colors.getColor('light')
                 antialiasing: true
             }
         }
 
-        Rectangle {
-            id: colordot
-            width: 13
-            height: 13
-            color: colors.get(model.color)
-            radius: 30
-            anchors.left: handler.right
-            anchors.leftMargin: 12
-            anchors.verticalCenter: parent.verticalCenter
-        }
 
         TextInput {
             id: itemName
             text: model.name
             horizontalAlignment: Text.AlignLeft
-            anchors.left: colordot.right
-            anchors.leftMargin: 7
+            anchors.left: handler.right
+            anchors.leftMargin: 30
             font.pointSize: parent.fontSize
-            color: colors.get('dark')
+            color: colors.getColor('dark')
             anchors.verticalCenter: parent.verticalCenter
 
             onTextChanged: {
@@ -120,7 +109,7 @@ Rectangle {
         TextInput {
             id: itemtime
             width: 20
-            color: colors.get('dark')
+            color: colors.getColor('dark')
             text: Math.trunc( model.duration / 60 )
             horizontalAlignment: Text.AlignRight
             anchors.right: itemtimeMin.left
@@ -140,14 +129,23 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.verticalCenter: parent.verticalCenter
-            color: colors.get('mid')
+            color: colors.getColor('mid')
             font.pixelSize: parent.fontSize
+        }
+
+        ColorSelector {
+            id: colorSelector
+            anchors.leftMargin: 3
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: handler.right
+            lineId: index
+
         }
 
         Rectangle {
             id: itemControls
             visible: false
-            color: colors.get()
+            color: colors.getColor("bg")
 
             height: parent.height
             width: 0
@@ -177,7 +175,7 @@ Rectangle {
                         id: copyOverlay
                         anchors.fill: parent
                         source: parent
-                        color: colors.get('light')
+                        color: colors.getColor('light')
                         antialiasing: true
                     }
                 }
@@ -187,7 +185,9 @@ Rectangle {
                     anchors.fill: parent
                     propagateComposedEvents: true
                     cursorShape: Qt.PointingHandCursor
-                    onReleased: masterModel.add(model.name + " copy", model.color, model.duration)
+                    onReleased: {
+                        masterModel.add(masterModel.count, model.name, model.color, model.duration)
+                    }
                 }
             }
 
@@ -211,7 +211,7 @@ Rectangle {
                     ColorOverlay{
                         id: closeOverlay
                         source: parent
-                        color: colors.get('light')
+                        color: colors.getColor('light')
                         anchors.fill: parent
                         antialiasing: true
                     }
