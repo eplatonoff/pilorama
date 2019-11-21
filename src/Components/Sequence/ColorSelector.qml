@@ -32,27 +32,30 @@ Rectangle {
         property bool darkMode: appSettings.darkMode
 
         Component.onCompleted: {
-            rebuildModel();
+            updateModel();
             topColor(masterModel.get(lineId).color);
         }
-        onDarkModeChanged: rebuildModel()
+        onDarkModeChanged: updateModel()
 
-        function rebuildModel(){
+        function updateModel(){
+            reloadColors()
+            topColor(masterModel.get(lineId).color)
+        }
+
+        function reloadColors(){
             clear()
             colors.list().forEach(color => { append({"color" : color}) })
-            topColor(masterModel.get(lineId).color)
         }
 
         function topColor(color){
             var id
-
+             reloadColors()
             for(var i = 0; i < count; i++){
                 if(color === get(i).color) {id = i; break}
                 else{ id = undefined }
             }
 
             if(i === undefined || !color){throw "No matching color"}
-
             move(id, 0, 1)
         }
     }
