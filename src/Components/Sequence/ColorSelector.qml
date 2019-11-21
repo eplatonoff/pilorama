@@ -25,6 +25,9 @@ Rectangle {
         onExited: {
             colorSelector.expand(false)
         }
+        onFocusChanged: {
+            colorSelector.expand(false)
+        }
     }
 
     ListModel{
@@ -32,31 +35,36 @@ Rectangle {
         property bool darkMode: appSettings.darkMode
 
         Component.onCompleted: {
-            updateModel();
-            topColor(masterModel.get(lineId).color);
+           loadModel()
+           topColor(masterModel.get(lineId).color);
         }
-        onDarkModeChanged: updateModel()
+        onDarkModeChanged: loadModel()
 
-        function updateModel(){
-            reloadColors()
+        function loadModel(){
+            clear()
+            colors.list().forEach((color, index) => { append({"id": index, "color" : color}) })
             topColor(masterModel.get(lineId).color)
         }
 
-        function reloadColors(){
-            clear()
-            colors.list().forEach(color => { append({"color" : color}) })
-        }
-
-        function topColor(color){
-            var id
-             reloadColors()
-            for(var i = 0; i < count; i++){
-                if(color === get(i).color) {id = i; break}
-                else{ id = undefined }
+        function reorder(){
+            for(var i = 0; i<count; i++){
+                move(i, get(i).id, 1)
             }
 
-            if(i === undefined || !color){throw "No matching color"}
-            move(id, 0, 1)
+        }
+
+
+
+        function topColor(color){
+            var top
+            reorder()
+            for(var i = 0; i < count; i++){
+                if(color === get(i).color) {top = i; break}
+                else{ top = undefined }
+            }
+
+            if(top === undefined || !color){throw "No matching color"}
+            move(top, 0, 1)
         }
     }
 
