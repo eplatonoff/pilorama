@@ -4,7 +4,7 @@ import Qt.labs.platform 1.1
 SystemTrayIcon {
     id: tray
     visible: true
-    iconSource: './assets/tray/static.svg'
+    iconSource: iconURL()
     iconName: qsTr("test")
     tooltip : window.title
     property string appTitle: "QML Timer"
@@ -14,16 +14,6 @@ SystemTrayIcon {
 
     property real dialTime: 0
     property real runningTime: 0
-    property var pixmap: undefined
-
-    onPixmapChanged: {
-        iconSource = pixmap
-        available
-        console.log('tray icon changed')
-    }
-
-    onDialTimeChanged: {trayIconPath()}
-    onRunningTimeChanged: {updateTrayTime()}
 
     onMessageClicked: window.visible
     onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
@@ -31,11 +21,9 @@ SystemTrayIcon {
 
     function checkMenuItemText(){
         if (globalTimer.running && pomodoroQueue.infiniteMode) {
-            return "Reset Pomodoro"
-        } else if (globalTimer.running && !pomodoroQueue.infiniteMode){
             return "Reset Timer"
         } else {
-            return "Start Pomodoro"
+            return "Start Sequence"
         }
     }
 
@@ -48,21 +36,31 @@ SystemTrayIcon {
     }
 
     function iconDialMin(){
-        var precision = 300
+        var precision = 120
         var y = Math.abs(dialTime) + precision / 2;
         y = y - y % precision;
         return y / 60
     }
 
-    function trayIconPath() {
-      if(pomodoroQueue.infiniteMode){
-          return pomodoroQueue.first().type + "-" + iconDialMin()
-      } else if (!pomodoroQueue.infiniteMode && globalTimer.duration > 0){
-          return "timer-" + iconDialMin()
+    function iconURL() {
+      const path = './assets/tray/'
+      if(globalTimer.running){
+          return path +  "timer-" + iconDialMin()
       }
       else {
-          return "static.svg"
+          return path + "static.svg"
       }
+    }
+
+    function setDialTime(){
+        dialTime = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
+        iconURL()
+    }
+
+    function setTime(){
+        runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
+        setDialTime()
+        updateTime()
     }
 
     function pad(value){
@@ -70,7 +68,7 @@ SystemTrayIcon {
         } else {return value}
     }
 
-    function updateTrayTime(){
+    function updateTime(){
         let h = Math.trunc(runningTime / 3600)
         let hour = h > 0 ? h + ":" : ""
         let min = pad(Math.trunc(runningTime / 60) - Math.trunc(runningTime / 3600) * 60)
@@ -81,7 +79,7 @@ SystemTrayIcon {
     menu: Menu {
 
        MenuItem {
-           text: "text"
+           text: updateTime()
            onTriggered: {window.active}
        }
 

@@ -107,8 +107,6 @@ Canvas {
                  colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color),
                  0, pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration )
 
-            pixmap.dialTime = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
-
         } else if (!pomodoroQueue.infiniteMode && globalTimer.duration){
 
             var splitVisibleEnd = 0;

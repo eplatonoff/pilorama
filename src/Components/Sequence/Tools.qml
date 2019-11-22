@@ -12,11 +12,12 @@ Rectangle {
         id: addButton
 
         height: 40
+
         color:  "transparent"
         radius: 3
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        border.color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
+        border.color: colors.getColor("light")
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.right: parent.right
@@ -72,7 +73,4 @@ Rectangle {
 
 
     }
-
-
-
 }

@@ -2,20 +2,18 @@ import QtQuick 2.0
 
 Canvas {
     id: pixmap
-    width: 64
-    height: 64
+    width: 32
+    height: 32
     visible: false
 
     property real runningTime: 0
-    property real dialTime: 0
 
     renderStrategy: Canvas.Threaded;
     renderTarget: Canvas.Image;
 
-    property real centreX : height / 2
-    property real centreY : height / 2
+    property real centreX : 32 / 2
+    property real centreY : 32 / 2
 
-    onDialTimeChanged: { requestPaint() }
 
     onPaint: {
         var trx = getContext("2d");
@@ -30,16 +28,23 @@ Canvas {
             trx.stroke();
         }
 
-        trx.font = "32px Arial";
-        trx.fillStyle = colors.getColor('dark');
-        trx.textAlign = "center";
-        trx.fillText(dialTime, centreX, centreY + 10);
+        function dialTime(){
+            return pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
+        }
 
+        iconDial(32, 6, colors.getColor("mid gray"), 0, 3600 )
+        if(pomodoroQueue.infiniteMode){
+            iconDial(32, 6, colors.getColor(masterModel.get(pomodoroQueue.first().id).color), 0, dialTime() )
+        }
 
-        iconDial(width, 8, colors.getColor('light'), 0, 3600 )
-        iconDial(width, 8, colors.getColor('yellow'), 0, dialTime )
+//        var url = toDataURL('image/png')
+//        tray.iconSource = url
 
     }
 
-    onPainted: { tray.pixmap = toDataURL('image/png') }
+    onPainted: {
+//        tray.pixmap = './assets/tray/static.svg'
+//        tray.pixmap = toDataURL('image/png')
+    }
+
 }

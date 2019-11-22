@@ -45,9 +45,13 @@ ListModel{
         night: "#4F5655"
         day: "#D0CBCC"
     }
+    ListElement{
+        name: "mid gray"
+        night: "#878681"
+        day: "#878681"
+    }
 
-
-    // Colors from index 3
+    // Colors from index 5
 
 
     ListElement{
@@ -83,7 +87,7 @@ ListModel{
 
     function list(){
         var colors = []
-        for(var i= 4; i<count; i++){
+        for(var i= 5; i<count; i++){
            colors.push(get(i).name)
         }
         return colors

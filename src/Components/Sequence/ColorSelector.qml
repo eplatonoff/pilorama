@@ -12,21 +12,21 @@ Rectangle {
 
     property real itemWidth: 25
 
+    property bool expanded: false
+
     property real expWidth: colorModel.count * (itemWidth + colorsList.spacing)
     property real colWidth: itemWidth
 
-    function expand(bool){
-        width = bool ? expWidth : colWidth
-    }
+    onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
     MouseArea {
         hoverEnabled: true
         anchors.fill: parent
         onExited: {
-            colorSelector.expand(false)
+            expanded = false
         }
         onFocusChanged: {
-            colorSelector.expand(false)
+            expanded = false
         }
     }
 
@@ -92,14 +92,16 @@ Rectangle {
 
             MouseArea{
                 anchors.fill: parent
-//                propagateComposedEvents: true
                 cursorShape: Qt.PointingHandCursor
 
                 onReleased: {
-                    colorSelector.expand(true)
-                    colorModel.topColor(model.color)
-                    masterModel.get(lineId).color = model.color
-
+                    if(index === 0){
+                       expanded = !expanded
+                    } else {
+                        colorModel.topColor(model.color)
+                        masterModel.get(lineId).color = model.color
+                        expanded = false
+                    }
                 }
             }
         }

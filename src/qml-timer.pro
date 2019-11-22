@@ -14,6 +14,8 @@ win*: {
     RC_ICONS = assets/app_icons/icon.ico
 }
 
+QT += widgets
+
 
 
 # The following define makes your compiler emit warnings if you use

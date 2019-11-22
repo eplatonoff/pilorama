@@ -130,6 +130,10 @@ ApplicationWindow {
 
         }
 
+        ExternalDrop {
+            id: externalDrop
+        }
+
 
     }
 

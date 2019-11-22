@@ -15,6 +15,11 @@ Timer {
     running: false
     repeat: true
 
+    onRunningChanged: {
+        pixmap.requestPaint();
+        canvas.requestPaint();
+    }
+
     onTriggered: {
 
         if (!pomodoroQueue.infiniteMode) {
@@ -34,9 +39,9 @@ Timer {
 //        pomodoroQueue.showQueue()
 //        masterModel.showModel()
 
+
         pomodoroQueue.drainTime(1);
 
-//        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
 
         const first = pomodoroQueue.first();
 
@@ -52,8 +57,8 @@ Timer {
         } else
             splitDuration = 0;
 
-
-        pixmap.requestPaint();
+        tray.setTime()
+//        pixmap.requestPaint();
         canvas.requestPaint();
     }
 }
