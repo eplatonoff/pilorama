@@ -2,8 +2,10 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.12
 
 Rectangle {
-    id: rectangle
     height: 50
+    width: parent.width
+    anchors.bottom: parent.bottom
+    anchors.bottomMargin: 0
     color: appSettings.darkMode ? colors.bgDark : colors.bgLight
 
     property real fontSize: 14

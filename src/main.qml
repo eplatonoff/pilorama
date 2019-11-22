@@ -11,7 +11,7 @@ ApplicationWindow {
     id: window
     visible: true
     width: 320
-    height: 650
+    height: padding * 2 + timerLayout.height + layoutDivider.height + layoutDivider.padding + sequence.height
     minimumHeight: 320
 
     maximumWidth: width
@@ -20,9 +20,20 @@ ApplicationWindow {
     color: appSettings.darkMode ? colors.bgDark : colors.bgLight
     title: qsTr("qml timer")
 
+    property real padding: 16
+    property bool expanded: true
+
     property string clockMode: "start"
 
     onClockModeChanged: {canvas.requestPaint()}
+    onExpandedChanged: {
+        if(expanded === true){
+            height = padding * 2 + timerLayout.height + layoutDivider.height + layoutDivider.padding + sequence.height
+        } else {
+            height = padding * 2 + timerLayout.height
+        }
+    }
+
 
     function checkClockMode (){
         // temporary Settings
@@ -48,10 +59,10 @@ ApplicationWindow {
     Item {
         id: content
 
-        anchors.rightMargin: 16
-        anchors.leftMargin: 16
-        anchors.bottomMargin: 16
-        anchors.topMargin: 16
+        anchors.rightMargin: window.padding
+        anchors.leftMargin: window.padding
+        anchors.bottomMargin: window.padding
+        anchors.topMargin: window.padding
         anchors.fill: parent
 
         Item {
@@ -116,25 +127,16 @@ ApplicationWindow {
             width: parent.width
             color: colors.getColor("light")
             anchors.top: timerLayout.bottom
-            anchors.topMargin: 18
+            anchors.topMargin: padding
+
+            property real padding: 18
 
         }
 
         Sequence {
             id: sequence
             anchors.top: layoutDivider.bottom
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.topMargin: 0
-
         }
-
-        ExternalDrop {
-            id: externalDrop
-        }
-
-
     }
 
 

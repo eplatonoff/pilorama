@@ -100,7 +100,7 @@ Rectangle {
                     } else {
                         colorModel.topColor(model.color)
                         masterModel.get(lineId).color = model.color
-                        expanded = false
+//                        expanded = false
                     }
                 }
             }

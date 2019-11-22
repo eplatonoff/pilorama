@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.12
 Rectangle {
     id: rectangle
     height: 40
+    width: parent.width
     color: colors.getColor("bg")
 
     property real fontSize: 18

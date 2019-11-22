@@ -9,19 +9,15 @@ import ".."
 
 Item {
     id: sequence
+    height: sequenceHeader.height + sequenceSetLayout.height + tools.height
+    width: parent.width
 
     Rectangle {
-
+        id: sequenceSetLayout
+        height: (masterModel.count + 1)  * 38
+        width: parent.width
         color: colors.getColor("bg")
-//        Behavior on color { ColorAnimation { duration: 100 } }
-
         anchors.top: sequenceHeader.bottom
-        anchors.right: parent.right
-        anchors.bottom: tools.top
-        anchors.left: parent.left
-        anchors.topMargin: 0
-        anchors.bottomMargin: 0
-
 
 //        DelegateModel {
 //            id: visualModel
@@ -38,27 +34,20 @@ Item {
             cacheBuffer: 40
             snapMode: ListView.SnapOneItem
             model: masterModel
-            delegate: SequenceItem { id: sequenceItem }
+            delegate: SequenceItem { id: sequenceItem; }
         }
     }
 
     Header {
         id: sequenceHeader
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
     }
 
     Tools {
         id: tools
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
     }
+//    ExternalDrop {
+//        id: externalDrop
+//    }
 }
 
 /*##^##

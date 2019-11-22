@@ -38,6 +38,7 @@ Rectangle {
         onReleased: {
 //            cursorShape = Qt.OpenHandCursor
             held = false
+//            masterModel.load()
         }
 
         onEntered: {
