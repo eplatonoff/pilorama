@@ -4,7 +4,6 @@ import QtGraphicalEffects 1.12
 Rectangle {
     height: 50
     width: parent.width
-    anchors.bottom: parent.bottom
     anchors.bottomMargin: 0
     color: appSettings.darkMode ? colors.bgDark : colors.bgLight
 

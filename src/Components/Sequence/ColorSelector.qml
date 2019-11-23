@@ -4,7 +4,7 @@ Rectangle {
     id: colorSelector
     height: parent.height
     width: colWidth
-    color: colors.getColor("bg")
+    color: parent.color
 
     Behavior on width { PropertyAnimation { duration: 100 } }
 

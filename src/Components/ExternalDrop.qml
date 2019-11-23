@@ -4,6 +4,8 @@ Item{
     id: externalDrop
     anchors.fill: parent
 
+    property bool validFile: false
+
     function loadContent(url){
         var req = new XMLHttpRequest;
         req.open("GET", url);
@@ -19,7 +21,7 @@ Item{
 
     Rectangle{
         id: rectangle
-        visible: dropData.containsDrag ? true : false
+        visible: validFile
         color: colors.getColor('bg')
         radius: 3
         border.color: colors.getColor('light')
@@ -27,9 +29,10 @@ Item{
         anchors.fill: parent
 
         Text {
+            id: externalDropText
             height: 150
             color: colors.getColor("mid")
-            text: "Drop "+ window.title + " preset here"
+            text: "Not valid file type"
             clip: true
             fontSizeMode: Text.Fit
             anchors.right: parent.right
@@ -47,20 +50,18 @@ Item{
         id: dropData
         anchors.fill: parent
         onEntered: {
-            for(var i = 0; i < drag.urls.length; i++)
-            {
-                if(validateFileExtension(drag.urls[i]))
-                {
-                    drag.accept()
-                    return // drag accepted
-                 }
-            }
+                externalDrop.validFile = true
+                drag.accept()
+                externalDropText.text = "Drop "+ window.title + " preset here"
+        }
+        onExited: {
+                externalDrop.validFile = false
         }
         onDropped: if (drop.hasText) {
             if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
                 externalDrop.loadContent(drop.text)
                 drop.acceptProposedAction()
-
+                externalDrop.validFile = false
             }
         }
 

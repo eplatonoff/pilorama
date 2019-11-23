@@ -13,31 +13,9 @@ Item {
     property bool hlight: false
 
     Rectangle {
-        id: layoutDivider
-        height: 1
-        width: parent.width
-        color: colors.getColor("light")
-        anchors.topMargin: padding
-        anchors.top: parent.top
-
-        property real padding: 18
-
-    }
-
-    Header {
-        id: sequenceHeader
-        anchors.top: layoutDivider.bottom
-    }
-
-    Rectangle {
         id: sequenceSetLayout
         color: colors.getColor("bg")
-        anchors.bottomMargin: 0
-        anchors.top: sequenceHeader.bottom
-        anchors.right: parent.right
-        anchors.bottom: tools.top
-        anchors.left: parent.left
-        anchors.topMargin: 0
+        anchors.fill: parent
 
         ListView {
             id: sequenceView
@@ -45,11 +23,22 @@ Item {
             spacing: 0
             orientation: ListView.Vertical
             clip: true
+            footerPositioning: ListView.OverlayFooter
 
             property int itemWidth: width
             property int itemHeight: 38
 
             model: masterModel
+
+            header: Header {
+                id: sequenceHeader
+                z: 3
+            }
+
+            footer: Footer {
+                id: sequenceFooter
+                z: 3
+            }
 
             delegate: Item {
                 id: delegateItem
@@ -61,6 +50,7 @@ Item {
 
                 DropArea {
                     anchors.fill: parent
+                    keys: ["sequenceItems"]
                     onEntered: {
                         var draggedId = drag.source.dragItemIndex
                         masterModel.move(draggedId, index, 1)
@@ -87,11 +77,6 @@ Item {
                 NumberAnimation {properties: "x, y"; duration: 100}
             }
         }
-    }
-
-
-    Tools {
-        id: tools
     }
 }
 

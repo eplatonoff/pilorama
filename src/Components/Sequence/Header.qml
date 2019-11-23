@@ -10,6 +10,17 @@ Rectangle {
     property real headingFontSize: 18
     property real fontSize: 14
 
+    Rectangle {
+        id: layoutDivider
+        height: 1
+        width: parent.width
+        color: colors.getColor("light")
+        anchors.top: parent.top
+
+        property real padding: 18
+
+    }
+
 
     Text {
         text: qsTr('Sequence')

@@ -16,6 +16,7 @@ Rectangle {
     Drag.active: itemDragTrigger.drag.active
     Drag.hotSpot.x: width / 2
     Drag.hotSpot.y: height / 2
+    Drag.keys: ["sequenceItems"]
 
     states: [
         State {

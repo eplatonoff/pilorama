@@ -119,11 +119,12 @@ ApplicationWindow {
                 anchors.bottom: timerLayout.bottom
                 anchors.bottomMargin: 0
             }
+
             ExternalDrop {
                 id: externalDrop
             }
-        }
 
+        }
 
         Sequence {
             id: sequence
@@ -131,7 +132,7 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.topMargin: 0
+            anchors.topMargin: 18
         }
     }
 

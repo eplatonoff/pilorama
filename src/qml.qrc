@@ -35,7 +35,7 @@
         <file>assets/img/copy.svg</file>
         <file>assets/img/add.svg</file>
         <file>Components/Sequence/Header.qml</file>
-        <file>Components/Sequence/Tools.qml</file>
+        <file>Components/Sequence/Footer.qml</file>
         <file>assets/img/back.svg</file>
         <file>assets/img/library.svg</file>
         <file>MasterModel.qml</file>
@@ -77,7 +77,6 @@
         <file>Components/Sequence/SaveButton.qml</file>
         <file>assets/img/save.svg</file>
         <file>assets/tray/static.svg</file>
-        <file>Components/Sequence/Total.qml</file>
         <file>assets/img/countdown.svg</file>
     </qresource>
 </RCC>
