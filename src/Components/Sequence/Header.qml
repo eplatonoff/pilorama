@@ -17,12 +17,12 @@ Rectangle {
         color: colors.getColor("dark")
     }
 
-    SaveButton {
-        id: saveButton
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-    }
+//    SaveButton {
+//        id: saveButton
+//        anchors.verticalCenter: parent.verticalCenter
+//        anchors.right: parent.right
+//        anchors.rightMargin: 0
+//    }
 
 }
 

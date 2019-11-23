@@ -9,23 +9,35 @@ import ".."
 
 Item {
     id: sequence
-    height: sequenceHeader.height + sequenceSetLayout.height + tools.height
+    height: layoutDivider.height + layoutDivider.padding + sequenceHeader.height + sequenceSetLayout.height + total.height + tools.height
     width: parent.width
+//    anchors.top: parent.top
+//    anchors.bottom: parent.bottom
+
+
+    Rectangle {
+        id: layoutDivider
+        height: 1
+        width: parent.width
+        color: colors.getColor("light")
+        anchors.topMargin: padding
+        anchors.top: parent.top
+
+        property real padding: 18
+
+    }
+
+    Header {
+        id: sequenceHeader
+        anchors.top: layoutDivider.bottom
+    }
 
     Rectangle {
         id: sequenceSetLayout
-        height: (masterModel.count + 1)  * 38
+        height: (masterModel.count + 0)  * 38
         width: parent.width
         color: colors.getColor("bg")
         anchors.top: sequenceHeader.bottom
-
-//        DelegateModel {
-//            id: visualModel
-//            model: SequenceModel{ id: sequenceModel }
-//            delegate: SequenceItem { id: sequenceItem }
-//            }
-
-
 
         ListView {
             id: sequenceSet
@@ -38,20 +50,15 @@ Item {
         }
     }
 
-    Header {
-        id: sequenceHeader
+    Total {
+        id: total
+        anchors.top: sequenceSetLayout.bottom
+        anchors.topMargin: 0
     }
 
     Tools {
         id: tools
     }
-//    ExternalDrop {
-//        id: externalDrop
-//    }
 }
 
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
+

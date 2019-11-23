@@ -11,8 +11,8 @@ ApplicationWindow {
     id: window
     visible: true
     width: 320
-    height: padding * 2 + timerLayout.height + layoutDivider.height + layoutDivider.padding + sequence.height
-    minimumHeight: 320
+    height: timerLayout.height + sequence.height + padding * 2
+    minimumHeight: timerLayout.height
 
     maximumWidth: width
     minimumWidth: width
@@ -28,7 +28,7 @@ ApplicationWindow {
     onClockModeChanged: {canvas.requestPaint()}
     onExpandedChanged: {
         if(expanded === true){
-            height = padding * 2 + timerLayout.height + layoutDivider.height + layoutDivider.padding + sequence.height
+            height = padding * 2 + timerLayout.height + sequence.height
         } else {
             height = padding * 2 + timerLayout.height
         }
@@ -119,23 +119,15 @@ ApplicationWindow {
                 anchors.bottom: timerLayout.bottom
                 anchors.bottomMargin: 0
             }
+            ExternalDrop {
+                id: externalDrop
+            }
         }
 
-        Rectangle {
-            id: layoutDivider
-            height: 1
-            width: parent.width
-            color: colors.getColor("light")
-            anchors.top: timerLayout.bottom
-            anchors.topMargin: padding
-
-            property real padding: 18
-
-        }
 
         Sequence {
             id: sequence
-            anchors.top: layoutDivider.bottom
+            anchors.top: timerLayout.bottom
         }
     }
 

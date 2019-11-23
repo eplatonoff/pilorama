@@ -7,11 +7,10 @@ ListModel {
     property string data: ''
     property string defaultName: 'Split'
     property string defaultColor: randomColor()
-    property real defaultDuration: 25
+    property real defaultDuration: 15
 
     Component.onCompleted: load()
     Component.onDestruction: save()
-
 
 
 // Adds item to sequence
