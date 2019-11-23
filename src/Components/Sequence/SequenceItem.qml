@@ -4,8 +4,8 @@ import QtQml.Models 2.13
 
 Rectangle {
     id: sequenceItem
-    height: 38
-    width: parent.width
+    height: sequenceView.itemHeight
+    width: sequenceView.itemWidth
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
     color: colors.getColor("bg")
@@ -27,7 +27,6 @@ Rectangle {
 
             AnchorChanges {
                 target: sequenceItem
-//                anchors.horizontalCenter: undefined
                 anchors.verticalCenter: undefined
             }
         }
@@ -41,8 +40,6 @@ Rectangle {
         propagateComposedEvents: true
 
         drag.target: sequenceItem
-        drag.axis: Drag.YAxis
-//        drag.smoothed: false
 
         onPressAndHold: {
             if (itemDragTrigger.drag.active) {

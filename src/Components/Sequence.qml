@@ -46,7 +46,27 @@ Item {
             orientation: ListView.Vertical
             clip: true
 
+            property int itemWidth: width
+            property int itemHeight: 38
+
             model: masterModel
+
+            delegate: Item {
+                id: delegateItem
+
+                width: sequenceView.itemWidth
+                height: sequenceView.itemHeight
+
+                SequenceItem {id: sequenceItem}
+
+                DropArea {
+                    anchors.fill: parent
+                    onEntered: {
+                        var draggedId = drag.source.dragItemIndex
+                        masterModel.move(draggedId, index, 1)
+                    }
+                }
+            }
 
             addDisplaced: Transition {
                 NumberAnimation {properties: "x, y"; duration: 100}
@@ -65,24 +85,6 @@ Item {
 
             displaced: Transition {
                 NumberAnimation {properties: "x, y"; duration: 100}
-            }
-
-            delegate: Item {
-                id: delegateItem
-                height: 38
-                width: parent.width
-
-                SequenceItem {id: sequenceItem}
-
-                DropArea {
-                    anchors.fill: parent
-                    onEntered: {
-                        console.log("dragged", drag.source.dragItemIndex);
-                        console.log("moved", sequenceItem.dragItemIndex);
-                        var draggedId = drag.source.dragItemIndex
-                        masterModel.move(draggedId, index, 1)
-                    }
-                }
             }
         }
     }
