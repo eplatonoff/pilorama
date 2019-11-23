@@ -9,11 +9,8 @@ import ".."
 
 Item {
     id: sequence
-    height: layoutDivider.height + layoutDivider.padding + sequenceHeader.height + sequenceSetLayout.height + total.height + tools.height
-    width: parent.width
-//    anchors.top: parent.top
-//    anchors.bottom: parent.bottom
 
+    property bool hlight: false
 
     Rectangle {
         id: layoutDivider
@@ -34,27 +31,62 @@ Item {
 
     Rectangle {
         id: sequenceSetLayout
-        height: (masterModel.count + 0)  * 38
-        width: parent.width
         color: colors.getColor("bg")
+        anchors.bottomMargin: 0
         anchors.top: sequenceHeader.bottom
+        anchors.right: parent.right
+        anchors.bottom: tools.top
+        anchors.left: parent.left
+        anchors.topMargin: 0
 
         ListView {
-            id: sequenceSet
+            id: sequenceView
             anchors.fill: parent
             spacing: 0
-            cacheBuffer: 40
-            snapMode: ListView.SnapOneItem
+            orientation: ListView.Vertical
+            clip: true
+
             model: masterModel
-            delegate: SequenceItem { id: sequenceItem; }
+
+            addDisplaced: Transition {
+                NumberAnimation {properties: "x, y"; duration: 100}
+            }
+            moveDisplaced: Transition {
+                NumberAnimation { properties: "x, y"; duration: 100 }
+            }
+            remove: Transition {
+                NumberAnimation { properties: "x, y"; duration: 100 }
+                NumberAnimation { properties: "opacity"; duration: 100}
+            }
+
+            removeDisplaced: Transition {
+                NumberAnimation { properties: "x, y"; duration: 100 }
+            }
+
+            displaced: Transition {
+                NumberAnimation {properties: "x, y"; duration: 100}
+            }
+
+            delegate: Item {
+                id: delegateItem
+                height: 38
+                width: parent.width
+
+                SequenceItem {id: sequenceItem}
+
+                DropArea {
+                    anchors.fill: parent
+                    onEntered: {
+                        console.log("dragged", drag.source.dragItemIndex);
+                        console.log("moved", sequenceItem.dragItemIndex);
+                        var draggedId = drag.source.dragItemIndex
+                        masterModel.move(draggedId, index, 1)
+                    }
+                }
+            }
         }
     }
 
-    Total {
-        id: total
-        anchors.top: sequenceSetLayout.bottom
-        anchors.topMargin: 0
-    }
 
     Tools {
         id: tools
@@ -62,3 +94,9 @@ Item {
 }
 
 
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

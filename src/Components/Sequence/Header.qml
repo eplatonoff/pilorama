@@ -7,14 +7,39 @@ Rectangle {
     width: parent.width
     color: colors.getColor("bg")
 
-    property real fontSize: 18
+    property real headingFontSize: 18
+    property real fontSize: 14
+
 
     Text {
         text: qsTr('Sequence')
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: fontSize
+        font.pixelSize: headingFontSize
         color: colors.getColor("dark")
+    }
+
+
+    Text {
+        id: totalTime
+        width: 30
+        color: colors.getColor('mid')
+        text: masterModel.totalDuration() / 60
+        horizontalAlignment: Text.AlignRight
+        anchors.right: itemtimeMin.left
+        anchors.rightMargin: 18
+        anchors.verticalCenter: parent.verticalCenter
+        font.pixelSize: fontSize
+    }
+
+    Text {
+        id: itemtimeMin
+        width: 30
+        text: qsTr("min")
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        color: colors.getColor('mid')
+        font.pixelSize: fontSize
     }
 
 //    SaveButton {

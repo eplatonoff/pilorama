@@ -11,7 +11,7 @@ ApplicationWindow {
     id: window
     visible: true
     width: 320
-    height: timerLayout.height + sequence.height + padding * 2
+    height: 600
     minimumHeight: timerLayout.height
 
     maximumWidth: width
@@ -128,6 +128,10 @@ ApplicationWindow {
         Sequence {
             id: sequence
             anchors.top: timerLayout.bottom
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 0
         }
     }
 

@@ -57,6 +57,7 @@ Timer {
         } else
             splitDuration = 0;
 
+        sequence.hlight = true
         tray.setTime()
 //        pixmap.requestPaint();
         canvas.requestPaint();
