@@ -10,6 +10,10 @@ import ".."
 Item {
     id: sequence
 
+    function setCurrentItem(id){
+        sequenceView.currentIndex = id
+    }
+
     Rectangle {
         id: sequenceSetLayout
         color: colors.getColor("bg")

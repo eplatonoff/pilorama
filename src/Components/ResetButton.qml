@@ -48,6 +48,7 @@ Item{
                 globalTimer.stop()
                 window.clockMode = "start"
                 notifications.stopSound();
+                sequence.setCurrentItem(-1)
             }
         }
     }

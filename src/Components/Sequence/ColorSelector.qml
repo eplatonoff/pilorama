@@ -9,16 +9,32 @@ Rectangle {
     property int lineId: 0
 
     property real itemWidth: 25
-
     property bool expanded: false
-
     property real expWidth: colorModel.count * (itemWidth + colorsList.spacing)
     property real colWidth: itemWidth
 
+    property bool currentItem: delegateItem.ListView.isCurrentItem
+    property bool blockAction: false
+
+    onCurrentItemChanged: { activateBlink(currentItem) }
+
     onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
+    function activateBlink(bool){
+        if(bool){
+            blockAction = true
+            blinkTimer.start()
+        } else {
+            blinkTimer.stop()
+            blockAction = false
+            colorsList.opacity = 1
+        }
+
+    }
+
     MouseArea {
-        id: colorSelectorTrigger
+
+        visible: !colorSelector.blockAction
         hoverEnabled: true
         anchors.fill: parent
         onExited: {
@@ -73,7 +89,11 @@ Rectangle {
         anchors.fill: parent
         orientation: ListView.Horizontal
         spacing: 5
+
+        Behavior on opacity { NumberAnimation{properties: "opacity"; duration: 100}}
+
         model: colorModel
+
         delegate: Item {
 
             id: colorItem
@@ -90,6 +110,8 @@ Rectangle {
             }
 
             MouseArea{
+
+                visible: !colorSelector.blockAction
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
 
@@ -104,5 +126,16 @@ Rectangle {
             }
         }
 
+    }
+
+    Timer{
+
+        id: blinkTimer
+
+        interval: 500
+        running: false
+        repeat: true
+
+        onTriggered: { colorsList.opacity = !colorsList.opacity }
     }
 }

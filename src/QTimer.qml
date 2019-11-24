@@ -36,8 +36,10 @@ Timer {
             }
         }
 
-        pomodoroQueue.showQueue()
-        masterModel.showModel()
+//        pomodoroQueue.showQueue()
+//        masterModel.showModel()
+
+        sequence.setCurrentItem(pomodoroQueue.first().id)
 
         pomodoroQueue.drainTime(1);
 
