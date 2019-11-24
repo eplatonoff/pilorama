@@ -1,6 +1,9 @@
 import QtQuick 2.0
 
 Item {
+    id: preferences
+    anchors.fill: parent
+    visible: false
 
     Column {
 

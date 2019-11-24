@@ -20,6 +20,14 @@ ListModel {
         const c = color ? color : defaultColor
         const d = duration ? duration : defaultDuration * 60
         append({"id": count,"name": n, "color": c, "duration": d})
+        recalcIDs()
+    }
+
+    function recalcIDs(){
+        for (var i = 0; i < count; i++){
+            get(i).id = i
+        }
+
     }
 
 // Random color without repeats
@@ -49,6 +57,7 @@ ListModel {
 // Saves sequence to setting
 
     function save(){
+        recalcIDs()
         var datamodel = []
         for (var i = 0; i < count; ++i) datamodel.push(get(i))
         data = JSON.stringify(datamodel)

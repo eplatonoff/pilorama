@@ -36,12 +36,10 @@ Timer {
             }
         }
 
-//        pomodoroQueue.showQueue()
-//        masterModel.showModel()
-
+        pomodoroQueue.showQueue()
+        masterModel.showModel()
 
         pomodoroQueue.drainTime(1);
-
 
         const first = pomodoroQueue.first();
 
@@ -57,9 +55,9 @@ Timer {
         } else
             splitDuration = 0;
 
-        sequence.hlight = true
         tray.setTime()
-//        pixmap.requestPaint();
         canvas.requestPaint();
+
+        //        pixmap.requestPaint();
     }
 }

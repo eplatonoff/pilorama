@@ -76,6 +76,10 @@ SystemTrayIcon {
         return "Time left: " + hour + min + ":" + sec
     }
 
+    function send(name){
+        showMessage(window.title, name + " split started")
+    }
+
     menu: Menu {
 
        MenuItem {

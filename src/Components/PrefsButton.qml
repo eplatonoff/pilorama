@@ -16,13 +16,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
 
         onReleased: {
-            if (sequence.visible){
-                window.height = window.height - sequence.height
-                sequence.visible = false
-            } else {
-                window.height = window.height - sequence.height
-                sequence.visible = true
-            }
+            stack.push(preferences)
         }
     }
 

@@ -6,8 +6,6 @@ Rectangle {
     width: colWidth
     color: parent.color
 
-    Behavior on width { PropertyAnimation { duration: 100 } }
-
     property int lineId: 0
 
     property real itemWidth: 25
@@ -20,6 +18,7 @@ Rectangle {
     onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
     MouseArea {
+        id: colorSelectorTrigger
         hoverEnabled: true
         anchors.fill: parent
         onExited: {
@@ -100,7 +99,6 @@ Rectangle {
                     } else {
                         colorModel.topColor(model.color)
                         masterModel.get(lineId).color = model.color
-//                        expanded = false
                     }
                 }
             }

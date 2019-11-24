@@ -220,7 +220,10 @@ Rectangle {
                 anchors.fill: parent
                 propagateComposedEvents: true
                 cursorShape: Qt.PointingHandCursor
-                onReleased: masterModel.remove(index)
+                onReleased: {
+                    globalTimer.stop()
+                    masterModel.remove(index)
+                }
             }
         }
     }

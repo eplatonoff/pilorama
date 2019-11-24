@@ -56,13 +56,19 @@ ApplicationWindow {
         id: colors
     }
 
-    Item {
-        id: content
-
+    StackView {
+        id: stack
         anchors.rightMargin: window.padding
         anchors.leftMargin: window.padding
         anchors.bottomMargin: window.padding
         anchors.topMargin: window.padding
+        anchors.fill: parent
+
+        initialItem: content
+
+        Item {
+        id: content
+
         anchors.fill: parent
 
         Item {
@@ -136,7 +142,10 @@ ApplicationWindow {
         }
     }
 
-
+        Preferences {
+            id: preferences
+        }
+    }
 
     MasterModel {
         id: masterModel

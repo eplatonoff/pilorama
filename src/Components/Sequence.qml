@@ -10,8 +10,6 @@ import ".."
 Item {
     id: sequence
 
-    property bool hlight: false
-
     Rectangle {
         id: sequenceSetLayout
         color: colors.getColor("bg")
@@ -24,9 +22,11 @@ Item {
             orientation: ListView.Vertical
             clip: true
             footerPositioning: ListView.OverlayFooter
+            currentIndex: -1
 
             property int itemWidth: width
             property int itemHeight: 38
+
 
             model: masterModel
 
@@ -46,7 +46,7 @@ Item {
                 width: sequenceView.itemWidth
                 height: sequenceView.itemHeight
 
-                SequenceItem {id: sequenceItem}
+                SequenceItem {id: sequenceItem }
 
                 DropArea {
                     anchors.fill: parent
