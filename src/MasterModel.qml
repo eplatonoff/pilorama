@@ -84,12 +84,6 @@ ListModel {
         return duration
     }
 
-    function getSeqId(seqId){
-        if( count == 0) { throw "no items in master" }
-        const id = seqId >= count ? seqId % count : seqId
-        return get(id)
-    }
-
     function showModel(){
         var datamodel = []
         for (var i = 0; i < count; ++i) datamodel.push(get(i))

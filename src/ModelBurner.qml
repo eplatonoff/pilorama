@@ -146,34 +146,24 @@ ListModel {
     }
 
     function itemDurationBound(item) {
-        return masterModel.getSeqId(item.id).duration
+        return masterModel.get(item.id).duration
     }
 
-    function _createNext() {
+    function _createNext()
+    {
+        const masterCount = masterModel.count;
 
-        if(masterModel.count === 0){
-            throw "master model is empty"
-        }
+        if (masterCount === 0)
+            throw "master model is empty";
 
+        const masterId = count >= masterCount ? count % masterCount : count;
 
-        // Break on sequence repeat
-
-        if(count === masterModel.count){
-            throw "no next item in master"
-        }
-
-        const masterID = count
-        const masterDuration = masterModel.getSeqId(count).duration
-
-        append({"id": masterID,  "duration": masterDuration})
-
+        append({"id": masterId,  "duration": 0})
     }
-
 
     function _createBatch() {
         changeQueue( masterModel.totalDuration() );
-        console.log("batch created")
-
+        console.log("batch created");
     }
 
     function showQueue(){
