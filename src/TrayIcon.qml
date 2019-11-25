@@ -53,7 +53,8 @@ SystemTrayIcon {
     }
 
     function setDialTime(){
-        dialTime = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
+        const t = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
+        dialTime = pomodoroQueue.first() ? t : 0
         iconURL()
     }
 
@@ -77,7 +78,8 @@ SystemTrayIcon {
     }
 
     function send(name){
-        showMessage(window.title, name + " split started")
+        var message = name ? name + " started" : "Time ran out"
+        showMessage(window.title, message )
     }
 
     menu: Menu {

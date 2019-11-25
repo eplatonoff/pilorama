@@ -27,11 +27,12 @@ Timer {
                 duration--;
 
             } else {
-                notifications.sendWithSound(NotificationSystem.STOP);
+                notifications.sendWithSound();
                 window.clockMode = "start";
                 pomodoroQueue.clear();
                 mouseArea._prevAngle = 0
                 mouseArea._totalRotatedSecs = 0
+                sequence.setCurrentItem(-1)
                 stop();
             }
         }

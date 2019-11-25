@@ -11,6 +11,7 @@ Item {
     id: sequence
 
     function setCurrentItem(id){
+        if(id === undefined){ id = -1 }
         sequenceView.currentIndex = id
     }
 

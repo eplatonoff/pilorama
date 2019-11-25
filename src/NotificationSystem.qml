@@ -28,12 +28,10 @@ QtObject {
 
     function sendWithSound(name) {
         soundNotification.play();
-//        send(name);
         tray.send(name)
     }
 
     function sendFromItem(item) {
-//        sendWithSound(NotificationSystem.POMODORO)
         sendWithSound(masterModel.get(item.id).name)
     }
 }
