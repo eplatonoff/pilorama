@@ -20,11 +20,9 @@ include_directories(
 file(GLOB SRCS_TOP ${PROJECT_SOURCE_DIR}/*.cpp)
 
 file( GLOB_RECURSE SRCS_NESTED
-		${PROJECT_SOURCE_DIR}/notifications/*.cpp
 		)
 
 file( GLOB_RECURSE HDRS
-		${PROJECT_SOURCE_DIR}/notifications/*.h
 		)
 
 file( GLOB_RECURSE QRCS *.qrc)

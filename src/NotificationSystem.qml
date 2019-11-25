@@ -1,10 +1,8 @@
 import QtQuick 2.0
 import QtMultimedia 5.13
 
-import notifications 1.0
 
-
-NotificationSystem {
+QtObject {
     id: notifications
 
     property bool soundMuted: false
