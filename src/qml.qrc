@@ -14,7 +14,6 @@
         <file>assets/sound/drum_roll.wav</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
-        <file>PomodoroModel.qml</file>
         <file>NotificationSystem.qml</file>
         <file>QTimer.qml</file>
         <file>MouseTracker.qml</file>
