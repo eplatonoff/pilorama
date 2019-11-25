@@ -14,7 +14,7 @@ Rectangle {
     property real colWidth: itemWidth
 
     property bool currentItem: delegateItem.ListView.isCurrentItem
-    property bool blockAction: false
+    property bool blockAction: sequence.blockEdits
 
     onCurrentItemChanged: { activateBlink(currentItem) }
 
@@ -22,11 +22,9 @@ Rectangle {
 
     function activateBlink(bool){
         if(bool){
-            blockAction = true
             blinkTimer.start()
         } else {
             blinkTimer.stop()
-            blockAction = false
             colorsList.opacity = 1
         }
 

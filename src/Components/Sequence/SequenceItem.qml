@@ -36,6 +36,7 @@ Rectangle {
     MouseArea {
         id: itemDragTrigger
         anchors.fill: parent
+        visible: !sequence.blockEdits
 
         hoverEnabled: true
         propagateComposedEvents: true
@@ -82,6 +83,7 @@ Rectangle {
     TextInput {
         id: itemName
         text: model.name
+        readOnly: sequence.blockEdits
         horizontalAlignment: Text.AlignLeft
         anchors.left: handler.right
         anchors.leftMargin: 30
@@ -105,6 +107,8 @@ Rectangle {
         width: 20
         color: colors.getColor('dark')
         text: Math.trunc( model.duration / 60 )
+        readOnly: sequence.blockEdits
+
         horizontalAlignment: Text.AlignRight
         anchors.right: itemtimeMin.left
         anchors.rightMargin: 18

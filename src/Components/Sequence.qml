@@ -10,6 +10,8 @@ import ".."
 Item {
     id: sequence
 
+    property bool blockEdits: globalTimer.running
+
     function setCurrentItem(id){
         if(id === undefined){ id = -1 }
         sequenceView.currentIndex = id
