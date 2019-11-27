@@ -22,14 +22,14 @@ Item {
         }
     }
 
-    function count(){
-        let d = getDuration()
+    function count(duration){
+        let d = duration
 
         let h = Math.floor( d / 3600 )
         let m = Math.floor( d / 60 ) - h * 60
         let s = d - (h * 3600 + m * 60)
 
-        const t = [ h, pad(m), pad(s) ]
+        const t = [ h, m, s ]
         return t
     }
 
@@ -65,7 +65,7 @@ Item {
             id: digitalTime
             width: 45
             height: 15
-            text: showFuture()
+            text: notifyOn()
             anchors.left: bellIcon.right
             anchors.leftMargin: 2
             anchors.verticalCenter: parent.verticalCenter
@@ -73,22 +73,24 @@ Item {
             font.pixelSize: 14
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+            color: colors.getColor("mid")
 
-            function showFuture() {
-                var extraTime;
-                if (!pomodoroQueue.infiniteMode){
-                    extraTime = globalTimer.duration
-                } else {
-                    extraTime = masterModel.get(pomodoroQueue.first().id).duration
+            property real duration: timer.getDuration()
 
-                }
-                var future = time.hours * 3600 + time.minutes *60 + time.seconds + extraTime
-                var h = Math.trunc(future / 3600)
-                var m = Math.trunc((future - h * 3600) / 60)
-                return timer.pad(h) + ":" + timer.pad(m)
+            function notifyOn() {
+                let today = new Date()
+                let _h = today.getHours()
+                let _m = today.getMinutes()
+                let _s = today.getSeconds()
+
+                let _t = _h * 3600 + _m * 60 + _s
+                let t = _t + getDuration()
+
+                t = t >= 86400 ? t % 86400 : t
+
+                let resulting = pad(count(t)[0]) + ":" + pad(count(t)[1])
+                return resulting
             }
-
         }
     }
 
@@ -104,7 +106,7 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: !globalTimer.running ? "min" : count()[2];
+            text: !globalTimer.running ? "min" : pad(count(getDuration())[2]);
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
             anchors.top: digitalMin.top
@@ -112,7 +114,7 @@ Item {
             anchors.left: digitalMin.right
             anchors.leftMargin: 3
             font.pixelSize: 22
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
 
             function seconds(){
                 if (pomodoroQueue.infiniteMode === true){
@@ -128,14 +130,14 @@ Item {
         Text {
             id: digitalMin
             width: 50
-            text: count()[1]
+            text: pad(count(getDuration())[1])
             anchors.verticalCenter: parent.verticalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
             anchors.left: digitalSeparator.right
             anchors.leftMargin: 0
             font.pixelSize: 44
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
 
             function minutes(){
                 if (pomodoroQueue.infiniteMode){
@@ -160,22 +162,22 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
 
         }
 
         Text {
             id: digitalHour
-            width: count()[0] > 0 ? 35 : 0
-            text: count()[0]
+            width: count(getDuration())[0] > 0 ? 35 : 0
+            text: count(getDuration())[0]
             anchors.left: parent.left
             anchors.leftMargin: 0
             anchors.verticalCenter: parent.verticalCenter
-            visible: count()[0] > 0 ? true : false
+            visible: count(getDuration())[0] > 0 ? true : false
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
 
         }
     }
