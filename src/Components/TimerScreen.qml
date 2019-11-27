@@ -9,13 +9,30 @@ Item {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
 
-    property string min: "00"
-    property string sec: "00"
-
     function pad(value){
         if (value < 10) {return "0" + value
         } else {return value}
     }
+
+    function getDuration(){
+        if(!pomodoroQueue.infiniteMode){
+          return globalTimer.duration
+        } else {
+          return globalTimer.splitDuration
+        }
+    }
+
+    function count(){
+        let d = getDuration()
+
+        let h = Math.floor( d / 3600 )
+        let m = Math.floor( d / 60 ) - h * 60
+        let s = d - (h * 3600 + m * 60)
+
+        const t = [ h, pad(m), pad(s) ]
+        return t
+    }
+
     Item {
         id: dateTime
         width: 60
@@ -87,7 +104,7 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: seconds();
+            text: !globalTimer.running ? "min" : count()[2];
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
             anchors.top: digitalMin.top
@@ -111,7 +128,7 @@ Item {
         Text {
             id: digitalMin
             width: 50
-            text: minutes()
+            text: count()[1]
             anchors.verticalCenter: parent.verticalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
@@ -123,6 +140,9 @@ Item {
             function minutes(){
                 if (pomodoroQueue.infiniteMode){
                     return timer.pad(Math.trunc(globalTimer.splitDuration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
+
+//                    return timer.pad(Math.trunc(globalTimer.splitDuration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
+
                 } else {
                     return timer.pad(Math.trunc(globalTimer.duration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
                 }
@@ -146,30 +166,17 @@ Item {
 
         Text {
             id: digitalHour
-            width: 0
-            text: hours()
+            width: count()[0] > 0 ? 35 : 0
+            text: count()[0]
             anchors.left: parent.left
             anchors.leftMargin: 0
             anchors.verticalCenter: parent.verticalCenter
-            visible: false
+            visible: count()[0] > 0 ? true : false
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
             color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
 
-            function hours(){
-                var h
-                if (pomodoroQueue.infiniteMode){
-                   h = Math.trunc(globalTimer.splitDuration / 3600)
-                } else {
-                   h = Math.trunc(globalTimer.duration / 3600)
-                }
-
-                visible = h > 0 ? true : false
-                width = h > 0 ? 35 : 0
-
-                return h
-            }
         }
     }
 

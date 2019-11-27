@@ -2,12 +2,12 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.12
 
 Item {
-    id: element
+    id: back
     width: 50
     height: 50
 
     MouseArea {
-        id: prefsIconTrigger
+        id: backTrigger
         x: 13
         y: 13
         anchors.fill: parent
@@ -16,19 +16,16 @@ Item {
         cursorShape: Qt.PointingHandCursor
 
         onReleased: {
-            stack.push(preferences)
+            stack.pop()
         }
     }
 
     Image {
-        source: "../assets/img/prefs.svg"
+        source: "../../assets/img/back.svg"
         fillMode: Image.PreserveAspectFit
 
         property bool prefsToggle: false
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.verticalCenter: parent.verticalCenter
 
         ColorOverlay{
             id: prefsIconOverlay
@@ -40,5 +37,3 @@ Item {
     }
 
 }
-
-

@@ -53,6 +53,15 @@ Rectangle {
         font.pixelSize: fontSize
     }
 
+    MouseArea {
+        id: showQueueTrigger
+        anchors.fill: parent
+
+        onDoubleClicked: {
+            sequence.showQueue = !sequence.showQueue
+        }
+    }
+
 //    SaveButton {
 //        id: saveButton
 //        anchors.verticalCenter: parent.verticalCenter

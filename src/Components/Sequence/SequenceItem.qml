@@ -8,10 +8,13 @@ Rectangle {
     width: sequenceView.itemWidth
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-    color: colors.getColor("bg")
+    color: colors.getColor('bg')
 
     property real fontSize: 14
     property int dragItemIndex: index
+    property bool currentItem: delegateItem.ListView.isCurrentItem
+
+    property bool dim: sequence.blockEdits - currentItem
 
     Drag.active: itemDragTrigger.drag.active
     Drag.hotSpot.x: width / 2
@@ -62,12 +65,15 @@ Rectangle {
 
     Image {
         id: handler
+        visible: !sequence.blockEdits
+        width: sequence.blockEdits ? 0 : 23
         source: "../../assets/img/dragger.svg"
         fillMode: Image.PreserveAspectFit
 
+        Behavior on width { NumberAnimation { properties: "width"; duration: 150 }}
+
         property bool prefsToggle: false
         anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.verticalCenter: parent.verticalCenter
 
         ColorOverlay{
@@ -83,13 +89,16 @@ Rectangle {
     TextInput {
         id: itemName
         text: model.name
-        readOnly: sequence.blockEdits
         horizontalAlignment: Text.AlignLeft
         anchors.left: handler.right
-        anchors.leftMargin: 30
+        anchors.leftMargin: 26
         font.pointSize: parent.fontSize
+        font.strikeout : masterModel.get(index).duration === 0
 
-        selectByMouse : true
+        wrapMode: TextEdit.NoWrap
+        readOnly: sequence.blockEdits
+        selectByMouse : !sequence.blockEdits
+
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('light')
 
@@ -107,21 +116,27 @@ Rectangle {
         width: 20
         color: colors.getColor('dark')
         text: Math.trunc( model.duration / 60 )
+
+        validator: IntValidator { bottom:0; top: globalTimer.timerLimit / 60}
+
+        wrapMode: TextEdit.NoWrap
         readOnly: sequence.blockEdits
+        selectByMouse : !sequence.blockEdits
 
         horizontalAlignment: Text.AlignRight
         anchors.right: itemtimeMin.left
         anchors.rightMargin: 18
         anchors.verticalCenter: parent.verticalCenter
 
-        selectByMouse : true
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('light')
 
         font.pointSize: parent.fontSize
 
         onTextChanged: {
-            model.duration = itemtime.text * 60
+            if( !itemtime.text || itemtime.text === 0 ) {
+                model.duration = 0
+            } else { model.duration = itemtime.text * 60 }
         }
     }
 
@@ -138,7 +153,7 @@ Rectangle {
 
     ColorSelector {
         id: colorSelector
-        anchors.leftMargin: 3
+        anchors.leftMargin: 0
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: handler.right
         lineId: index

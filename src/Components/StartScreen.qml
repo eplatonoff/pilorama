@@ -12,8 +12,8 @@ Item {
     Image {
         id: startPomoIcon
         anchors.horizontalCenter: parent.horizontalCenter
-        sourceSize.height: 45
-        sourceSize.width: 45
+        sourceSize.height: 150
+        sourceSize.width: 150
         antialiasing: true
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit

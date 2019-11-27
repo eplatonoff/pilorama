@@ -21,7 +21,7 @@ Rectangle {
     onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
     function activateBlink(bool){
-        if(bool){
+        if(bool && masterModel.get(lineId).duration !== 0){
             blinkTimer.start()
         } else {
             blinkTimer.stop()
@@ -86,7 +86,7 @@ Rectangle {
         interactive: false
         anchors.fill: parent
         orientation: ListView.Horizontal
-        spacing: 5
+        spacing: 4
 
         Behavior on opacity { NumberAnimation{properties: "opacity"; duration: 100}}
 
@@ -133,6 +133,7 @@ Rectangle {
         interval: 500
         running: false
         repeat: true
+        triggeredOnStart: false
 
         onTriggered: { colorsList.opacity = !colorsList.opacity }
     }

@@ -24,7 +24,6 @@
         <file>Components/StartScreen.qml</file>
         <file>Components/Dials.qml</file>
         <file>Components/TimerScreen.qml</file>
-        <file>Components/InfiniteScreen.qml</file>
         <file>Components/Preferences.qml</file>
         <file>Components/DarkModeButton.qml</file>
         <file>Components/PrefsButton.qml</file>
@@ -77,5 +76,7 @@
         <file>assets/img/save.svg</file>
         <file>assets/tray/static.svg</file>
         <file>assets/img/countdown.svg</file>
+        <file>Components/Preferences/Header.qml</file>
+        <file>Components/Preferences/BackButton.qml</file>
     </qresource>
 </RCC>

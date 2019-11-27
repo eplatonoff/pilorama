@@ -75,6 +75,11 @@ ListModel{
         day: "#7DCF6F"
     }
     ListElement{
+        name: "cyan"
+        night: "#339BA7"
+        day: "#59BDC9"
+    }
+    ListElement{
         name: "blue"
         night: "#5069BE"
         day: "#6F85CF"

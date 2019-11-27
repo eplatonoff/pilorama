@@ -93,29 +93,25 @@ Canvas {
 
         if (pomodoroQueue.infiniteMode){
             calibration(width, fakeWidth, masterModel.get(pomodoroQueue.first().id).duration / 60)
-        } else if (!pomodoroQueue.infiniteMode && !appSettings.splitToSequence && !globalTimer.running && globalTimer.duration){
-            calibration(globalTimer.duration > 0 ? fakeDialDiameter : width, fakeWidth, 12)
-        } else if (!pomodoroQueue.infiniteMode && appSettings.splitToSequence && globalTimer.duration){
+        } else if (!pomodoroQueue.infiniteMode && !globalTimer.running && globalTimer.duration){
             calibration(globalTimer.duration > 0 ? fakeDialDiameter : width, fakeWidth, 12)
         } else {
             calibration(globalTimer.duration > 0 ? fakeDialDiameter : width, fakeWidth, 60)
         }
 
-        if (pomodoroQueue.infiniteMode && globalTimer.running){
+        if (pomodoroQueue.infiniteMode){
 
             dial(width, fakeWidth,
                  colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color),
                  0, pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration )
 
-        } else if (!pomodoroQueue.infiniteMode && globalTimer.duration){
+        } else if (!pomodoroQueue.infiniteMode && appSettings.splitToSequence ){
 
             var splitVisibleEnd = 0;
             var splitVisibleStart = 0;
             var splitColor;
             var prevSplit = 0
             var splitIncrement = 3600 / globalTimer.duration
-
-            calibration(fakeDialDiameter, fakeWidth, calibrationGrades)
 
             for(let i = 0; i <= pomodoroQueue.count - 1; i++){
                 i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
@@ -129,10 +125,8 @@ Canvas {
                      splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd
                      )
             }
-        } else if (!pomodoroQueue.infiniteMode && globalTimer.duration && globalTimer.running){
-            dial(fakeDialDiameter, fakeWidth, colors.getColor('light'),
-                 0, (globalTimer.duration - Math.trunc(globalTimer.duration / 60) * 60) * 60 )
         } else {
+            dial(fakeDialDiameter, fakeWidth, colors.getColor('light'), 0, globalTimer.duration - (mainDialTurns * 3600) )
         }
 
 

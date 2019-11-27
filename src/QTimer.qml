@@ -5,6 +5,8 @@ Timer {
     property real duration: 0
     property real splitDuration: 0
 
+    property real timerLimit: 17940
+
     onDurationChanged: {
         window.checkClockMode();
         time.updateTime();
@@ -14,6 +16,7 @@ Timer {
     interval: 1000
     running: false
     repeat: true
+    triggeredOnStart: true
 
     onRunningChanged: {
         pixmap.requestPaint();
@@ -40,7 +43,9 @@ Timer {
 //        pomodoroQueue.showQueue()
 //        masterModel.showModel()
 
-        sequence.setCurrentItem(pomodoroQueue.first().id)
+        if(pomodoroQueue.infiniteMode || preferences.splitToSequence) {
+            sequence.setCurrentItem(pomodoroQueue.first().id)
+        } else { sequence.setCurrentItem() }
 
         pomodoroQueue.drainTime(1);
 
@@ -49,7 +54,7 @@ Timer {
         if (first) {
             splitDuration = first.duration;
 
-            const notificationsEnabled = pomodoroQueue.infiniteMode || appSettings.splitToSequence;
+            const notificationsEnabled = pomodoroQueue.infiniteMode || preferences.splitToSequence;
 
             if (notificationsEnabled)
                 if (splitDuration === pomodoroQueue.itemDurationBound(first))

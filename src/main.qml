@@ -10,22 +10,32 @@ import "Components/Sequence"
 ApplicationWindow {
     id: window
     visible: true
+
+    x: 100
+    y: 100
+
     width: 320
     height: 600
-    minimumHeight: timerLayout.height
+    flags: Qt.Window
+
+    minimumHeight: timerLayout.height + padding * 2 + 50
+    minimumWidth: timerLayout.width + padding * 2
 
     maximumWidth: width
-    minimumWidth: width
 
-    color: appSettings.darkMode ? colors.bgDark : colors.bgLight
-    title: qsTr("qml timer")
+    color: colors.getColor("bg")
+    title: qsTr("QML timer")
 
     property real padding: 16
     property bool expanded: true
 
+    property bool alwaysOnTop: false
+
     property string clockMode: "start"
 
-    onClockModeChanged: {canvas.requestPaint()}
+    onAlwaysOnTopChanged: { alwaysOnTop ? flags = Qt.WindowStaysOnTopHint : flags = Qt.Window }
+
+    onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
         if(expanded === true){
             height = padding * 2 + timerLayout.height + sequence.height
@@ -36,12 +46,6 @@ ApplicationWindow {
 
 
     function checkClockMode (){
-        // temporary Settings
-        appSettings.splitToSequence = true
-        durationSettings.pomodoro = 900
-        durationSettings.pause = 300
-        durationSettings.breakTime = 600
-        durationSettings.repeatBeforeBreak = 2
 
         if (pomodoroQueue.infiniteMode && globalTimer.running){
             clockMode = "pomodoro"
@@ -52,8 +56,83 @@ ApplicationWindow {
         }
     }
 
+    Settings {
+        id: appSettings
+
+        property bool darkMode: false
+        property alias soundMuted: notifications.soundMuted
+        property alias splitToSequence: preferences.splitToSequence
+
+        property alias windowX: window.x
+        property alias windowY: window.y
+
+        property alias windowHeight: window.height
+
+        property alias alwaysOnTop: window.alwaysOnTop
+        property alias showQueue: sequence.showQueue
+
+        onDarkModeChanged: { canvas.requestPaint(); pixmap.requestPaint() }
+        onSplitToSequenceChanged: { canvas.requestPaint(); }
+    }
+
+    Settings {
+        id: durationSettings
+
+        property real timer: 0
+
+        property real pomodoro: 25 * 60
+        property real pause: 10 * 60
+        property real breakTime: 15 * 60
+        property int repeatBeforeBreak: 2
+
+        property alias masterData: masterModel.data
+
+        onMasterDataChanged: console.log("Reloaded:" + masterData)
+
+    }
+
     Colors {
         id: colors
+    }
+
+    MasterModel {
+        id: masterModel
+        data: data
+    }
+
+    ModelBurner {
+        id: pomodoroQueue
+        durationSettings: durationSettings
+    }
+
+    IconGenerator {
+        id: pixmap
+    }
+
+    TrayIcon {
+        id: tray
+    }
+
+    NotificationSystem {
+        id: notifications
+    }
+
+    QTimer {
+        id: globalTimer
+    }
+
+    QtObject {
+        id: time
+        property real hours: 0
+        property real minutes: 0
+        property real seconds: 0
+
+        function updateTime(){
+            var currentDate = new Date()
+            hours = currentDate.getHours()
+            minutes = currentDate.getMinutes()
+            seconds = currentDate.getSeconds()
+        }
     }
 
     StackView {
@@ -68,8 +147,6 @@ ApplicationWindow {
 
         Item {
         id: content
-
-        anchors.fill: parent
 
         Item {
             id: timerLayout
@@ -143,88 +220,9 @@ ApplicationWindow {
     }
 
         Preferences {
-            id: preferences
+                id: preferences
         }
     }
-
-    MasterModel {
-        id: masterModel
-        data: data
-    }
-
-    ModelBurner {
-        id: pomodoroQueue
-        durationSettings: durationSettings
-    }
-
-//    PomodoroModel {
-//        id: pomodoroQueue
-//        durationSettings: durationSettings
-//    }
-
-    IconGenerator {
-        id: pixmap
-    }
-
-    TrayIcon {
-        id: tray
-    }
-
-    NotificationSystem {
-        id: notifications
-    }
-
-
-
-
-
-    Settings {
-        id: durationSettings
-
-        property real timer: 0
-
-        property real pomodoro: 25 * 60
-        property real pause: 10 * 60
-        property real breakTime: 15 * 60
-        property int repeatBeforeBreak: 2
-
-        property alias masterData: masterModel.data
-
-        onMasterDataChanged: console.log("Reloaded:" + masterData)
-
-    }
-
-    Settings {
-        id: appSettings
-
-        property bool darkMode: false
-        property alias soundMuted: notifications.soundMuted
-        property bool splitToSequence: true
-
-        onDarkModeChanged: { canvas.requestPaint(); pixmap.requestPaint() }
-        onSplitToSequenceChanged: { canvas.requestPaint(); }
-    }
-
-    QTimer {
-        id: globalTimer
-    }
-
-    QtObject {
-        id: time
-        property real hours: 0
-        property real minutes: 0
-        property real seconds: 0
-
-        function updateTime(){
-            var currentDate = new Date()
-            hours = currentDate.getHours()
-            minutes = currentDate.getMinutes()
-            seconds = currentDate.getSeconds()
-        }
-    }
-
-
-
 
 }
 

@@ -19,7 +19,7 @@ MouseArea {
     property real _totalRotated: 0
     property real _totalRotatedSecs: 0
 
-    property real _totalRotatedSecsLimit: 18000
+    property real _totalRotatedSecsLimit: globalTimer.timerLimit
 
     onReleased: {
         cursorShape = Qt.OpenHandCursor

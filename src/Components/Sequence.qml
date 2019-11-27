@@ -11,16 +11,25 @@ Item {
     id: sequence
 
     property bool blockEdits: globalTimer.running
+    property bool showQueue: true
 
     function setCurrentItem(id){
         if(id === undefined){ id = -1 }
         sequenceView.currentIndex = id
     }
 
+    Header {
+        id: sequenceHeader
+    }
+
     Rectangle {
         id: sequenceSetLayout
         color: colors.getColor("bg")
-        anchors.fill: parent
+        anchors.top: sequenceHeader.bottom
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.topMargin: 0
 
         ListView {
             id: sequenceView
@@ -28,6 +37,7 @@ Item {
             spacing: 0
             orientation: ListView.Vertical
             clip: true
+            snapMode: ListView.SnapToItem
             footerPositioning: ListView.OverlayFooter
             currentIndex: -1
 
@@ -35,16 +45,12 @@ Item {
             property int itemHeight: 38
 
 
-            model: masterModel
 
-            header: Header {
-                id: sequenceHeader
-                z: 3
-            }
+            model: masterModel
 
             footer: Footer {
                 id: sequenceFooter
-                z: 3
+                z: 2
             }
 
             delegate: Item {
