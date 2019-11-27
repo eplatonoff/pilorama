@@ -68,6 +68,8 @@ Rectangle {
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: fontSize
+                renderType: Text.NativeRendering
+
                 color: appSettings.darkMode ? colors.accentDark : colors.accentLight
             }
         }

@@ -75,6 +75,9 @@ Item {
             horizontalAlignment: Text.AlignLeft
             color: colors.getColor("mid")
 
+            renderType: Text.NativeRendering
+
+
             property real duration: timer.getDuration()
 
             function notifyOn() {
@@ -116,6 +119,9 @@ Item {
             font.pixelSize: 22
             color: colors.getColor("dark")
 
+            renderType: Text.NativeRendering
+
+
             function seconds(){
                 if (pomodoroQueue.infiniteMode === true){
                     return timer.pad(Math.trunc(globalTimer.splitDuration % 60))
@@ -138,6 +144,9 @@ Item {
             anchors.leftMargin: 0
             font.pixelSize: 44
             color: colors.getColor("dark")
+
+            renderType: Text.NativeRendering
+
 
             function minutes(){
                 if (pomodoroQueue.infiniteMode){
@@ -164,6 +173,9 @@ Item {
             font.pixelSize: 44
             color: colors.getColor("dark")
 
+            renderType: Text.NativeRendering
+
+
         }
 
         Text {
@@ -178,6 +190,9 @@ Item {
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
             color: colors.getColor("dark")
+
+            renderType: Text.NativeRendering
+
 
         }
     }

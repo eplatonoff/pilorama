@@ -88,40 +88,49 @@ Rectangle {
 
     TextInput {
         id: itemName
+        width: 170
         text: model.name
         horizontalAlignment: Text.AlignLeft
         anchors.left: handler.right
         anchors.leftMargin: 26
         font.pointSize: parent.fontSize
-        font.strikeout : masterModel.get(index).duration === 0
+//        font.strikeout : model.duration === 0
 
+        layer.enabled: true
         wrapMode: TextEdit.NoWrap
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
+        renderType: Text.NativeRendering
 
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('light')
 
-        color: colors.getColor('dark')
+        color: model.duration === 0 ? colors.getColor('mid') : colors.getColor('dark')
         anchors.verticalCenter: parent.verticalCenter
 
-        onTextChanged: {
+        function acceptInput(){
             model.name = itemName.text
         }
+
+        onTextChanged: { acceptInput() }
+        onAccepted: { acceptInput() }
 
     }
 
     TextInput {
         id: itemtime
         width: 20
-        color: colors.getColor('dark')
+        color: model.duration === 0 ? colors.getColor('mid') : colors.getColor('dark')
         text: Math.trunc( model.duration / 60 )
 
-        validator: IntValidator { bottom:0; top: globalTimer.timerLimit / 60}
+        validator: IntValidator { bottom: 1; top: globalTimer.timerLimit / 60}
+        inputMethodHints: Qt.ImhDigitsOnly
 
         wrapMode: TextEdit.NoWrap
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
+        renderType: Text.NativeRendering
+
 
         horizontalAlignment: Text.AlignRight
         anchors.right: itemtimeMin.left
@@ -133,11 +142,15 @@ Rectangle {
 
         font.pointSize: parent.fontSize
 
-        onTextChanged: {
-            if( !itemtime.text || itemtime.text === 0 ) {
-                model.duration = 0
-            } else { model.duration = itemtime.text * 60 }
+        function acceptData() {
+            if( !itemtime.text || itemtime.text == "") {
+                model.duration = 60
+            } else{ model.duration = itemtime.text * 60 }
         }
+
+        onTextChanged: { acceptData() }
+        onAccepted: { acceptData() }
+        onFocusChanged: { acceptData() }
     }
 
     Text {
@@ -149,6 +162,8 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor('mid')
         font.pixelSize: parent.fontSize
+        renderType: Text.NativeRendering
+
     }
 
     ColorSelector {

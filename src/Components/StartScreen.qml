@@ -15,6 +15,7 @@ Item {
         sourceSize.height: 150
         sourceSize.width: 150
         antialiasing: true
+        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
         source: "../assets/img/play.svg"

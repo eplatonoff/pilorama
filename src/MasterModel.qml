@@ -12,14 +12,16 @@ ListModel {
     Component.onCompleted: load()
     Component.onDestruction: save()
 
+    property var demo: '[{"id":0,"name":"Demo","color":"red","duration":900}]'
+
 
 // Adds item to sequence
 
     function add(name, color, duration){
-        const n = name ?  name : defaultName + " " + (count + 1)
+        const n = name  ?  name : defaultName + " " + (count + 1)
         const c = color ? color : defaultColor
-        const d = duration ? duration : defaultDuration * 60
-        append({"id": count,"name": n, "color": c, "duration": d})
+        const d = duration !== undefined ? duration : defaultDuration * 60
+        append({"id": count, "name": n, "color": c, "duration": d})
         recalcIDs()
     }
 
@@ -66,12 +68,11 @@ ListModel {
 // Loads sequence from setting
 
     function load(){
-        if (data) {
-          clear()
-          var datamodel = JSON.parse(data)
-          for (var i = 0; i < datamodel.length; ++i) {
-              append(datamodel[i])
-          }
+        clear()
+        const list = !data || data === '[]' ? demo : data
+        const datamodel = JSON.parse(list)
+        for (var i = 0; i < datamodel.length; ++i) {
+            append(datamodel[i])
         }
     }
 

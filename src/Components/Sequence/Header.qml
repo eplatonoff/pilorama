@@ -28,6 +28,9 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: headingFontSize
         color: colors.getColor("dark")
+
+        renderType: Text.NativeRendering
+
     }
 
 

@@ -48,6 +48,9 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
             }
 
             Text {
@@ -60,6 +63,9 @@ Item {
                 horizontalAlignment: Text.AlignLeft
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
             }
 
             MouseArea {
@@ -91,6 +97,9 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
             }
 
             Text {
@@ -103,6 +112,9 @@ Item {
                 horizontalAlignment: Text.AlignLeft
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
             }
 
             MouseArea {
