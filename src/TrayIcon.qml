@@ -127,7 +127,7 @@ SystemTrayIcon {
         MenuItem {
             text: qsTr("Settings")
             onTriggered: {
-               if (content.currentItem === timerLayout) {content.push(prefsLayout)}
+               if (stack.currentItem === content) {stack.push(preferences)}
             }
         }
 

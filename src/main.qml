@@ -95,6 +95,16 @@ ApplicationWindow {
         id: colors
     }
 
+    FontLoader {
+        id: openSans;
+        source: "./assets/font/OpenSans-Regular.ttf"
+    }
+
+    Text {
+        // set default font
+        font.family: openSans
+    }
+
     MasterModel {
         id: masterModel
         data: data

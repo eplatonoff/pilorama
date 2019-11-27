@@ -78,5 +78,6 @@
         <file>assets/img/countdown.svg</file>
         <file>Components/Preferences/Header.qml</file>
         <file>Components/Preferences/BackButton.qml</file>
+        <file>assets/font/OpenSans-Regular.ttf</file>
     </qresource>
 </RCC>

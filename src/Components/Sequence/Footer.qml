@@ -12,7 +12,8 @@ Rectangle {
     Rectangle {
         id: addButton
 
-        height: 40
+        visible: !sequence.blockEdits
+        height: sequence.blockEdits ? 0 : 40
 
         color:  "transparent"
         radius: 3
@@ -23,6 +24,12 @@ Rectangle {
         anchors.leftMargin: 0
         anchors.right: parent.right
         anchors.rightMargin: 0
+
+        Behavior on height {
+            NumberAnimation {
+                property: "height"
+                duration: 150
+            }}
 
 
         MouseArea {
