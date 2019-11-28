@@ -1,0 +1,14 @@
+[
+	{"id":0,"name":"Brainstorm big ideas","color":"violet","duration":1200},
+	{"id":1,"name":"Break","color":"green","duration":300},
+	{"id":2,"name":"Evaluate","color":"yellow","duration":300},
+	{"id":3,"name":"Determine app content","color":"violet","duration":1200},
+	{"id":4,"name":"Rough wireframes","color":"violet","duration":1200},
+	{"id":5,"name":"Break","color":"green","duration":300},
+	{"id":6,"name":"Evaluate","color":"yellow","duration":300},
+	{"id":7,"name":"Refined wireframes","color":"red","duration":1200},
+	{"id":8,"name":"Visual design thinking","color":"red","duration":1200},
+	{"id":9,"name":"Break","color":"green","duration":300},
+	{"id":10,"name":"Evaluate","color":"yellow","duration":300},
+	{"id":11,"name":"Final clean sketches","color":"red","duration":1200}
+]
