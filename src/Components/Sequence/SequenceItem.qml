@@ -93,7 +93,7 @@ Rectangle {
         horizontalAlignment: Text.AlignLeft
         anchors.left: handler.right
         anchors.leftMargin: 26
-//        font.strikeout : model.duration === 0
+        font.strikeout : model.duration === 0
 
         layer.enabled: true
         wrapMode: TextEdit.NoWrap

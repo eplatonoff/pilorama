@@ -4,10 +4,30 @@ import QtGraphicalEffects 1.12
 Item {
     id: element
     visible: window.clockMode === "start"
-    width: 150
-    height: 150
+    width: 200
+    height: 200
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
+
+//    Image {
+//        id: startPomoBG
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        sourceSize.height: 200
+//        sourceSize.width: 200
+//        antialiasing: true
+//        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
+//        anchors.verticalCenter: parent.verticalCenter
+//        fillMode: Image.PreserveAspectFit
+//        source: "../assets/img/background.svg"
+
+//        ColorOverlay{
+//            id: startPomoBGOverlay
+//            anchors.fill: parent
+//            source: parent
+//            color: colors.getColor("light")
+//            antialiasing: true
+//        }
+//    }
 
     Image {
         id: startPomoIcon
