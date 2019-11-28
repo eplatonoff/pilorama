@@ -1,266 +1,64 @@
 import QtQuick 2.0
 
+import "Preferences"
+
 Item {
+    id: preferences
+    visible: false
+
+    property bool splitToSequence: false
+
+    property int cellHeight: 38
+
+    property int fontSize: 14
+    property int infoFontSize: 12
+
+    Header {
+        id: prefsHeader
+    }
 
     Column {
 
         id: prefs
 
-        spacing: 7
+        spacing: 0
 
-        property real dotSize: 10
-        property real dotSpacing: 3
-        property real cellHeight: 19
+        anchors.top: prefsHeader.bottom
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
 
-        anchors.topMargin: 40
-        anchors.fill: parent
-
-        Item {
-            id: pomoLine
-            height: parent.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Rectangle {
-                id: pomoDot
-                width: prefs.dotSize
-                height: prefs.dotSize
-                color: appSettings.darkMode ? colors.pomodoroDark : colors.pomodoroLight
-                radius: 30
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Text {
-                width: 115
-                height: 19
-                text: qsTr("pomodoro:")
-                color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: pomoDot.right
-                anchors.leftMargin: 7
-                font.pixelSize: 16
-            }
-
-
-            TextInput {
-                id: pomoTime
-                width: 30
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                text: durationSettings.pomodoro / 60
-                anchors.left: parent.left
-                anchors.leftMargin: 150
-                horizontalAlignment: Text.AlignHCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 16
-
-                onTextChanged: {durationSettings.pomodoro = pomoTime.text * 60}
-            }
-
-            Text {
-                width: 30
-                text: qsTr("min")
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: pomoTime.right
-                anchors.leftMargin: 3
-                font.pixelSize: 16
-            }
-
-        }
-
-        Item {
-            id: pauseLine
-            height: parent.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Rectangle {
-                id: pauseDot
-                width: prefs.dotSize
-                height: prefs.dotSize
-                color: appSettings.darkMode ? colors.shortBreakDark : colors.shortBreakLight
-                radius: 30
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Text {
-                width: 115
-                height: 19
-                text: qsTr("short break:")
-                color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: pauseDot.right
-                anchors.leftMargin: 7
-                font.pixelSize: 16
-            }
-
-
-            TextInput {
-                id: pauseTime
-                width: 30
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                text: durationSettings.pause / 60
-                anchors.left: parent.left
-                anchors.leftMargin: 150
-                horizontalAlignment: Text.AlignHCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 16
-
-                onTextChanged: {durationSettings.pause = pauseTime.text * 60}
-            }
-
-            Text {
-                width: 30
-                text: qsTr("min")
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: pauseTime.right
-                anchors.leftMargin: 3
-                font.pixelSize: 16
-            }
-
-        }
-
-        Item {
-            id: breakLine
-            height: parent.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Rectangle {
-                id: breakDot
-                width: prefs.dotSize
-                height: prefs.dotSize
-                color: appSettings.darkMode ? colors.longBreakDark : colors.longBreakLight
-                radius: 30
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Text {
-                width: 115
-                height: 19
-                text: qsTr("long break:")
-                color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: breakDot.right
-                anchors.leftMargin: 7
-                font.pixelSize: 16
-            }
-
-
-            TextInput {
-                id: breakTime
-                width: 30
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                text: durationSettings.breakTime / 60
-                anchors.left: parent.left
-                anchors.leftMargin: 150
-                horizontalAlignment: Text.AlignHCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 16
-
-                onTextChanged: {durationSettings.breakTime = breakTime.text * 60}
-            }
-
-            Text {
-                width: 30
-                text: qsTr("min")
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: breakTime.right
-                anchors.leftMargin: 3
-                font.pixelSize: 16
-            }
-
-        }
-
-        Item {
-            id: repeatLine
-            height: parent.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Text {
-                width: 115
-                height: 19
-                text: qsTr("long break every:")
-                color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 16
-            }
-
-
-            TextInput {
-                id: repeatTime
-                width: 30
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                text: durationSettings.repeatBeforeBreak
-                anchors.leftMargin: 150
-                anchors.left: parent.left
-                horizontalAlignment: Text.AlignHCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 16
-
-                onTextChanged: {durationSettings.repeatBeforeBreak = repeatTime.text}
-            }
-
-            Text {
-                width: 30
-                text: qsTr("pomodoro")
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: repeatTime.right
-                anchors.leftMargin: 3
-                font.pixelSize: 16
-            }
-
-        }
+        anchors.topMargin: 0
 
         Item {
             id: splitToSequence
-            height: parent.cellHeight
+            height: preferences.cellHeight
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: parent.left
             anchors.leftMargin: 0
 
-            Text {
-                id: splitToSequenceLabel
-                width: 115
-                height: 19
-                text: qsTr("split to pomodoro:")
-                color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                font.pixelSize: 16
+            Checkbox {
+                id: splitToSequenceCheck
+                checked: preferences.splitToSequence
             }
 
             Text {
-                id: splitToSequenceSetting
-                width: 30
-                color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
-                text: appSettings.splitToSequence
-                anchors.leftMargin: 150
-                anchors.left: parent.left
-                horizontalAlignment: Text.AlignLeft
+                id: splitToSequenceLabel
+                height: 19
+                text: qsTr("Split timer to sequence")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                color: colors.getColor("dark")
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 16
+                anchors.left: splitToSequenceCheck.right
+                anchors.leftMargin: 0
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
             }
+
 
             MouseArea {
                 id: splitToSequenceTrigger
@@ -268,16 +66,69 @@ Item {
                 cursorShape: Qt.PointingHandCursor
 
                 onReleased: {
-                    appSettings.splitToSequence = !appSettings.splitToSequence
+                    preferences.splitToSequence = !preferences.splitToSequence
                 }
             }
         }
+
+        Item {
+            id: onTop
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Checkbox {
+                id: onTopCheck
+                checked: window.alwaysOnTop
+            }
+
+            Text {
+                id: onTopLabel
+                height: 19
+                text: qsTr("Always on top")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: onTopCheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
+            }
+
+
+            MouseArea {
+                id: onTopTrigger
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    window.alwaysOnTop = !window.alwaysOnTop
+                }
+            }
+        }
+
+    }
+
+    Text {
+        id: help
+        text: '<html><a href="https://github.com/eplatonoff/qml-timer">project on github</a></html>'
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.pixelSize: infoFontSize
+
+        onLinkActivated: Qt.openUrlExternally(link)
 
     }
 }
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;autoSize:true;height:480;width:640}D{i:5;anchors_width:115}D{i:9;anchors_width:115}
 }
 ##^##*/

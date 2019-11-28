@@ -1,10 +1,8 @@
 import QtQuick 2.0
 import QtMultimedia 5.13
 
-import notifications 1.0
 
-
-NotificationSystem {
+QtObject {
     id: notifications
 
     property bool soundMuted: false
@@ -28,23 +26,12 @@ NotificationSystem {
         soundNotification.stop();
     }
 
-    function sendWithSound(type) {
+    function sendWithSound(name) {
         soundNotification.play();
-        send(type);
+        tray.send(name)
     }
 
     function sendFromItem(item) {
-        switch (item.type) {
-        case "pomodoro":
-            sendWithSound(NotificationSystem.POMODORO); break;
-        case "pause":
-            sendWithSound(NotificationSystem.PAUSE); break;
-        case "break":
-            sendWithSound(NotificationSystem.BREAK); break;
-        case "timer":
-            sendWithSound(NotificationSystem.TIMER); break;
-        default:
-            throw "unknown time segment type";
-        }
+        sendWithSound(masterModel.get(item.id).name)
     }
 }

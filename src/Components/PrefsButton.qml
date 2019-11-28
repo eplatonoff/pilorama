@@ -16,7 +16,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
 
         onReleased: {
-            content.currentItem === timerLayout ? content.push(prefsLayout) : content.pop()
+            stack.push(preferences)
         }
     }
 
@@ -25,14 +25,16 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         property bool prefsToggle: false
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
 
         ColorOverlay{
             id: prefsIconOverlay
             anchors.fill: parent
             source: parent
-            color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
+            color: colors.getColor("light")
             antialiasing: true
         }
     }

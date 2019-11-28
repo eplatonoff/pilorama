@@ -30,8 +30,10 @@ Item {
 
         property string iconDark: "../assets/img/sun.svg"
         property string iconLight: "../assets/img/moon.svg"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
 
         source: appSettings.darkMode ? iconDark : iconLight
 
@@ -39,7 +41,7 @@ Item {
             id: modeSwitchOverlay
             anchors.fill: parent
             source: parent
-            color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
+            color: colors.getColor('light')
             antialiasing: true
         }
     }

@@ -5,6 +5,8 @@ Timer {
     property real duration: 0
     property real splitDuration: 0
 
+    property real timerLimit: 17940
+
     onDurationChanged: {
         window.checkClockMode();
         time.updateTime();
@@ -14,6 +16,12 @@ Timer {
     interval: 1000
     running: false
     repeat: true
+    triggeredOnStart: true
+
+    onRunningChanged: {
+        pixmap.requestPaint();
+        canvas.requestPaint();
+    }
 
     onTriggered: {
 
@@ -22,25 +30,31 @@ Timer {
                 duration--;
 
             } else {
-                notifications.sendWithSound(NotificationSystem.STOP);
+                notifications.sendWithSound();
                 window.clockMode = "start";
                 pomodoroQueue.clear();
                 mouseArea._prevAngle = 0
                 mouseArea._totalRotatedSecs = 0
+                sequence.setCurrentItem(-1)
                 stop();
             }
         }
 
-        pomodoroQueue.drainTime(1);
+//        pomodoroQueue.showQueue()
+//        masterModel.showModel()
 
-        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
+        if(pomodoroQueue.infiniteMode || preferences.splitToSequence) {
+            sequence.setCurrentItem(pomodoroQueue.first().id)
+        } else { sequence.setCurrentItem() }
+
+        pomodoroQueue.drainTime(1);
 
         const first = pomodoroQueue.first();
 
         if (first) {
             splitDuration = first.duration;
 
-            const notificationsEnabled = pomodoroQueue.infiniteMode || appSettings.splitToSequence;
+            const notificationsEnabled = pomodoroQueue.infiniteMode || preferences.splitToSequence;
 
             if (notificationsEnabled)
                 if (splitDuration === pomodoroQueue.itemDurationBound(first))
@@ -49,6 +63,9 @@ Timer {
         } else
             splitDuration = 0;
 
+        tray.setTime()
         canvas.requestPaint();
+
+        //        pixmap.requestPaint();
     }
 }

@@ -5,7 +5,6 @@
 #include <QSystemTrayIcon>
 #include <QPixmap>
 #include <QApplication>
-#include <notifications/notificationsystem.h>
 #include <QQmlContext>
 
 void disable_app_nap();
@@ -27,8 +26,6 @@ int main(int argc, char *argv[])
     app.setOrganizationName("Some Humans");
     app.setOrganizationDomain("somehumans.com");
     app.setApplicationName("QML Timer");
-
-    qmlRegisterType<NotificationSystem>("notifications", 1, 0, "NotificationSystem");
 
     QQmlApplicationEngine engine;
 

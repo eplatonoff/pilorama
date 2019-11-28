@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.12
 
 Item {
+    id: element
 
     width: 50
     height: 50
@@ -18,8 +19,10 @@ Item {
 
         property string iconSound: "../assets/img/sound.svg"
         property string iconNoSound: "../assets/img/nosound.svg"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
 
 
         ColorOverlay{

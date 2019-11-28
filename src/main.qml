@@ -4,27 +4,49 @@ import QtQuick.Controls 2.13
 import Qt.labs.settings 1.0
 
 import "Components"
+import "Components/Sequence"
 
-Window {
+
+ApplicationWindow {
     id: window
     visible: true
-    width: 300
-    height: 300
+
+    x: 100
+    y: 100
+
+    width: 320
+    height: 600
+    flags: Qt.Window
+
+    minimumHeight: timerLayout.height + padding * 2 + 50
+    minimumWidth: timerLayout.width + padding * 2
 
     maximumWidth: width
-    maximumHeight: height
 
-    minimumWidth: width
-    minimumHeight: height
+    color: colors.getColor("bg")
+    title: qsTr("QML timer")
 
-    color: appSettings.darkMode ? colors.bgDark : colors.bgLight
-    title: qsTr("qml timer")
+    property real padding: 16
+    property bool expanded: true
+
+    property bool alwaysOnTop: false
 
     property string clockMode: "start"
 
-    onClockModeChanged: { canvas.requestPaint()}
+    onAlwaysOnTopChanged: { alwaysOnTop ? flags = Qt.WindowStaysOnTopHint : flags = Qt.Window }
+
+    onClockModeChanged: { canvas.requestPaint() }
+    onExpandedChanged: {
+        if(expanded === true){
+            height = padding * 2 + timerLayout.height + sequence.height
+        } else {
+            height = padding * 2 + timerLayout.height
+        }
+    }
+
 
     function checkClockMode (){
+
         if (pomodoroQueue.infiniteMode && globalTimer.running){
             clockMode = "pomodoro"
         } else if (!pomodoroQueue.infiniteMode){
@@ -34,80 +56,23 @@ Window {
         }
     }
 
-    StackView {
-        id: content
-        initialItem: timerLayout
+    Settings {
+        id: appSettings
 
-        anchors.rightMargin: 16
-        anchors.leftMargin: 16
-        anchors.bottomMargin: 16
-        anchors.topMargin: 16
-        anchors.fill: parent
+        property bool darkMode: false
+        property alias soundMuted: notifications.soundMuted
+        property alias splitToSequence: preferences.splitToSequence
 
-        Item {
-            id: timerLayout
+        property alias windowX: window.x
+        property alias windowY: window.y
 
-            Dials {
-                id: canvas
+        property alias windowHeight: window.height
 
-                MouseTracker {
-                    id: mouseArea}
-            }
+        property alias alwaysOnTop: window.alwaysOnTop
+        property alias showQueue: sequence.showQueue
 
-            StartScreen {
-                id: startControls
-            }
-
-            TimerScreen {
-                id: digitalClock
-            }
-        }
-
-        Preferences {
-            id: prefsLayout
-            visible: false
-        }
-
-    }
-
-    TrayIcon {
-        id: tray
-    }
-
-    NotificationSystem {
-        id: notifications
-    }
-
-
-    SoundButton {
-        id: soundButton
-        y: 16
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-    }
-
-    PrefsButton {
-        id: prefsButton
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.topMargin: 0
-    }
-
-    DarkModeButton {
-        id: darkModeButton
-        x: 16
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-    }
-
-    PomodoroModel {
-        id: pomodoroQueue
-        durationSettings: durationSettings
+        onDarkModeChanged: { canvas.requestPaint(); pixmap.requestPaint() }
+        onSplitToSequenceChanged: { canvas.requestPaint(); }
     }
 
     Settings {
@@ -119,21 +84,44 @@ Window {
         property real pause: 10 * 60
         property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
-    }
 
-    Settings {
-        id: appSettings
+        property alias masterData: masterModel.data
 
-        property bool darkMode: false
-        property alias soundMuted: notifications.soundMuted
-        property bool splitToSequence: false
+        onMasterDataChanged: console.log("Reloaded:" + masterData)
 
-        onDarkModeChanged: { canvas.requestPaint(); }
-        onSplitToSequenceChanged: { canvas.requestPaint(); }
     }
 
     Colors {
         id: colors
+    }
+
+    FontLoader {
+        id: openSans;
+        name: 'Helvetica'
+//        source: "./assets/font/SF-Pro-Display-Regular.otf"
+    }
+
+
+    MasterModel {
+        id: masterModel
+        data: data
+    }
+
+    ModelBurner {
+        id: pomodoroQueue
+        durationSettings: durationSettings
+    }
+
+    IconGenerator {
+        id: pixmap
+    }
+
+    TrayIcon {
+        id: tray
+    }
+
+    NotificationSystem {
+        id: notifications
     }
 
     QTimer {
@@ -154,8 +142,94 @@ Window {
         }
     }
 
+    StackView {
+        id: stack
+        anchors.rightMargin: window.padding
+        anchors.leftMargin: window.padding
+        anchors.bottomMargin: window.padding
+        anchors.topMargin: window.padding
+        anchors.fill: parent
 
+        initialItem: content
 
+        Item {
+        id: content
+
+        Item {
+            id: timerLayout
+            width: parent.width
+            height: width
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.top: parent.top
+
+            Dials {
+                id: canvas
+
+            }
+
+            MouseTracker {
+                id: mouseArea
+            }
+
+            StartScreen {
+                id: startControls
+            }
+
+            TimerScreen {
+                id: digitalClock
+            }
+
+            DarkModeButton {
+                id: darkModeButton
+                x: 238
+                y: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+            }
+
+            PrefsButton {
+                id: prefsButton
+                x: 238
+                y: 0
+                anchors.bottom: timerLayout.bottom
+                anchors.bottomMargin: 0
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+            }
+
+            SoundButton {
+                id: soundButton
+                x: 0
+                y: 486
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.bottom: timerLayout.bottom
+                anchors.bottomMargin: 0
+            }
+
+            ExternalDrop {
+                id: externalDrop
+            }
+
+        }
+
+        Sequence {
+            id: sequence
+            anchors.top: timerLayout.bottom
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 18
+        }
+    }
+
+        Preferences {
+                id: preferences
+        }
+    }
 
 }
 
@@ -166,13 +240,8 @@ Window {
 
 /*##^##
 Designer {
-    D{i:6;anchors_width:200;invisible:true}D{i:2;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}
-D{i:7;anchors_width:200;invisible:true}D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:8;anchors_height:200;anchors_width:200;anchors_x:50;anchors_y:55}D{i:9;anchors_height:40;anchors_x:99;anchors_y:54;invisible:true}
-D{i:10;anchors_height:40;anchors_x:16;anchors_y:16;invisible:true}D{i:11;anchors_height:200;anchors_width:200;anchors_x:44;anchors_y:55}
-D{i:13;anchors_height:200;anchors_width:200;anchors_x:99;anchors_y:54}D{i:14;anchors_x:99;anchors_y:54}
-D{i:15;anchors_x:104;anchors_y:54;invisible:true}D{i:16;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
-D{i:17;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0;invisible:true}
+    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
+D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
 }
 ##^##*/
 

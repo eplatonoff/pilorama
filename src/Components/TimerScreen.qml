@@ -9,13 +9,36 @@ Item {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
 
-    property string min: "00"
-    property string sec: "00"
-
     function pad(value){
         if (value < 10) {return "0" + value
         } else {return value}
     }
+
+    function getDuration(){
+        if(!pomodoroQueue.infiniteMode){
+          return globalTimer.duration
+        } else {
+          return globalTimer.splitDuration
+        }
+    }
+
+    function count(duration){
+        let d = duration
+
+        let h = Math.floor( d / 3600 )
+        let m = Math.floor( d / 60 ) - h * 60
+        let s = d - (h * 3600 + m * 60)
+
+        const t = [ h, m, s ]
+        return t
+    }
+
+    MouseArea {
+        id: triggerBlocker
+        anchors.fill: parent
+        propagateComposedEvents: true
+    }
+
     Item {
         id: dateTime
         width: 60
@@ -48,7 +71,7 @@ Item {
             id: digitalTime
             width: 45
             height: 15
-            text: showFuture()
+            text: notifyOn()
             anchors.left: bellIcon.right
             anchors.leftMargin: 2
             anchors.verticalCenter: parent.verticalCenter
@@ -56,34 +79,27 @@ Item {
             font.pixelSize: 14
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+            color: colors.getColor("mid")
 
-            function showFuture() {
-                var extraTime;
-                if (!pomodoroQueue.infiniteMode){
-                    extraTime = globalTimer.duration
-                } else {
-                    switch (pomodoroQueue.first().type) {
-                    case "pomodoro":
-                        extraTime = durationSettings.pomodoro
-                        break;
-                    case "pause":
-                        extraTime =  durationSettings.pause;
-                        break;
-                    case "break":
-                        extraTime = durationSettings.breakTime;
-                        break;
-                    default:
-                        throw "can't calculate notification time";
-                    }
+            renderType: Text.NativeRendering
 
-                }
-                var future = time.hours * 3600 + time.minutes *60 + time.seconds + extraTime
-                var h = Math.trunc(future / 3600)
-                var m = Math.trunc((future - h * 3600) / 60)
-                return timer.pad(h) + ":" + timer.pad(m)
+
+            property real duration: timer.getDuration()
+
+            function notifyOn() {
+                let today = new Date()
+                let _h = today.getHours()
+                let _m = today.getMinutes()
+                let _s = today.getSeconds()
+
+                let _t = _h * 3600 + _m * 60 + _s
+                let t = _t + getDuration()
+
+                t = t >= 86400 ? t % 86400 : t
+
+                let resulting = pad(count(t)[0]) + ":" + pad(count(t)[1])
+                return resulting
             }
-
         }
     }
 
@@ -99,7 +115,7 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: seconds();
+            text: !globalTimer.running ? "min" : pad(count(getDuration())[2]);
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
             anchors.top: digitalMin.top
@@ -107,7 +123,10 @@ Item {
             anchors.left: digitalMin.right
             anchors.leftMargin: 3
             font.pixelSize: 22
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
+
+            renderType: Text.NativeRendering
+
 
             function seconds(){
                 if (pomodoroQueue.infiniteMode === true){
@@ -123,18 +142,24 @@ Item {
         Text {
             id: digitalMin
             width: 50
-            text: minutes()
+            text: pad(count(getDuration())[1])
             anchors.verticalCenter: parent.verticalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
             anchors.left: digitalSeparator.right
             anchors.leftMargin: 0
             font.pixelSize: 44
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
+
+            renderType: Text.NativeRendering
+
 
             function minutes(){
                 if (pomodoroQueue.infiniteMode){
                     return timer.pad(Math.trunc(globalTimer.splitDuration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
+
+//                    return timer.pad(Math.trunc(globalTimer.splitDuration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
+
                 } else {
                     return timer.pad(Math.trunc(globalTimer.duration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
                 }
@@ -152,36 +177,29 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
+
+            renderType: Text.NativeRendering
+
 
         }
 
         Text {
             id: digitalHour
-            width: 0
-            text: hours()
+            width: count(getDuration())[0] > 0 ? 35 : 0
+            text: count(getDuration())[0]
             anchors.left: parent.left
             anchors.leftMargin: 0
             anchors.verticalCenter: parent.verticalCenter
-            visible: false
+            visible: count(getDuration())[0] > 0 ? true : false
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
-            color: appSettings.darkMode ? colors.accentTextDark : colors.accentTextLight
+            color: colors.getColor("dark")
 
-            function hours(){
-                var h
-                if (pomodoroQueue.infiniteMode){
-                   h = Math.trunc(globalTimer.splitDuration / 3600)
-                } else {
-                   h = Math.trunc(globalTimer.duration / 3600)
-                }
+            renderType: Text.NativeRendering
 
-                visible = h > 0 ? true : false
-                width = h > 0 ? 35 : 0
 
-                return h
-            }
         }
     }
 
