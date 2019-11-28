@@ -93,14 +93,17 @@ Rectangle {
         horizontalAlignment: Text.AlignLeft
         anchors.left: handler.right
         anchors.leftMargin: 26
-        font.pointSize: parent.fontSize
 //        font.strikeout : model.duration === 0
 
         layer.enabled: true
         wrapMode: TextEdit.NoWrap
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
+
+        font.pointSize: parent.fontSize
+        font.family: openSans.name
         renderType: Text.NativeRendering
+
 
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('light')

@@ -33,6 +33,12 @@ Item {
         return t
     }
 
+    MouseArea {
+        id: triggerBlocker
+        anchors.fill: parent
+        propagateComposedEvents: true
+    }
+
     Item {
         id: dateTime
         width: 60

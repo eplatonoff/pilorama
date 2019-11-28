@@ -79,5 +79,8 @@
         <file>Components/Preferences/Header.qml</file>
         <file>Components/Preferences/BackButton.qml</file>
         <file>assets/font/OpenSans-Regular.ttf</file>
+        <file>assets/font/SF-Pro-Display-Regular.otf</file>
+        <file>Components/Preferences/Checkbox.qml</file>
+        <file>assets/img/check.svg</file>
     </qresource>
 </RCC>

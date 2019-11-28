@@ -97,13 +97,10 @@ ApplicationWindow {
 
     FontLoader {
         id: openSans;
-        source: "./assets/font/OpenSans-Regular.ttf"
+        name: 'Helvetica'
+//        source: "./assets/font/SF-Pro-Display-Regular.otf"
     }
 
-    Text {
-        // set default font
-        font.family: openSans
-    }
 
     MasterModel {
         id: masterModel

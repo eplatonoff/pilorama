@@ -7,7 +7,10 @@ Item {
     visible: false
 
     property bool splitToSequence: false
-    property int fontSize: 16
+
+    property int cellHeight: 38
+
+    property int fontSize: 14
     property int infoFontSize: 12
 
     Header {
@@ -18,11 +21,8 @@ Item {
 
         id: prefs
 
-        spacing: 7
+        spacing: 0
 
-        property real dotSize: 10
-        property real dotSpacing: 3
-        property real cellHeight: 19
         anchors.top: prefsHeader.bottom
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -32,20 +32,26 @@ Item {
 
         Item {
             id: splitToSequence
-            height: parent.cellHeight
+            height: preferences.cellHeight
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: parent.left
             anchors.leftMargin: 0
 
+            Checkbox {
+                id: splitToSequenceCheck
+                checked: preferences.splitToSequence
+            }
+
             Text {
                 id: splitToSequenceLabel
-                width: 115
                 height: 19
-                text: qsTr("Split timer to sequence:")
-                color: colors.getColor("mid")
+                text: qsTr("Split timer to sequence")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                color: colors.getColor("dark")
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
+                anchors.left: splitToSequenceCheck.right
                 anchors.leftMargin: 0
                 font.pixelSize: fontSize
 
@@ -53,20 +59,6 @@ Item {
 
             }
 
-            Text {
-                id: splitToSequenceSetting
-                width: 30
-                color: colors.getColor("dark")
-                text:  preferences.splitToSequence
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                horizontalAlignment: Text.AlignLeft
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-            }
 
             MouseArea {
                 id: splitToSequenceTrigger
@@ -81,41 +73,33 @@ Item {
 
         Item {
             id: onTop
-            height: parent.cellHeight
+            height: preferences.cellHeight
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: parent.left
             anchors.leftMargin: 0
 
+            Checkbox {
+                id: onTopCheck
+                checked: window.alwaysOnTop
+            }
+
             Text {
                 id: onTopLabel
-                width: 115
                 height: 19
-                text: qsTr("Always on top:")
-                color: colors.getColor("mid")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-            }
-
-            Text {
-                id: onTopSetting
-                width: 30
-                color: colors.getColor("dark")
-                text: window.alwaysOnTop
+                text: qsTr("Always on top")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
-                horizontalAlignment: Text.AlignLeft
+                anchors.left: onTopCheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: fontSize
 
                 renderType: Text.NativeRendering
 
             }
+
 
             MouseArea {
                 id: onTopTrigger
@@ -145,6 +129,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;autoSize:true;height:480;width:640}D{i:5;anchors_width:115}D{i:9;anchors_width:115}
 }
 ##^##*/
