@@ -128,7 +128,7 @@ Item {
             Text {
                 id: closeOnQuitLabel
                 height: 19
-                text: qsTr("On quit hide in system tray ")
+                text: qsTr("On close hide to system tray ")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.left: closeOnQuitCheck.right
