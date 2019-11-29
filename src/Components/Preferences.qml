@@ -112,6 +112,47 @@ Item {
             }
         }
 
+        Item {
+            id: closeOnQuit
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Checkbox {
+                id: closeOnQuitCheck
+                checked: !window.quitOnClose
+            }
+
+            Text {
+                id: closeOnQuitLabel
+                height: 19
+                text: qsTr("On quit hide in system tray ")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: closeOnQuitCheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
+            }
+
+
+            MouseArea {
+                id: closeOnQuitTrigger
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    window.quitOnClose = !window.quitOnClose
+                }
+            }
+        }
+
     }
 
     Text {

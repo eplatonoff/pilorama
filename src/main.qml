@@ -30,8 +30,16 @@ ApplicationWindow {
     property bool expanded: true
 
     property bool alwaysOnTop: false
+    property bool quitOnClose: true
 
     property string clockMode: "start"
+
+    onClosing: {
+        if(!quitOnClose) {
+            close.accepted = false
+            window.hide()
+        }
+    }
 
     onAlwaysOnTopChanged: { alwaysOnTop ? flags = Qt.WindowStaysOnTopHint : flags = Qt.Window }
 
@@ -69,6 +77,7 @@ ApplicationWindow {
         property alias windowHeight: window.height
 
         property alias alwaysOnTop: window.alwaysOnTop
+        property alias quitOnClose: window.quitOnClose
         property alias showQueue: sequence.showQueue
 
         onDarkModeChanged: { canvas.requestPaint(); pixmap.requestPaint() }

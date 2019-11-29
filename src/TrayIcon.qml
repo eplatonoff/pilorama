@@ -96,7 +96,7 @@ SystemTrayIcon {
             onTriggered: {
                 if (globalTimer.running) {
 
-                    pomodoroQueue.infiniteMode = false
+                    pomodoroQueue.infiniteMode = false;
                     pomodoroQueue.clear();
 
                     mouseArea._prevAngle = 0
@@ -108,6 +108,8 @@ SystemTrayIcon {
                     window.clockMode = "start"
 
                     notifications.stopSound();
+                    sequence.setCurrentItem(-1)
+
                 } else {
                     window.clockMode = "pomodoro"
                     pomodoroQueue.infiniteMode = true
@@ -134,8 +136,19 @@ SystemTrayIcon {
         MenuSeparator {}
 
         MenuItem {
+            text: "Show " + window.title
+            onTriggered: {
+                window.raise()
+                window.show()
+            }
+        }
+
+        MenuItem {
             text: qsTr("Quit")
-            onTriggered: Qt.quit()
+            onTriggered: {
+                window.close()
+                Qt.quit()
+            }
         }
     }
 }
