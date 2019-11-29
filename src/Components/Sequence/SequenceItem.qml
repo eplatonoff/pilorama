@@ -147,13 +147,13 @@ Rectangle {
 
         function acceptData() {
             if( !itemtime.text || itemtime.text == "") {
-                model.duration = 60
+                model.duration = 0
             } else{ model.duration = itemtime.text * 60 }
         }
 
         onTextChanged: { acceptData() }
-        onAccepted: { acceptData() }
-        onFocusChanged: { acceptData() }
+        onAccepted: { acceptData(); itemtime.text = model.duration / 60}
+        onFocusChanged: { acceptData(); itemtime.text = model.duration / 60 }
     }
 
     Text {

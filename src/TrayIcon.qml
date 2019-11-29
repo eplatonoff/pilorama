@@ -82,6 +82,11 @@ SystemTrayIcon {
         showMessage(window.title, message )
     }
 
+    function popUp(){
+        window.raise()
+        window.show()
+    }
+
     menu: Menu {
 
        MenuItem {
@@ -114,8 +119,7 @@ SystemTrayIcon {
                     window.clockMode = "pomodoro"
                     pomodoroQueue.infiniteMode = true
                     globalTimer.start()
-                    tray.messageText = "Pomodoro started. Click to show timer"
-
+                    notifications.sendFromItem(pomodoroQueue.first())
                 }
 
             }
@@ -129,7 +133,10 @@ SystemTrayIcon {
         MenuItem {
             text: qsTr("Settings")
             onTriggered: {
-               if (stack.currentItem === content) {stack.push(preferences)}
+               if (stack.currentItem === content) {
+                   popUp()
+                   stack.push(preferences)
+               }
             }
         }
 
@@ -138,8 +145,7 @@ SystemTrayIcon {
         MenuItem {
             text: "Show " + window.title
             onTriggered: {
-                window.raise()
-                window.show()
+                popUp()
             }
         }
 
