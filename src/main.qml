@@ -41,7 +41,7 @@ ApplicationWindow {
         }
     }
 
-    onAlwaysOnTopChanged: { alwaysOnTop ? flags = Qt.WindowStaysOnTopHint : flags = Qt.Window }
+    onAlwaysOnTopChanged: { alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window }
 
     onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
