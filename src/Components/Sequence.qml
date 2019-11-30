@@ -20,14 +20,23 @@ Item {
 
     Header {
         id: sequenceHeader
+        z: 3
+    }
+
+    Footer {
+        id: sequenceFooter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        z: 3
     }
 
     Rectangle {
         id: sequenceSetLayout
         color: colors.getColor("bg")
+        anchors.bottomMargin: 0
         anchors.top: sequenceHeader.bottom
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.bottom: sequenceFooter.top
         anchors.left: parent.left
         anchors.topMargin: 0
 
@@ -44,14 +53,7 @@ Item {
             property int itemWidth: width
             property int itemHeight: 38
 
-
-
             model: masterModel
-
-            footer: Footer {
-                id: sequenceFooter
-                z: 2
-            }
 
             delegate: Item {
                 id: delegateItem
