@@ -15,6 +15,19 @@ Rectangle {
     property bool currentItem: delegateItem.ListView.isCurrentItem
 
     property bool dim: sequence.blockEdits - currentItem
+    property bool splitToSequence: preferences.splitToSequence
+
+    function dimmer() {
+        const color = colors.getColor('dark')
+        const dimColor = colors.getColor('mid')
+        if (!splitToSequence && globalTimer.duration){
+            return dimColor
+        } else if (model.duration === 0){
+            return dimColor
+        } else {
+            return color
+        }
+    }
 
     Drag.active: itemDragTrigger.drag.active
     Drag.hotSpot.x: width / 2
@@ -93,7 +106,7 @@ Rectangle {
         horizontalAlignment: Text.AlignLeft
         anchors.left: handler.right
         anchors.leftMargin: 26
-        font.strikeout : model.duration === 0
+//        font.strikeout : model.duration === 0
 
         layer.enabled: true
         wrapMode: TextEdit.NoWrap
@@ -108,7 +121,7 @@ Rectangle {
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('light')
 
-        color: model.duration === 0 ? colors.getColor('mid') : colors.getColor('dark')
+        color: sequenceItem.dimmer()
         anchors.verticalCenter: parent.verticalCenter
 
         function acceptInput(){
@@ -123,7 +136,7 @@ Rectangle {
     TextInput {
         id: itemtime
         width: 20
-        color: model.duration === 0 ? colors.getColor('mid') : colors.getColor('dark')
+        color: sequenceItem.dimmer()
         text: Math.trunc( model.duration / 60 )
 
         validator: IntValidator { bottom: 1; top: globalTimer.timerLimit / 60}

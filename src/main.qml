@@ -24,7 +24,7 @@ ApplicationWindow {
     maximumWidth: width
 
     color: colors.getColor("bg")
-    title: qsTr("QML timer")
+    title: qsTr("Pilorama")
 
     property real padding: 16
     property bool expanded: true

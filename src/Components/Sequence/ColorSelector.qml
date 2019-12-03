@@ -30,6 +30,20 @@ Rectangle {
 
     }
 
+    function dimmer(color) {
+        const dimColor = colors.getColor('light')
+        if (!splitToSequence && globalTimer.duration){
+            colorSelector.blockAction = true
+            return dimColor
+        } else if (model.duration === 0){
+            colorSelector.blockAction = true
+            return dimColor
+        } else {
+            colorSelector.blockAction = false
+            return color
+        }
+    }
+
     MouseArea {
 
         visible: !colorSelector.blockAction
@@ -101,7 +115,7 @@ Rectangle {
             Rectangle {
                 width: 13
                 height: 13
-                color: colors.getColor(model.color)
+                color: colorSelector.dimmer(colors.getColor(model.color))
                 radius: 30
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
