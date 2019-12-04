@@ -34,6 +34,22 @@ ApplicationWindow {
 
     property string clockMode: "start"
 
+    SystemPalette{
+        id: systemPalette
+
+        property color lightColor: '#ffffff'
+        property bool sysemDarkMode: base !== lightColor
+
+        onSysemDarkModeChanged: setSystemColors()
+        Component.onCompleted: setSystemColors()
+
+        function setSystemColors(){
+            if(appSettings.followSystemTheme){
+                appSettings.darkMode = sysemDarkMode
+            }
+        }
+    }
+
     onClosing: {
         if(!quitOnClose) {
             close.accepted = false
@@ -68,6 +84,8 @@ ApplicationWindow {
         id: appSettings
 
         property bool darkMode: false
+        property bool followSystemTheme: true
+
         property alias soundMuted: notifications.soundMuted
         property alias splitToSequence: preferences.splitToSequence
 

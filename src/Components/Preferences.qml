@@ -153,11 +153,52 @@ Item {
             }
         }
 
+        Item {
+            id: followSystemTheme
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Checkbox {
+                id: followSystemThemeCheck
+                checked: appSettings.followSystemTheme
+            }
+
+            Text {
+                id: followSystemThemeLabel
+                height: 19
+                text: qsTr("Follow system color theme")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: followSystemThemeCheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+
+            }
+
+
+            MouseArea {
+                id: followSystemThemeTrigger
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    appSettings.followSystemTheme = !appSettings.followSystemTheme
+                }
+            }
+        }
+
     }
 
     Text {
         id: help
-        text: '<html><a href="https://github.com/eplatonoff/qml-timer">project on github</a></html>'
+        text: '<html><a href="https://github.com/eplatonoff/pilorama">project on github</a></html>'
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.horizontalCenter: parent.horizontalCenter
