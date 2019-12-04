@@ -1,4 +1,4 @@
-# qml-timer
+# Pilorama
 
 ## Building on Archlinux
 ```
