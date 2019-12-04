@@ -163,7 +163,6 @@ ListModel {
 
     function _createBatch() {
         changeQueue( masterModel.totalDuration() );
-        console.log("batch created");
     }
 
     function showQueue(){

@@ -48,6 +48,7 @@ Rectangle {
         }
 
         Item {
+
             width: 88
             height: 20
             anchors.horizontalCenter: parent.horizontalCenter

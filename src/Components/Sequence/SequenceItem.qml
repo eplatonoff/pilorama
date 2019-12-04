@@ -20,7 +20,7 @@ Rectangle {
     function dimmer() {
         const color = colors.getColor('dark')
         const dimColor = colors.getColor('mid')
-        if (!splitToSequence && globalTimer.duration){
+        if (!splitToSequence){
             return dimColor
         } else if (model.duration === 0){
             return dimColor

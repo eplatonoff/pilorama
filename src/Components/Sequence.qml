@@ -10,7 +10,7 @@ import ".."
 Item {
     id: sequence
 
-    property bool blockEdits: globalTimer.running
+    property bool blockEdits: globalTimer.duration || globalTimer.running
     property bool showQueue: true
 
     function setCurrentItem(id){
