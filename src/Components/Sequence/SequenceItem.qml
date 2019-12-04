@@ -10,6 +10,8 @@ Rectangle {
     anchors.verticalCenter: parent.verticalCenter
     color: colors.getColor('bg')
 
+    Behavior on color { ColorAnimation { duration: 200 }}
+
     property real fontSize: 14
     property int dragItemIndex: index
     property bool currentItem: delegateItem.ListView.isCurrentItem

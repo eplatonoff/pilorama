@@ -6,6 +6,7 @@ Item {
 
     width: 50
     height: 50
+    visible: !appSettings.followSystemTheme
 
     MouseArea {
         id: modeSwitchArea

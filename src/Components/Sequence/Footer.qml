@@ -5,7 +5,7 @@ Rectangle {
     height: 50
     width: parent.width
     anchors.bottomMargin: 0
-    color: appSettings.darkMode ? colors.bgDark : colors.bgLight
+    color: "transparent"
 
     property real fontSize: 14
 

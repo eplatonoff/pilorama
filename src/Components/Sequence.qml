@@ -32,7 +32,7 @@ Item {
 
     Rectangle {
         id: sequenceSetLayout
-        color: colors.getColor("bg")
+        color: 'transparent'
         anchors.bottomMargin: 0
         anchors.top: sequenceHeader.bottom
         anchors.right: parent.right

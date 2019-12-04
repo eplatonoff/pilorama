@@ -26,6 +26,8 @@ ApplicationWindow {
     color: colors.getColor("bg")
     title: qsTr("Pilorama")
 
+    Behavior on color { ColorAnimation { duration: 200 } }
+
     property real padding: 16
     property bool expanded: true
 
@@ -39,9 +41,12 @@ ApplicationWindow {
 
         property color lightColor: '#ffffff'
         property bool sysemDarkMode: base !== lightColor
+        property alias follow: appSettings.followSystemTheme
 
         onSysemDarkModeChanged: setSystemColors()
+        onFollowChanged: setSystemColors()
         Component.onCompleted: setSystemColors()
+
 
         function setSystemColors(){
             if(appSettings.followSystemTheme){

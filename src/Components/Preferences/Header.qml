@@ -4,7 +4,7 @@ Rectangle {
     id: rectangle
     height: 50
     width: parent.width
-    color: colors.getColor("bg")
+    color: "transparent"
 
     property real headingFontSize: 18
 

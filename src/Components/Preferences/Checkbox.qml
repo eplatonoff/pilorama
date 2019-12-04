@@ -23,7 +23,7 @@ Item {
     Rectangle{
         width: 16
         height: 16
-        color: colors.getColor('bg')
+        color: 'transparent'
         border.color: colors.getColor('light')
         radius: 3
         border.width: 2
