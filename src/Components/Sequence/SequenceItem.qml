@@ -16,13 +16,14 @@ Rectangle {
     property int dragItemIndex: index
     property bool currentItem: delegateItem.ListView.isCurrentItem
 
-    property bool dim: sequence.blockEdits - currentItem
+//    property bool dim: sequence.blockEdits - currentItem
     property bool splitToSequence: preferences.splitToSequence
 
     function dimmer() {
         const color = colors.getColor('dark')
         const dimColor = colors.getColor('mid')
-        if (!splitToSequence){
+
+         if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.duration){
             return dimColor
         } else if (model.duration === 0){
             return dimColor

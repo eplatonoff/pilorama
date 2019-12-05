@@ -13,8 +13,9 @@ Rectangle {
     Rectangle {
         id: layoutDivider
         height: 1
-        width: parent.width
+        width: parent.width - 6
         color: colors.getColor("light")
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
 
         property real padding: 18

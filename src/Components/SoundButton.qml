@@ -20,9 +20,9 @@ Item {
         property string iconSound: "../assets/img/sound.svg"
         property string iconNoSound: "../assets/img/nosound.svg"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 3
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 3
 
 
         ColorOverlay{

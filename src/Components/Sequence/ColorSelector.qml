@@ -100,7 +100,7 @@ Rectangle {
         interactive: false
         anchors.fill: parent
         orientation: ListView.Horizontal
-        spacing: 4
+        spacing: 2
 
         Behavior on opacity { NumberAnimation{properties: "opacity"; duration: 100}}
 

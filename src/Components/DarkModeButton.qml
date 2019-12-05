@@ -32,9 +32,9 @@ Item {
         property string iconDark: "../assets/img/sun.svg"
         property string iconLight: "../assets/img/moon.svg"
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: 3
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 3
 
         source: appSettings.darkMode ? iconDark : iconLight
 

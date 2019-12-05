@@ -15,7 +15,7 @@ SystemTrayIcon {
     property real dialTime: 0
     property real runningTime: 0
 
-    onMessageClicked: window.visible
+    onMessageClicked: popUp()
     onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
 
 
@@ -79,7 +79,7 @@ SystemTrayIcon {
 
     function send(name){
         var message = name ? name + " started" : "Time ran out"
-        showMessage(window.title, message )
+        showMessage(window.title, message, pixmap.data )
     }
 
     function popUp(){

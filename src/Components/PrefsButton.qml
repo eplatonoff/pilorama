@@ -26,9 +26,9 @@ Item {
 
         property bool prefsToggle: false
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 3
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 3
 
         ColorOverlay{
             id: prefsIconOverlay

@@ -8,10 +8,10 @@ Canvas {
     property real centreY : height / 2
 
     property real mainTurnsWidth: 2
-    property real mainTurnsPadding: 4
+    property real mainTurnsPadding: 6
 
     property real mainWidth: 4
-    property real mainPadding: 6
+    property real mainPadding: 8
 
     property real fakeWidth: 12
     property real fakePadding: 10

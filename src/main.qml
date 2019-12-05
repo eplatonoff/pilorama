@@ -272,8 +272,8 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
-D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54;invisible:true}
+    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
+D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
 }
 ##^##*/
 

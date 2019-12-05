@@ -14,6 +14,8 @@ Canvas {
     property real centreX : 32 / 2
     property real centreY : 32 / 2
 
+    property var data
+
 
     onPaint: {
         var trx = getContext("2d");
@@ -44,7 +46,7 @@ Canvas {
 
     onPainted: {
 //        tray.pixmap = './assets/tray/static.svg'
-//        tray.pixmap = toDataURL('image/png')
+        pixmap.data = toDataURL('image/png')
     }
 
 }
