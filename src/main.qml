@@ -221,8 +221,6 @@ ApplicationWindow {
 
             DarkModeButton {
                 id: darkModeButton
-                x: 238
-                y: 0
                 anchors.top: parent.top
                 anchors.topMargin: 0
                 anchors.right: parent.right
@@ -232,12 +230,20 @@ ApplicationWindow {
 
             SoundButton {
                 id: soundButton
-                x: 0
-                anchors.top: parent.top
-                anchors.topMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
             }
+
+
+//            PreferencesButton {
+//                id: preferencesButton
+//                anchors.top: parent.top
+//                anchors.topMargin: 0
+//                anchors.left: parent.left
+//                anchors.leftMargin: 0
+//            }
 
             ExternalDrop {
                 id: externalDrop
@@ -251,7 +257,7 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.topMargin: 6
+            anchors.topMargin: 18
         }
         }
 

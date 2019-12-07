@@ -15,7 +15,7 @@ Canvas {
 
     property real fakeWidth: 12
     property real fakePadding: 10
-    property real fakeDash: 1
+    property real fakeDash: 2
     property real fakeGrades: 180
 
     property real calibrationWidth: 4

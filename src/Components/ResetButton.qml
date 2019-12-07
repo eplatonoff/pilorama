@@ -1,55 +1,29 @@
 import QtQuick 2.0
 
 Item{
-    id: element
+    id: button
 
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 0
-    anchors.right: parent.right
-    anchors.rightMargin: 25
-    anchors.left: parent.left
-    anchors.leftMargin: 25
+    width: 85
+    height: 35
+
+    property string label: 'Button'
 
     Rectangle {
-        width: 90
-        height: 36
         color: "transparent"
-        border.color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
+        border.color: colors.getColor("light")
         border.width: 2
-        radius: 22.5
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-
+        radius: 22
+        anchors.fill: parent
 
         Text {
-            id: digitalClockReset
-            text: qsTr("Reset")
+            id: buttonText
+            text: button.label
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.fill: parent
             font.pixelSize: 15
-            color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+            color: colors.getColor("mid")
 
-        }
-
-        MouseArea {
-            id: digitalClockResetTrigger
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
-
-            onReleased: {
-                pomodoroQueue.infiniteMode = false;
-                pomodoroQueue.clear();
-                mouseArea._prevAngle = 0
-                mouseArea._totalRotatedSecs = 0
-                globalTimer.duration = 0
-                globalTimer.stop()
-                window.clockMode = "start"
-                notifications.stopSound();
-                sequence.setCurrentItem(-1)
-            }
         }
     }
 }

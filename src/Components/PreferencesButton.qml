@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.12
 
 Item {
-    id: element
+
     width: 50
     height: 50
 
@@ -23,11 +23,11 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         property bool prefsToggle: false
+        anchors.top: parent.top
+        anchors.topMargin: 3
+        anchors.left: parent.left
+        anchors.leftMargin: 3
 
-        anchors.right: parent.right
-        anchors.rightMargin: 3
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 3
 
         ColorOverlay{
             id: prefsIconOverlay

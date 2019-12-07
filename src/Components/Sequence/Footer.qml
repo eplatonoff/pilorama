@@ -78,7 +78,7 @@ Rectangle {
                     id: addIconOverlay
                     anchors.fill: parent
                     source: parent
-                    color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+                    color: colors.getColor("light")
                     antialiasing: true
                 }
             }
@@ -91,7 +91,7 @@ Rectangle {
                 font.pixelSize: fontSize
                 renderType: Text.NativeRendering
 
-                color: colors.getColor("dark")
+                color: colors.getColor("mid")
             }
         }
 

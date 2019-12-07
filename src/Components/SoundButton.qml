@@ -19,8 +19,8 @@ Item {
 
         property string iconSound: "../assets/img/sound.svg"
         property string iconNoSound: "../assets/img/nosound.svg"
-        anchors.top: parent.top
-        anchors.topMargin: 4
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 3
         anchors.left: parent.left
         anchors.leftMargin: 3
 

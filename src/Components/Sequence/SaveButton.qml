@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.12
 
 Item {
 
-    width: 28
+    width: 30
     height: parent.height
 
     Image {

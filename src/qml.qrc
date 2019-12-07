@@ -26,7 +26,7 @@
         <file>Components/TimerScreen.qml</file>
         <file>Components/Preferences.qml</file>
         <file>Components/DarkModeButton.qml</file>
-        <file>Components/PrefsButton.qml</file>
+        <file>Components/PreferencesButton.qml</file>
         <file>Components/Sequence.qml</file>
         <file>Components/Sequence/SequenceItem.qml</file>
         <file>assets/img/close.svg</file>

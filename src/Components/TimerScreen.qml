@@ -205,9 +205,30 @@ Item {
 
     ResetButton {
         id: resetButton
-        y: 112
-        height: 38
-        anchors.bottomMargin: 16
+        label: 'Reset'
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 7
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        MouseArea {
+            id: digitalClockResetTrigger
+            anchors.fill: parent
+            hoverEnabled: true
+            propagateComposedEvents: true
+            cursorShape: Qt.PointingHandCursor
+
+            onReleased: {
+                pomodoroQueue.infiniteMode = false;
+                pomodoroQueue.clear();
+                mouseArea._prevAngle = 0
+                mouseArea._totalRotatedSecs = 0
+                globalTimer.duration = 0
+                globalTimer.stop()
+                window.clockMode = "start"
+                notifications.stopSound();
+                sequence.setCurrentItem(-1)
+            }
+        }
     }
 
 }
