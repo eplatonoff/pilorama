@@ -6,19 +6,6 @@ Item{
 
     property bool validFile: false
 
-    function loadContent(url){
-        var req = new XMLHttpRequest;
-        req.open("GET", url);
-        req.onreadystatechange = function() {
-            if (req.readyState === XMLHttpRequest.DONE) {
-                console.log(req.responseText)
-                masterModel.data = req.responseText
-                masterModel.load()
-            }
-        };
-        req.send();
-    }
-
     Rectangle{
         id: rectangle
         visible: validFile
@@ -59,7 +46,11 @@ Item{
         }
         onDropped: if (drop.hasText) {
             if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
-                externalDrop.loadContent(drop.text)
+
+                masterModel.data = fileDialogue.openFile(drop.text).data
+                masterModel.title = fileDialogue.openFile(drop.text).title
+                masterModel.load()
+
                 drop.acceptProposedAction()
                 externalDrop.validFile = false
             }
@@ -68,11 +59,3 @@ Item{
     }
 
 }
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:2;anchors_width:447}
-}
-##^##*/

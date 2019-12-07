@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.12
 
 Rectangle {
     id: rectangle
-    height: 40
+    height: 50
     width: parent.width
     color: "transparent"
 
@@ -15,22 +15,43 @@ Rectangle {
         height: 1
         width: parent.width - 6
         color: colors.getColor("light")
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
 
         property real padding: 18
 
     }
 
-
-    Text {
-        text: qsTr('Sequence')
-        anchors.horizontalCenter: parent.horizontalCenter
+    TextInput {
+        id: presetName
+        text: masterModel.title
+        anchors.left: parent.left
+        anchors.leftMargin: 5
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: headingFontSize
+
+        layer.enabled: true
+        wrapMode: TextEdit.NoWrap
+        readOnly: sequence.blockEdits
+        selectByMouse : !sequence.blockEdits
+
+        font.pointSize: parent.headingFontSize
+        font.family: openSans.name
+        renderType: Text.NativeRendering
+        antialiasing: true
+
         color: colors.getColor("dark")
 
-        renderType: Text.NativeRendering
+        selectedTextColor : colors.getColor('dark')
+        selectionColor : colors.getColor('light')
+
+        function acceptInput(){
+            masterModel.title = presetName.text
+        }
+
+        onTextChanged: { acceptInput() }
+        onAccepted: { acceptInput() }
+
 
     }
 
@@ -56,22 +77,5 @@ Rectangle {
         color: colors.getColor('mid')
         font.pixelSize: fontSize
     }
-
-    MouseArea {
-        id: showQueueTrigger
-        anchors.fill: parent
-
-        onDoubleClicked: {
-            sequence.showQueue = !sequence.showQueue
-        }
-    }
-
-//    SaveButton {
-//        id: saveButton
-//        anchors.verticalCenter: parent.verticalCenter
-//        anchors.right: parent.right
-//        anchors.rightMargin: 0
-//    }
-
 }
 

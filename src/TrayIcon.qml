@@ -80,6 +80,7 @@ SystemTrayIcon {
     function send(name){
         var message = name ? name + " started" : "Time ran out"
         showMessage(window.title, message, pixmap.data )
+
     }
 
     function popUp(){
@@ -157,4 +158,5 @@ SystemTrayIcon {
             }
         }
     }
+
 }

@@ -9,6 +9,9 @@ Item {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
 
+    property real headingFontSize: 20
+    property real fontSize: 14
+
 //    Image {
 //        id: startPomoBG
 //        anchors.horizontalCenter: parent.horizontalCenter
@@ -63,4 +66,61 @@ Item {
             }
         }
     }
+
+    Text {
+        id: presetName
+        text: masterModel.title
+        horizontalAlignment: Text.AlignHCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: totalTime.top
+        anchors.bottomMargin: 7
+
+        layer.enabled: true
+        wrapMode: TextEdit.NoWrap
+
+
+        font.pointSize: parent.headingFontSize
+        font.family: openSans.name
+        renderType: Text.NativeRendering
+        antialiasing: true
+
+        color: colors.getColor("dark")
+
+    }
+
+
+        Text {
+            id: totalTime
+            color: colors.getColor('mid')
+            text: masterModel.totalDuration() / 60 + " min"
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+            horizontalAlignment: Text.AlignHCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            font.pixelSize: fontSize
+        }
+
+//        Text {
+//            id: itemtimeMin
+//            width: 30
+//            text: qsTr("min")
+//            anchors.right: parent.right
+//            anchors.verticalCenter: parent.verticalCenter
+//            color: colors.getColor('mid')
+//            font.pixelSize: fontSize
+//        }
+
+
 }
+
+/*##^##
+Designer {
+    D{i:5;anchors_width:30}
+}
+##^##*/

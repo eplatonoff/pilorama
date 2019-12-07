@@ -18,10 +18,10 @@ Item {
         sequenceView.currentIndex = id
     }
 
-    Header {
-        id: sequenceHeader
-        z: 3
-    }
+//    Header {
+//        id: sequenceHeader
+//        z: 3
+//    }
 
     Footer {
         id: sequenceFooter
@@ -34,7 +34,7 @@ Item {
         id: sequenceSetLayout
         color: 'transparent'
         anchors.bottomMargin: 0
-        anchors.top: sequenceHeader.bottom
+        anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: sequenceFooter.top
         anchors.left: parent.left

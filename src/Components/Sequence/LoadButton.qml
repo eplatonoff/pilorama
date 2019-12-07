@@ -7,37 +7,30 @@ Item {
     height: parent.height
 
     Image {
-        source: "../../assets/img/save.svg"
+        source: "../../assets/img/load.svg"
         fillMode: Image.PreserveAspectFit
-        smooth: true
-        antialiasing: false
 
         property bool prefsToggle: false
-
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
-
         ColorOverlay{
-            id: prefsIconOverlay
+            id: loadOverlay
             anchors.fill: parent
             source: parent
             color: colors.getColor("light")
-            antialiasing: false
-            smooth: true
+            antialiasing: true
         }
     }
 
     MouseArea {
-        id: prefsIconTrigger
+        id: loadTrigger
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
         cursorShape: Qt.PointingHandCursor
 
-        onReleased: { fileDialogue.saveDialogue() }
+        onReleased: { fileDialogue.openDialogue() }
     }
 
 }
-
-

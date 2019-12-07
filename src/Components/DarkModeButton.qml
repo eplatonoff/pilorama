@@ -8,33 +8,18 @@ Item {
     height: 50
     visible: !appSettings.followSystemTheme
 
-    MouseArea {
-        id: modeSwitchArea
-        x: 25
-        y: 25
-        anchors.fill: parent
-        hoverEnabled: true
-        propagateComposedEvents: true
-        cursorShape: Qt.PointingHandCursor
-
-        onReleased: {
-            appSettings.darkMode = !appSettings.darkMode
-        }
-    }
-
     Image {
-        sourceSize.width: 23
-        sourceSize.height: 23
-        antialiasing: true
-        smooth: true
         fillMode: Image.PreserveAspectFit
+
+        sourceSize.width: 24
+        sourceSize.height: 24
 
         property string iconDark: "../assets/img/sun.svg"
         property string iconLight: "../assets/img/moon.svg"
-        anchors.top: parent.top
-        anchors.topMargin: 3
         anchors.right: parent.right
         anchors.rightMargin: 3
+        anchors.top: parent.top
+        anchors.topMargin: 3
 
         source: appSettings.darkMode ? iconDark : iconLight
 
@@ -43,7 +28,18 @@ Item {
             anchors.fill: parent
             source: parent
             color: colors.getColor('light')
-            antialiasing: true
+        }
+    }
+
+    MouseArea {
+        id: modeSwitchArea
+        anchors.fill: parent
+        hoverEnabled: true
+        propagateComposedEvents: true
+        cursorShape: Qt.PointingHandCursor
+
+        onReleased: {
+            appSettings.darkMode = !appSettings.darkMode
         }
     }
 

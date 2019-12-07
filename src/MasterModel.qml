@@ -4,6 +4,7 @@ ListModel {
 
     id: masterModel
 
+    property string title: 'Sequence'
     property string data: ''
     property string defaultName: 'Split'
     property string defaultColor: randomColor()
@@ -29,7 +30,6 @@ ListModel {
         for (var i = 0; i < count; i++){
             get(i).id = i
         }
-
     }
 
 // Random color without repeats

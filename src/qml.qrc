@@ -82,5 +82,9 @@
         <file>assets/font/SF-Pro-Display-Regular.otf</file>
         <file>Components/Preferences/Checkbox.qml</file>
         <file>assets/img/check.svg</file>
+        <file>FileDialogue.qml</file>
+        <file>Components/Sequence/LoadButton.qml</file>
+        <file>assets/img/load.svg</file>
+        <file>Components/Sequence/PrefsButton.qml</file>
     </qresource>
 </RCC>

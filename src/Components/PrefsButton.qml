@@ -8,8 +8,6 @@ Item {
 
     MouseArea {
         id: prefsIconTrigger
-        x: 13
-        y: 13
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
@@ -25,6 +23,7 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         property bool prefsToggle: false
+
         anchors.right: parent.right
         anchors.rightMargin: 3
         anchors.bottom: parent.bottom
@@ -35,7 +34,6 @@ Item {
             anchors.fill: parent
             source: parent
             color: colors.getColor("light")
-            antialiasing: true
         }
     }
 

@@ -117,9 +117,10 @@ ApplicationWindow {
         property real breakTime: 15 * 60
         property int repeatBeforeBreak: 2
 
-        property alias masterData: masterModel.data
+        property alias data: masterModel.data
+        property alias title: masterModel.title
 
-        onMasterDataChanged: console.log("Reloaded:" + masterData)
+        onDataChanged: console.log("Reloaded:" + data)
 
     }
 
@@ -137,6 +138,7 @@ ApplicationWindow {
     MasterModel {
         id: masterModel
         data: data
+        title: title
     }
 
     ModelBurner {
@@ -160,6 +162,10 @@ ApplicationWindow {
         id: globalTimer
     }
 
+    FileDialogue {
+        id: fileDialogue
+    }
+
     QtObject {
         id: time
         property real hours: 0
@@ -176,9 +182,10 @@ ApplicationWindow {
 
     StackView {
         id: stack
+        anchors.bottomMargin: 3
         anchors.rightMargin: window.padding
         anchors.leftMargin: window.padding
-        anchors.bottomMargin: window.padding
+//        anchors.bottomMargin: window.padding
         anchors.topMargin: window.padding
         anchors.fill: parent
 
@@ -222,24 +229,14 @@ ApplicationWindow {
                 anchors.rightMargin: 0
             }
 
-            PrefsButton {
-                id: prefsButton
-                x: 238
-                y: 0
-                anchors.bottom: timerLayout.bottom
-                anchors.bottomMargin: 0
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-            }
 
             SoundButton {
                 id: soundButton
                 x: 0
-                y: 486
+                anchors.top: parent.top
+                anchors.topMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
-                anchors.bottom: timerLayout.bottom
-                anchors.bottomMargin: 0
             }
 
             ExternalDrop {
@@ -254,9 +251,9 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.topMargin: 18
+            anchors.topMargin: 6
         }
-    }
+        }
 
         Preferences {
                 id: preferences
@@ -272,8 +269,8 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
-D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
+    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
+D{i:22;anchors_y:486}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
 }
 ##^##*/
 

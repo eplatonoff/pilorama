@@ -7,24 +7,19 @@ Item {
     height: parent.height
 
     Image {
-        source: "../../assets/img/save.svg"
+        source: "../../assets/img/prefs.svg"
         fillMode: Image.PreserveAspectFit
-        smooth: true
-        antialiasing: false
 
         property bool prefsToggle: false
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
-
         ColorOverlay{
             id: prefsIconOverlay
             anchors.fill: parent
             source: parent
             color: colors.getColor("light")
-            antialiasing: false
-            smooth: true
         }
     }
 
@@ -35,7 +30,9 @@ Item {
         propagateComposedEvents: true
         cursorShape: Qt.PointingHandCursor
 
-        onReleased: { fileDialogue.saveDialogue() }
+        onReleased: {
+            stack.push(preferences)
+        }
     }
 
 }

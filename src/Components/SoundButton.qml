@@ -8,19 +8,19 @@ Item {
     height: 50
 
     Image {
-        property bool soundOn: !notifications.soundMuted
-        sourceSize.height: 23
-        sourceSize.width: 23
-        source: soundOn ? iconSound : iconNoSound
-        antialiasing: true
         fillMode: Image.PreserveAspectFit
 
-        property color color: colors.fakeLight
+        sourceSize.width: 24
+        sourceSize.height: 24
+
+        source: soundOn ? iconSound : iconNoSound
+
+        property bool soundOn: !notifications.soundMuted
 
         property string iconSound: "../assets/img/sound.svg"
         property string iconNoSound: "../assets/img/nosound.svg"
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 3
+        anchors.top: parent.top
+        anchors.topMargin: 4
         anchors.left: parent.left
         anchors.leftMargin: 3
 
@@ -28,8 +28,7 @@ Item {
         ColorOverlay{
             anchors.fill: parent
             source: parent
-            color: appSettings.darkMode ? colors.fakeDark : colors.fakeLight
-            antialiasing: true
+            color: colors.getColor("light")
         }
     }
 
