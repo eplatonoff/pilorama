@@ -12,14 +12,17 @@ TrayImageProvider::TrayImageProvider() : QQuickImageProvider(QQuickImageProvider
 QPixmap TrayImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
     QStringList colorInfo = id.split("_");
-    Q_ASSERT(colorInfo.size() == 2);
+    Q_ASSERT(colorInfo.size() == 3);
 
     bool ok = false;
 
-    const auto secs = colorInfo[1].toInt(&ok);
+    const auto secs = colorInfo[2].toInt(&ok);
     Q_ASSERT(ok);
 
     const auto color = QColor(colorInfo[0]);
+    Q_ASSERT(color.isValid());
+
+    const auto placeholderColor = QColor(colorInfo[1]);
     Q_ASSERT(color.isValid());
 
     const int width = 320, height = 320;
@@ -30,6 +33,28 @@ QPixmap TrayImageProvider::requestPixmap(const QString &id, QSize *size, const Q
 
     QPixmap pix(width, height);
     pix.fill(Qt::transparent);
+
+    // Placeholder wheel
+
+    QPainter placeholder(&pix);
+    placeholder.setPen( { QBrush(placeholderColor), penWidth } );
+
+    QPainterPath placeholderPath;
+    placeholderPath.moveTo(startPoint);
+    placeholderPath.arcTo(
+        hPadding,
+        vPadding,
+        width - 2 * hPadding,
+        height - 2 * vPadding,
+        90, // start angle
+        450 // clock-wise
+    );
+
+    placeholder.drawPath(placeholderPath);
+
+    placeholder.end();
+
+    // Timer wheel
 
     QPainter painter(&pix);
     painter.setPen( { QBrush(color), penWidth } );

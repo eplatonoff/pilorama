@@ -52,7 +52,7 @@ SystemTrayIcon {
 
         const renderSecs = Math.round(dialTime / 10) * 10;
 
-        return "image://tray_icon_provider/" + color + "_" + renderSecs;
+        return "image://tray_icon_provider/" + color + "_" + bgcolor + "_" + renderSecs;
     }
 
     function setDialTime() {
