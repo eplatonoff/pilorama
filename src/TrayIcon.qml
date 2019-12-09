@@ -47,7 +47,7 @@ SystemTrayIcon {
         if (!globalTimer.running)
             return './assets/tray/static.svg';
 
-        const color = pomodoroQueue.infiniteMode ? colors.getColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getColor("mid gray");
+        const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("mid gray");
 
         const renderSecs = Math.round(dialTime / 10) * 10;
 

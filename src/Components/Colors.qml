@@ -112,4 +112,19 @@ ListModel{
         if (appSettings.darkMode){ return get(colorIndex).night }
         else { return get(colorIndex).day  }
     }
+
+    function getThemeColor(color) {
+        let colorIndex = 0
+        for(var i= 0; i<count; i++){
+            if(color === get(i).name){
+                colorIndex = i
+                break;
+            } else if(!color) {
+                colorIndex = 0
+                break;
+            }
+        }
+        if (appSettings.sysemDarkMode){ return get(colorIndex).night }
+        else { return get(colorIndex).day  }
+    }
 }
