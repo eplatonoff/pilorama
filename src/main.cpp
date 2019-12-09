@@ -1,3 +1,5 @@
+#include "trayimageprovider.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTimer>
@@ -28,6 +30,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("QML Timer");
 
     QQmlApplicationEngine engine;
+    engine.addImageProvider("tray_icon_provider", new TrayImageProvider());
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 

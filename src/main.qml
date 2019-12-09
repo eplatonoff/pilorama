@@ -172,7 +172,7 @@ ApplicationWindow {
         property real minutes: 0
         property real seconds: 0
 
-        function updateTime(){
+        function updateTime() {
             var currentDate = new Date()
             hours = currentDate.getHours()
             minutes = currentDate.getMinutes()

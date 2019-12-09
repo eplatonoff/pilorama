@@ -19,7 +19,7 @@ SystemTrayIcon {
     onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
 
 
-    function checkMenuItemText(){
+    function checkMenuItemText() {
         if (globalTimer.running && pomodoroQueue.infiniteMode) {
             return "Reset Timer"
         } else {
@@ -27,7 +27,7 @@ SystemTrayIcon {
         }
     }
 
-    function checkSoundItemText(){
+    function checkSoundItemText() {
         if (notifications.soundMuted) {
             return "on"
         } else {
@@ -35,41 +35,42 @@ SystemTrayIcon {
         }
     }
 
-    function iconDialMin(){
+    function iconDialMin() {
         var precision = 120
         var y = Math.abs(dialTime) + precision / 2;
         y = y - y % precision;
         return y / 60
     }
 
-    function iconURL() {
-      const path = './assets/tray/'
-      if(globalTimer.running){
-          return path +  "timer-" + iconDialMin()
-      }
-      else {
-          return path + "static.svg"
-      }
+    function iconURL()
+    {
+        if (!globalTimer.running)
+            return './assets/tray/static.svg';
+
+        const color = pomodoroQueue.infiniteMode ? masterModel.get(pomodoroQueue.first().id).color : colors.getColor("mid gray");
+
+        const renderSecs = Math.round(dialTime / 10) * 10;
+
+        return "image://tray_icon_provider/" + color + "_" + renderSecs;
     }
 
-    function setDialTime(){
+    function setDialTime() {
         const t = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
-        dialTime = pomodoroQueue.first() ? t : 0
-        iconURL()
+        dialTime = pomodoroQueue.first() ? t : 0;
     }
 
-    function setTime(){
+    function setTime() {
         runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
         setDialTime()
         updateTime()
     }
 
-    function pad(value){
+    function pad(value) {
         if (value < 10) {return "0" + value
         } else {return value}
     }
 
-    function updateTime(){
+    function updateTime() {
         let h = Math.trunc(runningTime / 3600)
         let hour = h > 0 ? h + ":" : ""
         let min = pad(Math.trunc(runningTime / 60) - Math.trunc(runningTime / 3600) * 60)
@@ -80,7 +81,6 @@ SystemTrayIcon {
     function send(name){
         var message = name ? name + " started" : "Time ran out"
         showMessage(window.title, message, pixmap.data )
-
     }
 
     function popUp(){
