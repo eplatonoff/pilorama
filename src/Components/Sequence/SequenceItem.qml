@@ -116,7 +116,7 @@ Rectangle {
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
 
-        font.pointSize: parent.fontSize
+        font.pixelSize: parent.fontSize
         font.family: openSans.name
         renderType: Text.NativeRendering
 
@@ -159,7 +159,7 @@ Rectangle {
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('lighter')
 
-        font.pointSize: parent.fontSize
+        font.pixelSize: parent.fontSize
 
         function acceptData() {
             if( !itemtime.text || itemtime.text == "") {

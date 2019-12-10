@@ -42,12 +42,10 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.left: saveButton.right
-        anchors.right: prefsButton.left
+        anchors.right: parent.right
 
         MouseArea {
             id: paddButtonTrigger
-            x: 13
-            y: 13
             anchors.rightMargin: 0
             anchors.fill: parent
             hoverEnabled: true
@@ -56,6 +54,7 @@ Rectangle {
 
             onReleased: {
                 masterModel.add()
+                focus = true
             }
         }
 

@@ -52,6 +52,8 @@ MouseArea {
     }
 
     onPressed: {
+        focus = true
+
         cursorShape = Qt.ClosedHandCursor
 
         const angle = GeometryScripts.mouseAngle(

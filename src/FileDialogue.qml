@@ -1,5 +1,6 @@
 import QtQuick 2.13
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 1.3
+
 
 Item{
 
@@ -33,7 +34,6 @@ Item{
         var request = new XMLHttpRequest();
         request.open("PUT", url, false);
         request.send(masterModel.data);
-//        return request.status;
         return getTitle(url)
     }
 
@@ -41,6 +41,7 @@ Item{
         id: openFileDialog
         nameFilters: ["JSON files (*.json)"]
         selectMultiple: false
+        folder: shortcuts.desktop
 
         onAccepted: {
             masterModel.data = openFile(fileUrl).data
@@ -54,7 +55,7 @@ Item{
         selectExisting: false
         nameFilters: ["JSON files (*.json)"]
         defaultSuffix : 'json'
-        folder: 'file:///' + masterModel.title + ".json"
+        folder: shortcuts.desktop + "/" + masterModel.title + '.json'
 
         onAccepted: {
             masterModel.save()

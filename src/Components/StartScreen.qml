@@ -14,77 +14,17 @@ Item {
     property real headingFontSize: 23
     property real fontSize: 14
 
-//    Image {
-//        id: startPomoBG
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        sourceSize.height: 200
-//        sourceSize.width: 200
-//        antialiasing: true
-//        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
-//        anchors.verticalCenter: parent.verticalCenter
-//        fillMode: Image.PreserveAspectFit
-//        source: "../assets/img/background.svg"
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        propagateComposedEvents: true
+//        cursorShape: Qt.PointingHandCursor
 
-//        ColorOverlay{
-//            id: startPomoBGOverlay
-//            anchors.fill: parent
-//            source: parent
-//            color: colors.getColor("light")
-//            antialiasing: true
-//        }
-//    }
-
-//    Item {
-//        id: start
-
-//        width: 60
-//        height: 60
-//        anchors.bottom: presetName.top
-//        anchors.bottomMargin: 5
-//        anchors.horizontalCenter: parent.horizontalCenter
-
-//        Image {
-//            id: startIcon
-//            anchors.verticalCenter: parent.verticalCenter
-//            anchors.bottom: totalTime.top
-//            anchors.bottomMargin: 56
-//            anchors.horizontalCenter: parent.horizontalCenter
-//            sourceSize.height: 24
-//            sourceSize.width: 24
-//            antialiasing: true
-//            visible: masterModel.count > 0 && masterModel.totalDuration() > 0
-//            fillMode: Image.PreserveAspectFit
-//            source: "../assets/img/play.svg"
-
-//            ColorOverlay{
-//                id: startOverlay
-//                anchors.fill: parent
-//                source: parent
-//                color: colors.getColor("mid")
-//                antialiasing: true
-//            }
-//        }
-
-//        MouseArea {
-//            id: startrigger
-//            anchors.fill: parent
-//            hoverEnabled: true
-//            propagateComposedEvents: true
-//            cursorShape: Qt.PointingHandCursor
-
-//            onReleased: {
-//                window.clockMode = "pomodoro"
-//                pomodoroQueue.infiniteMode = true
-//                globalTimer.start()
-
-//            }
-//        }
-//    }
+        onPressed: { focus = true }
+    }
 
 
-
-
-    Text {
+    TextInput {
         id: presetName
         text: masterModel.title
         anchors.top: parent.top
@@ -96,16 +36,28 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 0
 
-         layer.enabled: true
-         wrapMode: TextEdit.NoWrap
+        layer.enabled: true
+        wrapMode: TextEdit.NoWrap
 
+        readOnly: sequence.blockEdits
+        selectByMouse : !sequence.blockEdits
 
-         font.pointSize: startScreen.headingFontSize
-         font.family: openSans.name
-         renderType: Text.NativeRendering
-         antialiasing: true
+        font.pixelSize: startScreen.headingFontSize
+        font.family: openSans.name
+        renderType: Text.NativeRendering
+        antialiasing: true
 
-         color: colors.getColor("dark")
+        selectedTextColor : colors.getColor('dark')
+        selectionColor : colors.getColor('lighter')
+
+        color: colors.getColor("dark")
+
+        function acceptInput(){
+            masterModel.title = presetName.text
+        }
+
+        onTextChanged: { acceptInput() }
+        onAccepted: { acceptInput() }
 
      }
 
@@ -124,27 +76,6 @@ Item {
         font.pixelSize: startScreen.fontSize
     }
 
-
-//    Row {
-//        id: fileBlock
-//        height: 24
-//        anchors.top: parent.top
-//        anchors.topMargin: 0
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        spacing: 3
-
-
-//        LoadButton {
-//            id: loadButton
-//            anchors.verticalCenter: parent.verticalCenter
-//        }
-
-//        SaveButton {
-//            id: saveButton
-//            anchors.verticalCenter: parent.verticalCenter
-//        }
-
-//    }
 
     ResetButton{
         id: play
@@ -165,6 +96,7 @@ Item {
                 window.clockMode = "pomodoro"
                 pomodoroQueue.infiniteMode = true
                 globalTimer.start()
+                focus = true
 
             }
         }

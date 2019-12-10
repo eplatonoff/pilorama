@@ -228,6 +228,8 @@ Item {
                 window.clockMode = "start"
                 notifications.stopSound();
                 sequence.setCurrentItem(-1)
+
+                focus = true
             }
         }
     }
