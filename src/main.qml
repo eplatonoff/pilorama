@@ -232,6 +232,10 @@ ApplicationWindow {
                 anchors.leftMargin: 0
             }
 
+            PreferencesButton {
+                id: preferencesButton
+            }
+
 
 //            PreferencesButton {
 //                id: preferencesButton

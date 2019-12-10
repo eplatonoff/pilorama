@@ -108,10 +108,4 @@ Rectangle {
         anchors.left: loadButton.right
         anchors.verticalCenter: parent.verticalCenter
     }
-
-    PrefsButton {
-        id: prefsButton
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-    }
 }

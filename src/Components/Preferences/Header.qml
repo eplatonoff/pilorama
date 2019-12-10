@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 Rectangle {
     id: rectangle
-    height: 50
+    height: 32
     width: parent.width
     color: "transparent"
 

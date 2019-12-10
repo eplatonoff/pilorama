@@ -20,6 +20,7 @@
         <file>assets/sound/drum_roll.wav</file>
         <file>assets/tray/static-day.svg</file>
         <file>assets/tray/static-night.svg</file>
+        <file>assets/img/github.svg</file>
         <file>assets/font/OpenSans-Regular.ttf</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
@@ -51,5 +52,6 @@
         <file>Components/Preferences/Checkbox.qml</file>
         <file>Components/Sequence/LoadButton.qml</file>
         <file>Components/Sequence/PrefsButton.qml</file>
+
     </qresource>
 </RCC>

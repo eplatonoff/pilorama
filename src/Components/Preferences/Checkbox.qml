@@ -4,36 +4,24 @@ import QtGraphicalEffects 1.12
 Item {
     id: checkbox
 
-    width: 38
-    height: 38
+    width: 30
+    height: parent.height
 
     property bool checked: false
 
-    MouseArea {
-        id: modeSwitchArea
-        anchors.fill: parent
-        hoverEnabled: true
-        propagateComposedEvents: true
-        cursorShape: Qt.PointingHandCursor
-
-        onReleased: {
-            appSettings.darkMode = !appSettings.darkMode
-        }
-    }
     Rectangle{
-        width: 16
-        height: 16
-        color: 'transparent'
-        border.color: colors.getColor('light')
+        width: 14
+        height: 14
+        color: colors.getColor('lighter')
         radius: 3
-        border.width: 2
+        anchors.left: parent.left
+        anchors.leftMargin: 5
 
-        anchors.horizontalCenter: parent.horizontalCenter
+
         anchors.verticalCenter: parent.verticalCenter
     }
     Image {
         visible: checkbox.checked
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         sourceSize.width: 23
         sourceSize.height: 23
@@ -55,3 +43,9 @@ Item {
 
 }
 
+
+/*##^##
+Designer {
+    D{i:2;anchors_width:16}
+}
+##^##*/

@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.12
 
 import "Preferences"
 
@@ -28,7 +29,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
 
-        anchors.topMargin: 0
+        anchors.topMargin: 7
 
         Item {
             id: splitToSequence
@@ -196,17 +197,45 @@ Item {
 
     }
 
-    Text {
+    Row {
         id: help
-        text: '<html><a href="https://github.com/eplatonoff/pilorama">project on github</a></html>'
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        height: 32
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: infoFontSize
+        spacing: 3
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
 
-        onLinkActivated: Qt.openUrlExternally(link)
+        Image {
+            anchors.verticalCenter: parent.verticalCenter
+            sourceSize.width: 23
+            sourceSize.height: 23
+            antialiasing: true
+            smooth: true
+            fillMode: Image.PreserveAspectFit
 
+            source: "../assets/img/github.svg"
+
+            ColorOverlay{
+                anchors.fill: parent
+                source: parent
+                color: colors.getColor('mid')
+                antialiasing: true
+            }
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            textFormat: Text.RichText;
+            text:   "<style>a:link { color: " + colors.getColor('mid') + "; }</style>" +
+                    "<a href='https://github.com/eplatonoff/pilorama'>project on github</a>"
+            font.pixelSize: preferences.infoFontSize
+
+            onLinkActivated: Qt.openUrlExternally(link)
+
+        }
     }
+
+
 }
 
 /*##^##

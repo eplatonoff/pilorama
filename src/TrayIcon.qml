@@ -7,7 +7,7 @@ SystemTrayIcon {
     iconSource: iconURL()
     iconName: qsTr("test")
     tooltip : window.title
-    property string appTitle: "QML Timer"
+    property string appTitle: window.title
     property string messageText: ""
     property string menuItemText: checkMenuItemText()
     property string soundItemText: "Turn sound " + checkSoundItemText()
@@ -105,9 +105,12 @@ SystemTrayIcon {
        MenuItem {
            text: updateTime()
            onTriggered: {window.active}
+           visible: globalTimer.running
        }
 
-        MenuSeparator {}
+        MenuSeparator {
+            visible: globalTimer.running
+        }
 
         MenuItem {
             text: tray.menuItemText

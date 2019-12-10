@@ -4,12 +4,11 @@ import QtGraphicalEffects 1.12
 Item {
     id: back
     width: 50
-    height: 50
+    height: parent.height
+
 
     MouseArea {
         id: backTrigger
-        x: 13
-        y: 13
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
