@@ -7,6 +7,8 @@ MouseArea {
     anchors.fill: parent
     cursorShape: Qt.OpenHandCursor
     propagateComposedEvents: true
+    visible: masterModel.count > 0
+
 
     signal rotated(real delta)
 

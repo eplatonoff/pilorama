@@ -69,6 +69,7 @@ ListModel {
 
     function load(){
         clear()
+        if(data === "[]"){ data = demo; }
         const datamodel = JSON.parse(data)
         for (var i = 0; i < datamodel.length; ++i) {
             append(datamodel[i])

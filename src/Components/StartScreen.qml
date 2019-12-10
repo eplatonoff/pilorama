@@ -79,6 +79,7 @@ Item {
 
     ResetButton{
         id: play
+        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
