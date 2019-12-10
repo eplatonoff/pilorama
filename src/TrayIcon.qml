@@ -45,19 +45,30 @@ SystemTrayIcon {
     function iconURL()
     {
         if (!globalTimer.running)
-            return './assets/tray/static.svg';
+            if (systemPalette.sysemDarkMode) {
+                return './assets/tray/static-night.svg';
+            } else {
+                return './assets/tray/static-day.svg'
+            }
 
-        const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("mid");
-        const bgcolor = colors.getThemeColor("light")
+        const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");
+        const placeholderColor = colors.getThemeColor("light")
 
         const renderSecs = Math.round(dialTime / 10) * 10;
 
-        return "image://tray_icon_provider/" + color + "_" + bgcolor + "_" + renderSecs;
+        return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
     }
 
     function setDialTime() {
-        const t = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
-        dialTime = pomodoroQueue.first() ? t : 0;
+        var t
+        if(!pomodoroQueue.infiniteMode) {
+            t = globalTimer.duration * 3600 / globalTimer.durationBound
+            dialTime = globalTimer.duration ? t : 0;
+        } else {
+            t = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
+            dialTime = pomodoroQueue.first() ? t : 0;
+        }
+
     }
 
     function setTime() {
@@ -81,7 +92,7 @@ SystemTrayIcon {
 
     function send(name){
         var message = name ? name + " started" : "Time ran out"
-        showMessage(window.title, message, pixmap.data )
+        showMessage(window.title, message)
     }
 
     function popUp(){

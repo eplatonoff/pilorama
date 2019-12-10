@@ -88,7 +88,7 @@ Item {
         id: presetName
         text: masterModel.title
         anchors.top: parent.top
-        anchors.topMargin: 45
+        anchors.topMargin: 40
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.left: parent.left
@@ -149,7 +149,7 @@ Item {
     ResetButton{
         id: play
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 7
+        anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
         label: 'Start'
 
@@ -175,6 +175,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:2;anchors_width:30}D{i:5;anchors_width:30}D{i:6;anchors_width:30}
+    D{i:2;anchors_width:30}
 }
 ##^##*/

@@ -96,7 +96,7 @@ Rectangle {
             id: prefsIconOverlay
             anchors.fill: parent
             source: parent
-            color: colors.getColor('light')
+            color: colors.getColor('lighter')
             antialiasing: true
         }
     }
@@ -122,7 +122,7 @@ Rectangle {
 
 
         selectedTextColor : colors.getColor('dark')
-        selectionColor : colors.getColor('light')
+        selectionColor : colors.getColor('lighter')
 
         color: sequenceItem.dimmer()
         anchors.verticalCenter: parent.verticalCenter
@@ -157,7 +157,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
 
         selectedTextColor : colors.getColor('dark')
-        selectionColor : colors.getColor('light')
+        selectionColor : colors.getColor('lighter')
 
         font.pointSize: parent.fontSize
 

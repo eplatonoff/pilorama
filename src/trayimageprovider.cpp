@@ -27,7 +27,7 @@ QPixmap TrayImageProvider::requestPixmap(const QString &id, QSize *size, const Q
 
     const int width = 320, height = 320;
     const int hPadding = 30, vPadding = 30;
-    const int penWidth = 40;
+    const int penWidth = 48;
 
     QPoint startPoint(width / 2, vPadding);
 

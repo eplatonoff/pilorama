@@ -103,7 +103,7 @@ ApplicationWindow {
         property alias quitOnClose: window.quitOnClose
         property alias showQueue: sequence.showQueue
 
-        onDarkModeChanged: { canvas.requestPaint(); pixmap.requestPaint() }
+        onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
     }
 
@@ -120,7 +120,7 @@ ApplicationWindow {
         property alias data: masterModel.data
         property alias title: masterModel.title
 
-        onDataChanged: console.log("Reloaded:" + data)
+        onDataChanged: console.log("Settings data:" + data)
 
     }
 
@@ -144,10 +144,6 @@ ApplicationWindow {
     ModelBurner {
         id: pomodoroQueue
         durationSettings: durationSettings
-    }
-
-    IconGenerator {
-        id: pixmap
     }
 
     TrayIcon {

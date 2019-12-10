@@ -3,15 +3,16 @@ import QtQuick 2.0
 Item{
     id: button
 
-    width: 85
-    height: 35
+    width: 80
+    height: 34
 
     property string label: 'Button'
 
     Rectangle {
-        color: "transparent"
-        border.color: colors.getColor("light")
-        border.width: 2
+        color: colors.getColor("lighter")
+//        color: "transparent"
+//        border.color: colors.getColor("light")
+//        border.width: 3
         radius: 22
         anchors.fill: parent
 
@@ -22,7 +23,7 @@ Item{
             horizontalAlignment: Text.AlignHCenter
             anchors.fill: parent
             font.pixelSize: 15
-            color: colors.getColor("mid")
+            color: colors.getColor("dark")
 
         }
     }

@@ -41,11 +41,11 @@ Item {
 
     Item {
         id: dateTime
-        width: 60
+        width: 70
         height: 15
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: 23
 
         Image {
             id: bellIcon
@@ -107,10 +107,11 @@ Item {
     Item{
         id: digital
         height: 50
-        width: digitalHour.width + digitalSeparator.width + digitalMin.width + 3 + digitalSec.width
+        anchors.horizontalCenterOffset: 0
+        width: digitalHour.width + digitalSeparator.width + digitalMin.width + 5 + digitalSec.width
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 39
+        anchors.top: dateTime.bottom
+        anchors.topMargin: 6
 
         Text {
             id: digitalSec
@@ -121,7 +122,7 @@ Item {
             anchors.top: digitalMin.top
             anchors.topMargin: 6
             anchors.left: digitalMin.right
-            anchors.leftMargin: 3
+            anchors.leftMargin: 5
             font.pixelSize: 22
             color: colors.getColor("dark")
 
@@ -207,7 +208,7 @@ Item {
         id: resetButton
         label: 'Reset'
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 7
+        anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
 
         MouseArea {

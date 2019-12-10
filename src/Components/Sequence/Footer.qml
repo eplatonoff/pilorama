@@ -22,7 +22,7 @@ Rectangle {
         id: layoutDivider
         height: 1
         width: parent.width - 6
-        color: colors.getColor("light")
+        color: colors.getColor("lighter")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
 
@@ -35,15 +35,14 @@ Rectangle {
 
         color:  "transparent"
         radius: 3
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-//        border.color: colors.getColor("light")
         anchors.left: saveButton.right
-        anchors.leftMargin: 10
         anchors.right: prefsButton.left
-        anchors.rightMargin: 35
 
         MouseArea {
             id: paddButtonTrigger
@@ -62,10 +61,11 @@ Rectangle {
 
         Item {
 
-            width: 88
-            height: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height
+
+            anchors.left: parent.left
+            anchors.leftMargin: 32
+
             Image {
                 id: addIcon
                 source: "../../assets/img/add.svg"
@@ -78,7 +78,7 @@ Rectangle {
                     id: addIconOverlay
                     anchors.fill: parent
                     source: parent
-                    color: colors.getColor("light")
+                    color: colors.getColor("mid")
                     antialiasing: true
                 }
             }
@@ -86,12 +86,11 @@ Rectangle {
             Text {
                 text: qsTr('Add split')
                 anchors.left: addIcon.right
-                anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: fontSize
                 renderType: Text.NativeRendering
 
-                color: colors.getColor("mid")
+                color: colors.getColor("dark")
             }
         }
 
@@ -101,21 +100,18 @@ Rectangle {
     LoadButton {
         id: loadButton
         anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.verticalCenter: parent.verticalCenter
     }
 
     SaveButton {
         id: saveButton
         anchors.left: loadButton.right
-        anchors.leftMargin: 0
         anchors.verticalCenter: parent.verticalCenter
     }
 
     PrefsButton {
         id: prefsButton
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.verticalCenter: parent.verticalCenter
     }
 }

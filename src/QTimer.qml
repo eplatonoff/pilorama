@@ -3,7 +3,9 @@ import QtQuick 2.0
 Timer {
 
     property real duration: 0
+    property real durationBound: 0
     property real splitDuration: 0
+
 
     property real timerLimit: 17940
 
@@ -19,8 +21,8 @@ Timer {
     triggeredOnStart: true
 
     onRunningChanged: {
-        pixmap.requestPaint();
         canvas.requestPaint();
+        durationBound = running ? duration : 0
     }
 
     onTriggered: {
@@ -39,9 +41,6 @@ Timer {
                 stop();
             }
         }
-
-//        pomodoroQueue.showQueue()
-//        masterModel.showModel()
 
         if(pomodoroQueue.infiniteMode || preferences.splitToSequence) {
             sequence.setCurrentItem(pomodoroQueue.first().id)
@@ -65,7 +64,5 @@ Timer {
 
         tray.setTime()
         canvas.requestPaint();
-
-        //        pixmap.requestPaint();
     }
 }

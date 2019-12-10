@@ -5,19 +5,31 @@
         <file>assets/img/sound.svg</file>
         <file>assets/img/prefs.svg</file>
         <file>assets/img/nosound.svg</file>
-        <file>assets/img/play.svg</file>
         <file>assets/img/bell.svg</file>
         <file>assets/img/dragger.svg</file>
+        <file>assets/img/close.svg</file>
+        <file>assets/img/copy.svg</file>
+        <file>assets/img/add.svg</file>
+        <file>assets/img/back.svg</file>
+        <file>assets/img/save.svg</file>
+        <file>assets/img/check.svg</file>
+        <file>assets/img/load.svg</file>
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
         <file>assets/sound/drum_roll.wav</file>
+        <file>assets/tray/static-day.svg</file>
+        <file>assets/tray/static-night.svg</file>
+        <file>assets/font/OpenSans-Regular.ttf</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
         <file>NotificationSystem.qml</file>
         <file>QTimer.qml</file>
         <file>MouseTracker.qml</file>
         <file>TrayIcon.qml</file>
+        <file>FileDialogue.qml</file>
+        <file>MasterModel.qml</file>
+        <file>ModelBurner.qml</file>
         <file>Components/Colors.qml</file>
         <file>Components/ResetButton.qml</file>
         <file>Components/SoundButton.qml</file>
@@ -29,62 +41,15 @@
         <file>Components/PreferencesButton.qml</file>
         <file>Components/Sequence.qml</file>
         <file>Components/Sequence/SequenceItem.qml</file>
-        <file>assets/img/close.svg</file>
-        <file>assets/img/copy.svg</file>
-        <file>assets/img/add.svg</file>
         <file>Components/Sequence/Header.qml</file>
         <file>Components/Sequence/Footer.qml</file>
-        <file>assets/img/back.svg</file>
-        <file>assets/img/library.svg</file>
-        <file>MasterModel.qml</file>
-        <file>ModelBurner.qml</file>
-        <file>IconGenerator.qml</file>
         <file>Components/Sequence/ColorSelector.qml</file>
-        <file>assets/tray/timer-0.svg</file>
-        <file>assets/tray/timer-2.svg</file>
-        <file>assets/tray/timer-4.svg</file>
-        <file>assets/tray/timer-6.svg</file>
-        <file>assets/tray/timer-8.svg</file>
-        <file>assets/tray/timer-10.svg</file>
-        <file>assets/tray/timer-12.svg</file>
-        <file>assets/tray/timer-14.svg</file>
-        <file>assets/tray/timer-16.svg</file>
-        <file>assets/tray/timer-18.svg</file>
-        <file>assets/tray/timer-20.svg</file>
-        <file>assets/tray/timer-22.svg</file>
-        <file>assets/tray/timer-24.svg</file>
-        <file>assets/tray/timer-26.svg</file>
-        <file>assets/tray/timer-28.svg</file>
-        <file>assets/tray/timer-30.svg</file>
-        <file>assets/tray/timer-32.svg</file>
-        <file>assets/tray/timer-34.svg</file>
-        <file>assets/tray/timer-36.svg</file>
-        <file>assets/tray/timer-38.svg</file>
-        <file>assets/tray/timer-40.svg</file>
-        <file>assets/tray/timer-42.svg</file>
-        <file>assets/tray/timer-44.svg</file>
-        <file>assets/tray/timer-46.svg</file>
-        <file>assets/tray/timer-48.svg</file>
-        <file>assets/tray/timer-50.svg</file>
-        <file>assets/tray/timer-52.svg</file>
-        <file>assets/tray/timer-54.svg</file>
-        <file>assets/tray/timer-56.svg</file>
-        <file>assets/tray/timer-58.svg</file>
-        <file>assets/tray/timer-60.svg</file>
         <file>Components/ExternalDrop.qml</file>
         <file>Components/Sequence/SaveButton.qml</file>
-        <file>assets/img/save.svg</file>
-        <file>assets/tray/static.svg</file>
-        <file>assets/img/countdown.svg</file>
         <file>Components/Preferences/Header.qml</file>
         <file>Components/Preferences/BackButton.qml</file>
-        <file>assets/font/OpenSans-Regular.ttf</file>
-        <file>assets/font/SF-Pro-Display-Regular.otf</file>
         <file>Components/Preferences/Checkbox.qml</file>
-        <file>assets/img/check.svg</file>
-        <file>FileDialogue.qml</file>
         <file>Components/Sequence/LoadButton.qml</file>
-        <file>assets/img/load.svg</file>
         <file>Components/Sequence/PrefsButton.qml</file>
     </qresource>
 </RCC>
