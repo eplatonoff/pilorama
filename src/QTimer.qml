@@ -22,7 +22,7 @@ Timer {
 
     onRunningChanged: {
         canvas.requestPaint();
-        durationBound = running ? duration : 0
+        if ( running ) { durationBound = duration }
     }
 
     onTriggered: {

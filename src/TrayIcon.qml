@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Qt.labs.platform 1.1
 
+
 SystemTrayIcon {
     id: tray
     visible: true
@@ -9,6 +10,7 @@ SystemTrayIcon {
     tooltip : window.title
     property string appTitle: window.title
     property string messageText: ""
+    property string messageTitle: ""
     property string menuItemText: checkMenuItemText()
     property string soundItemText: "Turn sound " + checkSoundItemText()
 
@@ -16,7 +18,6 @@ SystemTrayIcon {
     property real runningTime: 0
 
     onMessageClicked: popUp()
-    onMessageTextChanged: showMessage(tray.appTitle, tray.messageText)
 
 
     function checkMenuItemText() {
@@ -40,6 +41,14 @@ SystemTrayIcon {
         var y = Math.abs(dialTime) + precision / 2;
         y = y - y % precision;
         return y / 60
+    }
+
+    function messageIcon() {
+        if (systemPalette.sysemDarkMode) {
+            return './assets/tray/static-night.svg';
+        } else {
+            return './assets/tray/static-day.svg'
+        }
     }
 
     function iconURL()
@@ -91,8 +100,21 @@ SystemTrayIcon {
     }
 
     function send(name){
-        var message = name ? name + " started" : "Time ran out"
-        showMessage(window.title, message)
+        var title
+        var message
+        var showfor
+
+        if (name) {
+            title  = name + " split started."
+            message = "Duration: " + masterModel.get(pomodoroQueue.first().id).duration / 60 +
+                    " min.  Ends at " + clock.getNotificationTime().clock
+            showfor = 5000
+        } else {
+            title = "Time ran out"
+            message = "Duration: " + globalTimer.durationBound / 60 + " min"
+            showfor = 10000
+        }
+        showMessage(title, message, iconURL(), showfor)
     }
 
     function popUp(){

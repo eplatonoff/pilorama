@@ -71,7 +71,7 @@ Item {
             id: digitalTime
             width: 45
             height: 15
-            text: notifyOn()
+            text: clock.notificationTime
             anchors.left: bellIcon.right
             anchors.leftMargin: 2
             anchors.verticalCenter: parent.verticalCenter
@@ -82,24 +82,6 @@ Item {
             color: colors.getColor("mid")
 
             renderType: Text.NativeRendering
-
-
-            property real duration: timer.getDuration()
-
-            function notifyOn() {
-                let today = new Date()
-                let _h = today.getHours()
-                let _m = today.getMinutes()
-                let _s = today.getSeconds()
-
-                let _t = _h * 3600 + _m * 60 + _s
-                let t = _t + getDuration()
-
-                t = t >= 86400 ? t % 86400 : t
-
-                let resulting = pad(count(t)[0]) + ":" + pad(count(t)[1])
-                return resulting
-            }
         }
     }
 
@@ -128,16 +110,6 @@ Item {
 
             renderType: Text.NativeRendering
 
-
-            function seconds(){
-                if (pomodoroQueue.infiniteMode === true){
-                    return timer.pad(Math.trunc(globalTimer.splitDuration % 60))
-                } else if(!pomodoroQueue.infiniteMode && !globalTimer.running) {
-                    return "min"
-                }else {
-                    return timer.pad(Math.trunc(globalTimer.duration % 60))
-                }
-            }
         }
 
         Text {
@@ -155,16 +127,6 @@ Item {
             renderType: Text.NativeRendering
 
 
-            function minutes(){
-                if (pomodoroQueue.infiniteMode){
-                    return timer.pad(Math.trunc(globalTimer.splitDuration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
-
-//                    return timer.pad(Math.trunc(globalTimer.splitDuration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
-
-                } else {
-                    return timer.pad(Math.trunc(globalTimer.duration / 60) - Math.trunc(globalTimer.duration / 3600) * 60)
-                }
-            }
         }
 
         Text {

@@ -158,6 +158,10 @@ ApplicationWindow {
         id: globalTimer
     }
 
+    Clock {
+        id: clock
+    }
+
     FileDialogue {
         id: fileDialogue
     }

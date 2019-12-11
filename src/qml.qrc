@@ -52,6 +52,6 @@
         <file>Components/Preferences/Checkbox.qml</file>
         <file>Components/Sequence/LoadButton.qml</file>
         <file>Components/Sequence/PrefsButton.qml</file>
-
+        <file>Components/Clock.qml</file>
     </qresource>
 </RCC>
