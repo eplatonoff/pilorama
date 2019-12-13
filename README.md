@@ -13,7 +13,7 @@
 - JSON Presets
 - Cross-platform software
 
-## Download [![semver](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/)
+## Download for MacOS and Windows [![semver](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/)
 
 Building from source code on Archlinux
 
