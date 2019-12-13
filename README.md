@@ -1,5 +1,7 @@
 # Pilorama
 
+![header image](https://github.com/eplatonoff/pilorama/master/img/cover.png)
+
 *Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) timer.*
 
 ## Key Features
