@@ -10,8 +10,10 @@
 - Dynamic tray icon and menu
 - JSON Presets
 
+## Download [![semver](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/)
 
-## Building on Archlinux
+
+## Building from source code on Archlinux
 
     $ sudo pacman -S qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects qt5-multimedia
     $ git clone https://github.com/eplatonoff/pilorama
