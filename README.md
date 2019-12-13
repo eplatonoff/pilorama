@@ -11,6 +11,7 @@
 - System notifications
 - Dynamic tray icon and menu
 - JSON Presets
+- Cross-platform software
 
 ## Download [![semver](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/)
 
