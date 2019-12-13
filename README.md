@@ -1,6 +1,6 @@
 # Pilorama
 
-*QML-based [Pomodoro timer](https://en.wikipedia.org/wiki/Pomodoro_Technique).*
+*Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) timer.*
 
 ## Key Features
 - Simple countdown timer
