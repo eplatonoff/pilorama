@@ -1,6 +1,6 @@
 # Pilorama
 
-![header image](https://github.com/eplatonoff/pilorama/master/img/cover.png)
+![header image](https://github.com/eplatonoff/pilorama/master/img/cover.jpg)
 
 *Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) timer.*
 
