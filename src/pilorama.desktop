@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Pilorama
+Comment=Pomodoro timer
+Exec=pilorama
+Terminal=false
+Icon=pilorama
+Categories=Office;Clock;
+GenericName=Timer
