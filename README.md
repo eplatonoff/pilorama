@@ -1,6 +1,6 @@
 # Pilorama
 
-*An QML-based [Pomodoro timer](https://en.wikipedia.org/wiki/Pomodoro_Technique).*
+*QML-based [Pomodoro timer](https://en.wikipedia.org/wiki/Pomodoro_Technique).*
 
 
 ## Building on Archlinux
