@@ -22,7 +22,10 @@ Item{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.fill: parent
+
+            font.family: localFont.name
             font.pixelSize: 15
+
             color: colors.getColor("dark")
 
         }

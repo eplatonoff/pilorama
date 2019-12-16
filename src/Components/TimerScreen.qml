@@ -75,8 +75,11 @@ Item {
             anchors.left: bellIcon.right
             anchors.leftMargin: 2
             anchors.verticalCenter: parent.verticalCenter
+
+            font.family: localFont.name
             font.bold: true
             font.pixelSize: 14
+
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: colors.getColor("mid")

@@ -14,7 +14,9 @@ Rectangle {
     property real colWidth: itemWidth
 
     property bool currentItem: delegateItem.ListView.isCurrentItem
-    property bool blockAction: sequence.blockEdits
+    property bool blockEdits: sequence.blockEdits
+
+    Behavior on width {NumberAnimation{duration: 150; easing.type: Easing.OutQuad}}
 
     onCurrentItemChanged: { activateBlink(currentItem) }
 
@@ -33,20 +35,17 @@ Rectangle {
     function dimmer(color) {
         const dimColor = colors.getColor('light')
         if (!splitToSequence && globalTimer.duration){
-            colorSelector.blockAction = true
             return dimColor
         } else if (model.duration === 0){
-            colorSelector.blockAction = true
             return dimColor
         } else {
-            colorSelector.blockAction = false
             return color
         }
     }
 
     MouseArea {
 
-        visible: !colorSelector.blockAction
+        visible: !colorSelector.blockEdits
         hoverEnabled: true
         anchors.fill: parent
         onExited: {
@@ -102,7 +101,7 @@ Rectangle {
         orientation: ListView.Horizontal
         spacing: 2
 
-        Behavior on opacity { NumberAnimation{properties: "opacity"; duration: 100}}
+        Behavior on opacity { NumberAnimation{properties: "opacity"; duration: 200; easing.type: Easing.OutQuad}}
 
         model: colorModel
 
@@ -123,7 +122,7 @@ Rectangle {
 
             MouseArea{
 
-                visible: !colorSelector.blockAction
+                visible: !colorSelector.blockEdits
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
 

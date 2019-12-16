@@ -14,11 +14,14 @@ SystemTrayIcon {
     property string menuItemText: checkMenuItemText()
     property string soundItemText: "Turn sound " + checkSoundItemText()
 
+
     property real dialTime: 0
     property real runningTime: 0
 
     onMessageClicked: popUp()
-
+    onActivated: {
+        if(reason === SystemTrayIcon.DoubleClick){ popUp(); !menu.visible}
+    }
 
     function checkMenuItemText() {
         if (globalTimer.running && pomodoroQueue.infiniteMode) {

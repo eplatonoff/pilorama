@@ -26,7 +26,8 @@ Item{
             anchors.rightMargin: 50
             anchors.left: parent.left
             anchors.leftMargin: 50
-            font.pointSize: 26
+            font.family: localFont.name
+            font.pixelSize: 26
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter

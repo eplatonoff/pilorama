@@ -58,11 +58,16 @@ ApplicationWindow {
     onClosing: {
         if(!quitOnClose) {
             close.accepted = false
-            window.hide()
+//            window.hide()
+//            console.log(window.visibility)
+            window.visibility = 3
         }
     }
 
-    onAlwaysOnTopChanged: { alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window }
+    onAlwaysOnTopChanged: {
+        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window
+        requestActivate()
+    }
 
     onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
@@ -129,9 +134,8 @@ ApplicationWindow {
     }
 
     FontLoader {
-        id: openSans;
-        name: 'Helvetica'
-//        source: "./assets/font/SF-Pro-Display-Regular.otf"
+        id: localFont;
+        source: "./assets/font/Inter-Regular.otf"
     }
 
 

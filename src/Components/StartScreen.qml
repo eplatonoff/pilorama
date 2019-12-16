@@ -42,8 +42,9 @@ Item {
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
 
+        font.family: localFont.name
         font.pixelSize: startScreen.headingFontSize
-        font.family: openSans.name
+
         renderType: Text.NativeRendering
         antialiasing: true
 
@@ -73,6 +74,8 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         anchors.right: parent.right
         anchors.rightMargin: 0
+
+        font.family: localFont.name
         font.pixelSize: startScreen.fontSize
     }
 

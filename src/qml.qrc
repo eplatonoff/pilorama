@@ -53,5 +53,6 @@
         <file>Components/Sequence/LoadButton.qml</file>
         <file>Components/Sequence/PrefsButton.qml</file>
         <file>Components/Clock.qml</file>
+        <file>assets/font/Inter-Regular.otf</file>
     </qresource>
 </RCC>

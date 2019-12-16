@@ -54,6 +54,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: splitToSequenceCheck.right
                 anchors.leftMargin: 0
+
+                font.family: localFont.name
                 font.pixelSize: fontSize
 
                 renderType: Text.NativeRendering

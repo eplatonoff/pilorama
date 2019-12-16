@@ -116,8 +116,9 @@ Rectangle {
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
 
+        font.family: localFont.name
         font.pixelSize: parent.fontSize
-        font.family: openSans.name
+
         renderType: Text.NativeRendering
 
 
@@ -159,6 +160,7 @@ Rectangle {
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('lighter')
 
+        font.family: localFont.name
         font.pixelSize: parent.fontSize
 
         function acceptData() {
@@ -180,7 +182,10 @@ Rectangle {
         anchors.rightMargin: 0
         anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor('mid')
+
+        font.family: localFont.name
         font.pixelSize: parent.fontSize
+
         renderType: Text.NativeRendering
 
     }

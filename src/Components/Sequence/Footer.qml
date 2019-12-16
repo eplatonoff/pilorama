@@ -86,7 +86,10 @@ Rectangle {
                 text: qsTr('Add split')
                 anchors.left: addIcon.right
                 anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
                 font.pixelSize: fontSize
+
                 renderType: Text.NativeRendering
 
                 color: colors.getColor("dark")

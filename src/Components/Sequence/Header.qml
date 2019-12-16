@@ -35,8 +35,9 @@ Rectangle {
         readOnly: sequence.blockEdits
         selectByMouse : !sequence.blockEdits
 
-        font.pointSize: parent.headingFontSize
-        font.family: openSans.name
+        font.family: localFont.name
+        font.pixelSize: parent.headingFontSize
+
         renderType: Text.NativeRendering
         antialiasing: true
 
@@ -65,6 +66,8 @@ Rectangle {
         anchors.right: itemtimeMin.left
         anchors.rightMargin: 18
         anchors.verticalCenter: parent.verticalCenter
+
+        font.family: localFont.name
         font.pixelSize: fontSize
     }
 
@@ -75,6 +78,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor('mid')
+
+        font.family: localFont.name
         font.pixelSize: fontSize
     }
 }
