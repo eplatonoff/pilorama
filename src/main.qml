@@ -135,7 +135,7 @@ ApplicationWindow {
 
     FontLoader {
         id: localFont;
-        source: "./assets/font/Inter-Regular.otf"
+        source: "./assets/font/Inter.otf"
     }
 
 

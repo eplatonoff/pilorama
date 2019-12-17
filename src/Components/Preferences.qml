@@ -97,6 +97,8 @@ Item {
                 anchors.leftMargin: 0
                 color: colors.getColor("dark")
                 anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
                 font.pixelSize: fontSize
 
                 renderType: Text.NativeRendering
@@ -138,6 +140,8 @@ Item {
                 anchors.leftMargin: 0
                 color: colors.getColor("dark")
                 anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
                 font.pixelSize: fontSize
 
                 renderType: Text.NativeRendering
@@ -179,6 +183,8 @@ Item {
                 anchors.leftMargin: 0
                 color: colors.getColor("dark")
                 anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
                 font.pixelSize: fontSize
 
                 renderType: Text.NativeRendering
@@ -230,6 +236,8 @@ Item {
             textFormat: Text.RichText;
             text:   "<style>a:link { color: " + colors.getColor('mid') + "; }</style>" +
                     "<a href='https://github.com/eplatonoff/pilorama'>project on github</a>"
+
+            font.family: localFont.name
             font.pixelSize: preferences.infoFontSize
 
             onLinkActivated: Qt.openUrlExternally(link)

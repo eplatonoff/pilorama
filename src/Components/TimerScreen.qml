@@ -77,7 +77,6 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
 
             font.family: localFont.name
-            font.bold: true
             font.pixelSize: 14
 
             verticalAlignment: Text.AlignVCenter
