@@ -23,6 +23,9 @@ Canvas {
     property real calibrationDash: 2
     property real calibrationGrades: 12
 
+    property real duration: globalTimer.duration
+    property real splitDuration: globalTimer.splitDuration
+
     onPaint: {
         var ctx = getContext("2d");
         ctx.save();
@@ -75,7 +78,7 @@ Canvas {
             }
         }
 
-        var mainDialTurns = Math.trunc(globalTimer.duration / 3600);
+        var mainDialTurns = Math.trunc(duration / 3600);
         var mainDialDiameter = mainDialTurns < 1 ? width : width - (mainDialTurns - 1) * mainTurnsPadding - mainDialTurns * mainTurnsWidth * 2 - mainPadding
         var fakeDialDiameter = mainDialDiameter - mainWidth * 2 - fakePadding
 
@@ -85,7 +88,7 @@ Canvas {
                 dial(width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding) , mainTurnsWidth, colors.getColor('light'), 0, 3600)
             }
 
-            dial(mainDialDiameter, mainWidth, colors.getColor('mid'), 0, globalTimer.duration - (mainDialTurns * 3600))
+            dial(mainDialDiameter, mainWidth, colors.getColor('mid'), 0, duration - (mainDialTurns * 3600))
         }
 
         mainDialTurn()
@@ -93,17 +96,17 @@ Canvas {
 
         if (pomodoroQueue.infiniteMode){
             calibration(width, fakeWidth, masterModel.get(pomodoroQueue.first().id).duration / 60)
-        } else if (!pomodoroQueue.infiniteMode && !globalTimer.running && globalTimer.duration){
-            calibration(globalTimer.duration > 0 ? fakeDialDiameter : width, fakeWidth, 12)
+        } else if (!pomodoroQueue.infiniteMode && !globalTimer.running && duration){
+            calibration(duration > 0 ? fakeDialDiameter : width, fakeWidth, 12)
         } else {
-            calibration(globalTimer.duration > 0 ? fakeDialDiameter : width, fakeWidth, 60)
+            calibration(duration > 0 ? fakeDialDiameter : width, fakeWidth, 60)
         }
 
         if (pomodoroQueue.infiniteMode){
 
             dial(width, fakeWidth,
                  colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color),
-                 0, pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration )
+                 0, splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration )
 
         } else if (!pomodoroQueue.infiniteMode && appSettings.splitToSequence ){
 
@@ -111,7 +114,7 @@ Canvas {
             var splitVisibleStart = 0;
             var splitColor;
             var prevSplit = 0
-            var splitIncrement = 3600 / globalTimer.duration
+            var splitIncrement = 3600 / duration
 
             for(let i = 0; i <= pomodoroQueue.count - 1; i++){
                 i <= 0 ? prevSplit = 0 : prevSplit = pomodoroQueue.get(i-1).duration
@@ -126,7 +129,7 @@ Canvas {
                      )
             }
         } else {
-            dial(fakeDialDiameter, fakeWidth, colors.getColor('light'), 0, globalTimer.duration - (mainDialTurns * 3600) )
+            dial(fakeDialDiameter, fakeWidth, colors.getColor('light'), 0, duration - (mainDialTurns * 3600) )
         }
 
 

@@ -21,13 +21,15 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
     }
     Image {
-        visible: checkbox.checked
+        opacity: checkbox.checked
         anchors.verticalCenter: parent.verticalCenter
         sourceSize.width: 23
         sourceSize.height: 23
         antialiasing: true
         smooth: true
         fillMode: Image.PreserveAspectFit
+
+        Behavior on opacity {PropertyAnimation{duration: 200; easing.type: Easing.OutQuad}}
 
 
         source: "../../assets/img/check.svg"
