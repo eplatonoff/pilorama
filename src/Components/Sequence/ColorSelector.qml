@@ -16,6 +16,8 @@ Rectangle {
     property bool currentItem: delegateItem.ListView.isCurrentItem
     property bool blockEdits: sequence.blockEdits
 
+    property bool dimm: false
+
     Behavior on width {NumberAnimation{duration: 150; easing.type: Easing.OutQuad}}
 
     onCurrentItemChanged: { activateBlink(currentItem) }
@@ -35,17 +37,20 @@ Rectangle {
     function dimmer(color) {
         const dimColor = colors.getColor('light')
         if (!splitToSequence && globalTimer.duration){
+            dimm = true
             return dimColor
         } else if (model.duration === 0){
+            dimm = true
             return dimColor
         } else {
+            dimm = false
             return color
         }
     }
 
     MouseArea {
 
-        visible: !colorSelector.blockEdits
+        visible: !(colorSelector.blockEdits || dimm)
         hoverEnabled: true
         anchors.fill: parent
         onExited: {
@@ -122,7 +127,7 @@ Rectangle {
 
             MouseArea{
 
-                visible: !colorSelector.blockEdits
+                visible: !(colorSelector.blockEdits || dimm)
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
 
