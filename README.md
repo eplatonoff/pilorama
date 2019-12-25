@@ -20,7 +20,7 @@
 
 Precompiled builds available [here](https://github.com/eplatonoff/pilorama/releases/latest/).
 
-### Linux
+### Linux [![Build Status](https://travis-ci.com/eplatonoff/pilorama.svg?branch=master)](https://travis-ci.com/eplatonoff/pilorama)
 
 > Tip: Archlinux [AUR](https://wiki.archlinux.org/index.php/Arch_User_Repository) package [`pilorama-git`](https://aur.archlinux.org/packages/pilorama-git/) available.
 
