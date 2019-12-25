@@ -78,7 +78,7 @@ Canvas {
             }
         }
 
-        var mainDialTurns = Math.trunc(duration / 3600);
+        var mainDialTurns = Math.trunc((duration - 1) / 3600);
         var mainDialDiameter = mainDialTurns < 1 ? width : width - (mainDialTurns - 1) * mainTurnsPadding - mainDialTurns * mainTurnsWidth * 2 - mainPadding
         var fakeDialDiameter = mainDialDiameter - mainWidth * 2 - fakePadding
 
