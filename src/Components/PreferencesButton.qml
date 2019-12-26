@@ -24,7 +24,7 @@ Item {
 
         property bool prefsToggle: false
         anchors.top: parent.top
-        anchors.topMargin: 5
+        anchors.topMargin: 3
         anchors.left: parent.left
         anchors.leftMargin: 3
 
