@@ -18,7 +18,7 @@
 
 ### MacOS and Windows
 
-Precompiled builds available [here](https://github.com/eplatonoff/pilorama/releases/latest/).
+Precompiled builds are available [here](https://github.com/eplatonoff/pilorama/releases/latest/).
 
 ### Linux [![Build Status](https://travis-ci.com/eplatonoff/pilorama.svg?branch=master)](https://travis-ci.com/eplatonoff/pilorama)
 
