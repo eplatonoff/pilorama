@@ -7,7 +7,7 @@ Timer {
     property real splitDuration: 0
 
 
-    property real timerLimit: 17940
+    property real timerLimit: 6 * 3600
 
     onDurationChanged: {
         window.checkClockMode();
