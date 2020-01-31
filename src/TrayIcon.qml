@@ -108,7 +108,7 @@ SystemTrayIcon {
         var showfor
 
         if (name) {
-            title  = name + " split started."
+            title  = name + " started"
             message = "Duration: " + masterModel.get(pomodoroQueue.first().id).duration / 60 +
                     " min.  Ends at " + clock.getNotificationTime().clock
             showfor = 5000
