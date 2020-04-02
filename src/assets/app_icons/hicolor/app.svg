@@ -1,8 +1,9 @@
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="24" cy="24" r="18" stroke="#3E393A" stroke-width="2"/>
-<circle cx="24" cy="24" r="14" stroke="#3E393A" stroke-width="2"/>
-<circle cx="24" cy="24" r="11" stroke="#3E393A" stroke-width="2"/>
-<circle cx="24" cy="24" r="8" stroke="#3E393A" stroke-width="2"/>
-<circle cx="24" cy="24" r="5" stroke="#3E393A" stroke-width="2"/>
-<circle cx="24" cy="24" r="2" stroke="#3E393A" stroke-width="2"/>
+<path d="M45 24C45 35.598 35.598 45 24 45C12.402 45 3 35.598 3 24C3 12.402 12.402 3 24 3C35.598 3 45 12.402 45 24ZM8.59308 24C8.59308 32.509 15.491 39.4069 24 39.4069C32.509 39.4069 39.4069 32.509 39.4069 24C39.4069 15.491 32.509 8.59308 24 8.59308C15.491 8.59308 8.59308 15.491 8.59308 24Z" fill="url(#paint0_linear)"/>
+<defs>
+<linearGradient id="paint0_linear" x1="3" y1="-12" x2="38.5" y2="46.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#A647BE"/>
+<stop offset="1" stop-color="#D12CFB"/>
+</linearGradient>
+</defs>
 </svg>
