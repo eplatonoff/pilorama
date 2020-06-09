@@ -1,11 +1,7 @@
 QT += quick widgets svg xml
 
-CONFIG += c++17 qmltypes
+CONFIG += c++17
 
-QML_IMPORT_NAME = Pilorama
-QML_IMPORT_MAJOR_VERSION = 1
-
-!versionAtLeast(QT_VERSION, 5.15):error("Use at least Qt version 5.15")
 
 OBJECTIVE_SOURCES += mac/appnap.mm
 

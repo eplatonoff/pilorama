@@ -1,8 +1,8 @@
 import QtQuick 2.0
 
-import Pilorama 1.0
+import Pilorama 1.0 as Pilorama
 
-PiloramaTimer {
+Pilorama.Timer {
 
     duration: 0
     durationBound: 0
@@ -31,12 +31,10 @@ PiloramaTimer {
     onTimeout: {
         const timeoutTime = new Date().getTime();
 
-        let elapsedSecs;
+        let elapsedSecs = 1;
 
-        if (previousTimeout == 0) {
-            elapsedSecs = 1;
-        } else {
-            elapsedSecs = Math.floor((timeoutTime - previousTimeout) / 1000);
+        if (previousTimeout != 0) {
+            elapsedSecs = Math.max(Math.floor((timeoutTime - previousTimeout) / 1000), 1);
         }
 
         previousTimeout = timeoutTime;

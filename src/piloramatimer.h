@@ -8,7 +8,6 @@
 class PiloramaTimer : public QTimer
 {
     Q_OBJECT
-    QML_ELEMENT
 public:
     Q_PROPERTY(float duration MEMBER _duration NOTIFY durationChanged)
     Q_PROPERTY(float durationBound MEMBER _durationBound NOTIFY durationBoundChanged)

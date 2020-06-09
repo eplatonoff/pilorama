@@ -1,3 +1,4 @@
+#include "piloramatimer.h"
 #include "trayimageprovider.h"
 
 #include <QGuiApplication>
@@ -42,6 +43,8 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
 
     }, Qt::QueuedConnection);
+
+    qmlRegisterType<PiloramaTimer>("Pilorama", 1, 0, "Timer");
 
     engine.load(url);
 
