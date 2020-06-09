@@ -1,6 +1,9 @@
 QT += quick widgets svg xml
 
-CONFIG += c++17
+CONFIG += c++17 qmltypes
+
+QML_IMPORT_NAME = Pilorama
+QML_IMPORT_MAJOR_VERSION = 1
 
 OBJECTIVE_SOURCES += mac/appnap.mm
 
@@ -29,9 +32,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
+        piloramatimer.cpp \
         trayimageprovider.cpp
 
 HEADERS += \
+    piloramatimer.h \
     trayimageprovider.h
 
 

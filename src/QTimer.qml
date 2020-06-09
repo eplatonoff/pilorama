@@ -1,13 +1,15 @@
 import QtQuick 2.0
 
-Timer {
+import Pilorama 1.0
 
-    property real duration: 0
-    property real durationBound: 0
-    property real splitDuration: 0
+PiloramaTimer {
 
+    duration: 0
+    durationBound: 0
+    splitDuration: 0
 
-    property real timerLimit: 6 * 3600
+    timerLimit: 6 * 3600
+
 
     onDurationChanged: {
         window.checkClockMode();
@@ -16,16 +18,16 @@ Timer {
     }
 
     interval: 1000
-    running: false
-    repeat: true
-    triggeredOnStart: true
 
     onRunningChanged: {
         canvas.requestPaint();
-        if ( running ) { durationBound = duration }
+        if ( running ) {
+            durationBound = duration;
+            onTimeout();
+        }
     }
 
-    onTriggered: {
+    onTimeout: {
 
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
