@@ -158,7 +158,7 @@ ApplicationWindow {
         id: notifications
     }
 
-    QTimer {
+    PiloramaTimer {
         id: globalTimer
     }
 
