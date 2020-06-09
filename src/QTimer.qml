@@ -10,6 +10,7 @@ PiloramaTimer {
 
     timerLimit: 6 * 3600
 
+    property double previousTimeout: 0
 
     onDurationChanged: {
         window.checkClockMode();
@@ -28,10 +29,21 @@ PiloramaTimer {
     }
 
     onTimeout: {
+        const timeoutTime = new Date().getTime();
+
+        let elapsedSecs;
+
+        if (previousTimeout == 0) {
+            elapsedSecs = 1;
+        } else {
+            elapsedSecs = Math.floor((timeoutTime - previousTimeout) / 1000);
+        }
+
+        previousTimeout = timeoutTime;
 
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
-                duration--;
+                duration -= elapsedSecs;
 
             } else {
                 notifications.sendWithSound();
@@ -48,7 +60,7 @@ PiloramaTimer {
             sequence.setCurrentItem(pomodoroQueue.first().id)
         } else { sequence.setCurrentItem() }
 
-        pomodoroQueue.drainTime(1);
+        pomodoroQueue.drainTime(elapsedSecs);
 
         const first = pomodoroQueue.first();
 
