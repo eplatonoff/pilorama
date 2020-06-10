@@ -34,7 +34,7 @@ private:
     float _durationBound;
     float _splitDuration;
     float _timerLimit;
-    bool _running;
+    bool _running = false;
 };
 
 #endif // PILORAMATIMER_H
