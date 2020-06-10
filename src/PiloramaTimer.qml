@@ -4,13 +4,13 @@ import Pilorama 1.0 as Pilorama
 
 Pilorama.Timer {
 
-    duration: 0
-    durationBound: 0
-    splitDuration: 0
+    property real duration: 0
+    property real durationBound: 0
+    property real splitDuration: 0
 
-    timerLimit: 6 * 3600
+    property real timerLimit: 6 * 3600
 
-    property double previousTimeout: 0
+    property real previousTimeout: 0
 
     onDurationChanged: {
         window.checkClockMode();
