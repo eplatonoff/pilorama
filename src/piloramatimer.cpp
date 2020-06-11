@@ -2,6 +2,7 @@
 
 PiloramaTimer::PiloramaTimer(QObject *parent) : QTimer(parent)
 {           
+    setTimerType(Qt::PreciseTimer);
 }
 
 void PiloramaTimer::start()
