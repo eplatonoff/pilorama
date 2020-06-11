@@ -2,14 +2,13 @@
 #define PILORAMATIMER_H
 
 #include <QTimer>
-#include <QQmlEngine>
-
 
 class PiloramaTimer : public QTimer
 {
     Q_OBJECT
 public:
     Q_PROPERTY(bool running MEMBER _running NOTIFY runningChanged)
+    Q_PROPERTY(bool triggeredOnStart MEMBER _triggeredOnStart NOTIFY triggeredOnStartChanged)
 
     PiloramaTimer(QObject *parent = nullptr);
 
@@ -19,10 +18,17 @@ public slots:
 
 signals:
     void runningChanged();
+    void triggered(int elapsedSecs);
+    void triggeredOnStartChanged();
 
 
 private:
+    void checkElapsedTime();
+
+    qint64 _elapsedSecsSinceEpoch = 0;
     bool _running = false;
+
+    bool _triggeredOnStart = false;
 };
 
 #endif // PILORAMATIMER_H

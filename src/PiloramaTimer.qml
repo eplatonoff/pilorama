@@ -4,13 +4,13 @@ import Pilorama 1.0 as Pilorama
 
 Pilorama.Timer {
 
+    triggeredOnStart: true
+
     property real duration: 0
     property real durationBound: 0
     property real splitDuration: 0
 
     property real timerLimit: 6 * 3600
-
-    property real previousTimeout: 0
 
     onDurationChanged: {
         window.checkClockMode();
@@ -24,21 +24,10 @@ Pilorama.Timer {
         canvas.requestPaint();
         if ( running ) {
             durationBound = duration;
-            onTimeout();
         }
     }
 
-    onTimeout: {
-        const timeoutTime = new Date().getTime();
-
-        let elapsedSecs = 1;
-
-        if (previousTimeout != 0) {
-            elapsedSecs = Math.max(Math.floor((timeoutTime - previousTimeout) / 1000), 1);
-        }
-
-        previousTimeout = timeoutTime;
-
+    onTriggered: {
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
                 duration -= elapsedSecs;
