@@ -113,7 +113,7 @@ Rectangle {
         delegate: Item {
 
             id: colorItem
-            height: parent.height
+            height: colorSelector.height
             width: colorSelector.itemWidth
 
             Rectangle {
