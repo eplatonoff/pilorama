@@ -24,7 +24,7 @@
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
         <file>NotificationSystem.qml</file>
-        <file>QTimer.qml</file>
+        <file>PiloramaTimer.qml</file>
         <file>MouseTracker.qml</file>
         <file>TrayIcon.qml</file>
         <file>FileDialogue.qml</file>

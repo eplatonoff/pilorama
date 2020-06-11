@@ -1,11 +1,14 @@
 import QtQuick 2.0
 
-Timer {
+import Pilorama 1.0 as Pilorama
+
+Pilorama.Timer {
+
+    triggeredOnStart: true
 
     property real duration: 0
     property real durationBound: 0
     property real splitDuration: 0
-
 
     property real timerLimit: 6 * 3600
 
@@ -16,20 +19,18 @@ Timer {
     }
 
     interval: 1000
-    running: false
-    repeat: true
-    triggeredOnStart: true
 
     onRunningChanged: {
         canvas.requestPaint();
-        if ( running ) { durationBound = duration }
+        if ( running ) {
+            durationBound = duration;
+        }
     }
 
     onTriggered: {
-
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
-                duration--;
+                duration -= elapsedSecs;
 
             } else {
                 notifications.sendWithSound();
@@ -46,7 +47,7 @@ Timer {
             sequence.setCurrentItem(pomodoroQueue.first().id)
         } else { sequence.setCurrentItem() }
 
-        pomodoroQueue.drainTime(1);
+        pomodoroQueue.drainTime(elapsedSecs);
 
         const first = pomodoroQueue.first();
 

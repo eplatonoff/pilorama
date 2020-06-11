@@ -2,6 +2,7 @@
 
 #include <QPainter>
 #include <QDebug>
+#include <QPainterPath>
 
 TrayImageProvider::TrayImageProvider() : QQuickImageProvider(QQuickImageProvider::Pixmap)
 {
