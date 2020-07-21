@@ -215,8 +215,8 @@ Item {
 
         Image {
             anchors.verticalCenter: parent.verticalCenter
-            sourceSize.width: 23
-            sourceSize.height: 23
+            sourceSize.width: 24
+            sourceSize.height: 24
             antialiasing: true
             smooth: true
             fillMode: Image.PreserveAspectFit

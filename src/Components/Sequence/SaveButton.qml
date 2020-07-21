@@ -12,6 +12,9 @@ Item {
         smooth: true
         antialiasing: false
 
+        sourceSize.width: 24
+        sourceSize.height: 24
+
         property bool prefsToggle: false
 
         anchors.horizontalCenter: parent.horizontalCenter
