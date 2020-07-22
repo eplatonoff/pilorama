@@ -47,7 +47,8 @@ jobs:
         where mingw64-make.exe
     - name: Build Application
       run: |
-        qmake src/pilorama.pro
+        cd src/
+        qmake pilorama.pro
         mingw64-make
         dir
     - name: Check Binary
