@@ -47,3 +47,6 @@ jobs:
         qmake src/pilorama.pro
         make
         dir
+    - name: Check Binary
+      run: |
+        dir
