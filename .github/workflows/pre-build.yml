@@ -51,6 +51,7 @@ jobs:
       shell: cmd
       run: |
         nmake
+        dir
     - name: Check Directory
       run: |
         dir
