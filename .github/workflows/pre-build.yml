@@ -41,14 +41,14 @@ jobs:
         version: '5.15.0'
     - name: Check Qt
       run: |
-        qmake --help
+        where qmake.exe
         where sh.exe
         where make.exe
-        where mingw32-make.exe
+        where mingw64-make.exe
     - name: Build Application
       run: |
         qmake src/pilorama.pro
-        make
+        mingw64-make
         dir
     - name: Check Binary
       run: |
