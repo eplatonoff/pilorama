@@ -19,8 +19,12 @@ jobs:
       run: |
         /usr/local/opt/qt/bin/qmake src/pilorama.pro
         make
+    - name: Prepare Build
+      run: |
+        mkdir executable
+        mv pilorama.app executable/pilorama.app
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
         name: pilorama.app
-        path: pilorama.app
+        path: executable/
