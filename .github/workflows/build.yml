@@ -15,10 +15,12 @@ jobs:
     - name: Setup Dependencies
       run: |
         brew install qt
-        export PATH="/usr/local/opt/qt/bin:$PATH"
-        ls /usr/local/opt/qt/bin
     - name: Build Application
       run: |
-        ls /usr/local/opt/qt/bin
         /usr/local/opt/qt/bin/qmake src/pilorama.pro
         make
+    - name: Store Application
+      uses: actions/upload-artifact@v2
+      with:
+        name: pilorama.app
+        path: pilorama.app
