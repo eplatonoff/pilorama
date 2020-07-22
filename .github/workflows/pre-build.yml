@@ -42,3 +42,8 @@ jobs:
     - name: Check Qt
       run: |
         qmake --help
+    - name: Build Application
+      run: |
+        qmake src/pilorama.pro
+        make
+        dir
