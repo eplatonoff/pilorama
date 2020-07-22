@@ -44,12 +44,12 @@ jobs:
         where qmake.exe
         where sh.exe
         where make.exe
-        where mingw64-make.exe
+        where mingw32-make.exe
     - name: Build Application
       run: |
         cd src/
         qmake pilorama.pro
-        mingw64-make
+        mingw32-make
         dir
     - name: Check Binary
       run: |
