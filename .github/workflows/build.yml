@@ -19,12 +19,13 @@ jobs:
       run: |
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
+        /usr/local/opt/qt/bin/macdeployqt pilorama.app -dmg -qmldir=./src
     - name: Prepare Build
       run: |
         mkdir executable
-        mv pilorama.app executable/pilorama.app
+        mv pilorama.dmg executable/pilorama.dmg
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
-        name: pilorama.app
+        name: pilorama.dmg
         path: executable
