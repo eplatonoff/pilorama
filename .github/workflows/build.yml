@@ -19,5 +19,6 @@ jobs:
         ls /usr/local/opt/qt/bin
     - name: Build Application
       run: |
-        qmake src/pilorama.pro
+        ls /usr/local/opt/qt/bin
+        /usr/local/opt/qt/bin/qmake src/pilorama.pro
         make
