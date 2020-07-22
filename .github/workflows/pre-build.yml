@@ -46,7 +46,7 @@ jobs:
         qmake src\pilorama.pro -spec win32-msvc
     - name: Verify Makefile
       run: |
-        type pilorama\Makefile.Release
+        type Makefile.Release
     - name: Check Directory
       run: |
         dir
