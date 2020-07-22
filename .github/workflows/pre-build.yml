@@ -47,3 +47,6 @@ jobs:
     - name: Verify Makefile
       run: |
         type pilorama\Makefile.Release
+    - name: Check Directory
+      run: |
+        dir
