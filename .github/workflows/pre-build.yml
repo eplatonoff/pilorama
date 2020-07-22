@@ -42,9 +42,12 @@ jobs:
     - name: Check Qt
       run: |
         qmake --help
+        where sh.exe
+        where make.exe
+        where mingw32-make.exe
     - name: Build Application
       run: |
-        qmake src/pilorama.pro  -spec win32-msvc
+        qmake src/pilorama.pro
         make
         dir
     - name: Check Binary
