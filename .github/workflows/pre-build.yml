@@ -51,7 +51,6 @@ jobs:
       shell: cmd
       run: |
         make
-        dir
     - name: Check Directory
       run: |
         dir
