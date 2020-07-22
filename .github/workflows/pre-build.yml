@@ -44,7 +44,7 @@ jobs:
         qmake --help
     - name: Build Application
       run: |
-        qmake src/pilorama.pro CONFIG+=release QTC_SOURCE="$ENV{GITHUB_WORKSPACE}/qtcreator" QTC_BUILD="$ENV{GITHUB_WORKSPACE}/qtcreator"
+        qmake src/pilorama.pro  -spec win32-msvc
         make
         dir
     - name: Check Binary
