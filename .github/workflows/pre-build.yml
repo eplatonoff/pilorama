@@ -39,16 +39,10 @@ jobs:
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.15.0'
-    - name: Check Qt
-      run: |
-        where qmake.exe
-        where sh.exe
-        where make.exe
-        where mingw32-make.exe
     - name: Build Application
       run: |
-        qmake src/pilorama.pro -spec win32-msvc -tp vc
-        mingw32-make
+        call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        qmake src\pilorama.pro
         dir
     - name: Check Binary
       run: |
