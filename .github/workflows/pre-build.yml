@@ -43,14 +43,5 @@ jobs:
       shell: cmd
       run: |
         call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake -platform win32-g++ src\pilorama.pro
-    - name: Verify Makefile
-      run: |
-        type Makefile.Release
-    - name: Build Application
-      shell: cmd
-      run: |
-        make
-    - name: Check Directory
-      run: |
-        dir
+        qmake src\pilorama.pro
+        nmake
