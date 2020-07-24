@@ -47,6 +47,7 @@ jobs:
         nmake
         windeployqt release/pilorama.exe -qmldir=./src
     - name: Check Build
+      shell: cmd
       run: |
         dir
         cd release
