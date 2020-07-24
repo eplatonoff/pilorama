@@ -46,5 +46,6 @@ jobs:
         qmake src\pilorama.pro
         nmake
     - name: Check Build
+      shell: cmd
       run: |
         dir
