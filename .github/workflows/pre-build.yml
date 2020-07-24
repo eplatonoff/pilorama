@@ -38,6 +38,7 @@ jobs:
     - name: Setup Dependencies
       uses: jurplel/install-qt-action@v2
       with:
+        arch: 'win32_mingw53'
         version: '5.15.0'
     - name: Build Application
       shell: cmd
