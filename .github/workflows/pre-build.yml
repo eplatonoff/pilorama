@@ -46,6 +46,10 @@ jobs:
         qmake -config release src\pilorama.pro
         nmake
         windeployqt release/pilorama.exe -qmldir=./src
+    - name: Check Build
+      run: |
+        dir
+        cd release
         dir
     - name: Store Application
       uses: actions/upload-artifact@v2
