@@ -43,8 +43,10 @@ jobs:
       shell: cmd
       run: |
         call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake src\pilorama.pro
+        qmake -config release src\pilorama.pro
         nmake
+        windeployqt release/pilorama.exe -qmldir=./src
+        dir
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
