@@ -45,7 +45,8 @@ jobs:
         call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         qmake src\pilorama.pro
         nmake
-    - name: Check Build
-      shell: cmd
-      run: |
-        dir
+    - name: Store Application
+      uses: actions/upload-artifact@v2
+      with:
+        name: pilorama.exe
+        path: release
