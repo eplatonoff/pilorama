@@ -10,6 +10,9 @@ Item {
         source: "../../assets/img/load.svg"
         fillMode: Image.PreserveAspectFit
 
+        sourceSize.width: 24
+        sourceSize.height: 24
+
         property bool prefsToggle: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter

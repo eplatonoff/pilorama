@@ -44,3 +44,6 @@ CMakeLists.txt.user*
 .idea/
 
 build
+
+.DS_Store
+pilorama.app

@@ -22,6 +22,9 @@ Item {
         source: "../assets/img/prefs.svg"
         fillMode: Image.PreserveAspectFit
 
+        sourceSize.width: 24
+        sourceSize.height: 24
+
         property bool prefsToggle: false
         anchors.top: parent.top
         anchors.topMargin: 3

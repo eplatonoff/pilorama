@@ -86,6 +86,9 @@ Rectangle {
         source: "../../assets/img/dragger.svg"
         fillMode: Image.PreserveAspectFit
 
+        sourceSize.height: 24
+        sourceSize.width: 24
+
         Behavior on width { NumberAnimation { properties: "width"; duration: 150 }}
 
         property bool prefsToggle: false
@@ -227,6 +230,9 @@ Rectangle {
                 source: "../../assets/img/copy.svg"
                 fillMode: Image.PreserveAspectFit
 
+                sourceSize.height: 24
+                sourceSize.width: 24
+
                 ColorOverlay{
                     id: copyOverlay
                     anchors.fill: parent
@@ -262,6 +268,9 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 source: "../../assets/img/close.svg"
                 fillMode: Image.PreserveAspectFit
+
+                sourceSize.height: 24
+                sourceSize.width: 24
 
 
                 ColorOverlay{

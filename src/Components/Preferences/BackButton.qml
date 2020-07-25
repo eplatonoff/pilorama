@@ -23,6 +23,9 @@ Item {
         source: "../../assets/img/back.svg"
         fillMode: Image.PreserveAspectFit
 
+        sourceSize.height: 24
+        sourceSize.width: 24
+
         property bool prefsToggle: false
         anchors.verticalCenter: parent.verticalCenter
 
