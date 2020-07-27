@@ -7,7 +7,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{6EB623F6-FDAB-4FC3-8559-2BBFF1605485}
+AppId={{6EB623F6-FDAB-4FC3-8559-2BBFF1605485}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -17,7 +17,7 @@ AllowNoIcons=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.\
-OutputBaseFilename=pilorama
+OutputBaseFilename=pilorama_setup
 SetupIconFile=.\src\assets\app_icons\icon.ico
 Compression=lzma
 SolidCompression=yes

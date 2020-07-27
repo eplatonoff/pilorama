@@ -55,5 +55,5 @@ jobs:
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
-        name: pilorama.exe
-        path: pilorama.exe
+        name: pilorama_setup.exe
+        path: pilorama_setup.exe
