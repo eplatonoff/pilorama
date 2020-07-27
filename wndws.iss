@@ -16,9 +16,9 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\DELL\Desktop
+OutputDir=.\
 OutputBaseFilename=pilorama
-SetupIconFile=C:\Users\DELL\Downloads\pilorama-master\pilorama-master\src\assets\app_icons\icon.ico
+SetupIconFile=.\src\assets\app_icons\icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -30,12 +30,12 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\DELL\Desktop\pilorama\pilorama.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\DELL\Desktop\pilorama\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ".\release\pilorama.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"               
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
