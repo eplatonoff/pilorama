@@ -20,7 +20,7 @@ jobs:
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt pilorama.app -qmldir=./src
-    - name: Prepare Build
+    - name: Make Installer
       run: |
         mkdir executable
         mv pilorama.app executable/pilorama.app
@@ -48,8 +48,12 @@ jobs:
         qmake -config release src\pilorama.pro
         nmake
         windeployqt release/pilorama.exe -qmldir=./src
+    - name: Make Installer
+      shell: cmd
+      run: |
+        iscc wndws.iss
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
-        name: pilorama-windows
-        path: release
+        name: pilorama.exe
+        path: pilorama.exe
