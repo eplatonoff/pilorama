@@ -1,4 +1,4 @@
-![header image](https://github.com/eplatonoff/pilorama/blob/master/assets/cover.png)
+![header image](/assets/cover.png?raw=true)
 
 # pilorama
 
