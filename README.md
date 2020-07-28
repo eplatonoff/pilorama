@@ -1,20 +1,20 @@
-# pilorama
-
 ![header image](https://github.com/eplatonoff/pilorama/blob/master/assets/cover.png)
 
-*Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) timer.*
+# pilorama
+
+*Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) Tool.*
 
 ## Key Features
+- Cross-platform software
 - Simple countdown timer
 - Infinite time boxing timer
-- Night mode
 - System notifications
 - Dynamic tray icon and menu
 - JSON Presets
-- Cross-platform software
+- Night mode
 
 
-## Installation [![semver](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/) [![semver](https://img.shields.io/github/release-date/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/)
+## Installation [![GitHub Release Version](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/) [![GitHub Release Date](https://img.shields.io/github/release-date/eplatonoff/pilorama?label=release%20date)](https://github.com/eplatonoff/pilorama/releases/latest/) [![GitHub Downloads](https://img.shields.io/github/downloads/eplatonoff/pilorama/total)](https://github.com/eplatonoff/pilorama/releases/latest/)
 
 ### MacOS and Windows
 
@@ -34,3 +34,5 @@ Building from source:
     $ qmake src/pilorama.pro 
     $ make
     $ ./pilorama
+
+## Development [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/GitHub%20Actions?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.org)](https://img.shields.io/travis/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
