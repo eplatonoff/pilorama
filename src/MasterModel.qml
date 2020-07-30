@@ -13,7 +13,16 @@ ListModel {
     Component.onCompleted: load()
     Component.onDestruction: save()
 
-    property var demo: '[{"id":0,"name":"Demo","color":"red","duration":900}]'
+    property var demo: '[
+        {"id":0,"name":"Pomodoro","color":"red","duration":1500},
+        {"id":1,"name":"Short Break","color":"green","duration":300},
+        {"id":2,"name":"Pomodoro","color":"red","duration":1500},
+        {"id":3,"name":"Short Break","color":"green","duration":300},
+        {"id":4,"name":"Pomodoro","color":"red","duration":1500},
+        {"id":5,"name":"Short Break","color":"green","duration":300},
+        {"id":6,"name":"Pomodoro","color":"red","duration":1500},
+        {"id":7,"name":"Long Break","color":"blue","duration":900}
+    ]'
 
 
 // Adds item to sequence
