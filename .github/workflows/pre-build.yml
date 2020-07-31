@@ -19,16 +19,18 @@ jobs:
       run: |
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
-        /usr/local/opt/qt/bin/macdeployqt pilorama.app -dmg -qmldir=./src
-    - name: Prepare Build
+        /usr/local/opt/qt/bin/macdeployqt pilorama.app -qmldir=./src
+    - name: Make Installer
       run: |
         mkdir executable
-        mv pilorama.dmg executable/pilorama.dmg
+        mv pilorama.app executable/pilorama.app
+        brew install create-dmg
+        create-dmg --volname pilorama --background assets/background.png --window-size 540 320 --icon pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable pilorama.dmg executable/
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
         name: pilorama.dmg
-        path: executable
+        path: pilorama.dmg
   windows:
     name: Pre-build Windows Package
     runs-on: windows-2019
@@ -46,8 +48,12 @@ jobs:
         qmake -config release src\pilorama.pro
         nmake
         windeployqt release/pilorama.exe -qmldir=./src
+    - name: Make Installer
+      shell: cmd
+      run: |
+        iscc wndws.iss
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
-        name: pilorama-windows
-        path: release
+        name: pilorama_setup.exe
+        path: pilorama_setup.exe
