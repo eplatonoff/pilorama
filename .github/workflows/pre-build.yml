@@ -17,20 +17,20 @@ jobs:
         brew install qt
     - name: Build Application
       run: |
-        /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
+        /usr/local/opt/qt/bin/qmake -config release src/Pilorama.pro
         make
-        /usr/local/opt/qt/bin/macdeployqt pilorama.app -qmldir=./src
+        /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
     - name: Make Installer
       run: |
         mkdir executable
-        mv pilorama.app executable/pilorama.app
+        mv Pilorama.app executable/Pilorama.app
         brew install create-dmg
-        create-dmg --volname pilorama --background assets/background.png --window-size 540 320 --icon pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable pilorama.dmg executable/
+        create-dmg --volname pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
-        name: pilorama.dmg
-        path: pilorama.dmg
+        name: Pilorama.dmg
+        path: Pilorama.dmg
   windows:
     name: Pre-build Windows Package
     runs-on: windows-2019
@@ -45,9 +45,9 @@ jobs:
       shell: cmd
       run: |
         call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake -config release src\pilorama.pro
+        qmake -config release src\Pilorama.pro
         nmake
-        windeployqt release/pilorama.exe -qmldir=./src
+        windeployqt release/Pilorama.exe -qmldir=./src
     - name: Make Installer
       shell: cmd
       run: |
@@ -55,5 +55,5 @@ jobs:
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
-        name: pilorama_setup.exe
-        path: pilorama_setup.exe
+        name: Pilorama_Setup.exe
+        path: Pilorama_Setup.exe
