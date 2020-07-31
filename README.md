@@ -1,8 +1,8 @@
 ![header image](/assets/cover.png?raw=true)
 
-# pilorama
+# Pilorama
 
-*Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) Tool.*
+*Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) Tool*
 
 ## Key Features
 - Cross-platform software
