@@ -2,7 +2,7 @@
 Type=Application
 Version=1.0
 Name=Pilorama
-Comment=Pomodoro timer
+Comment=Advanced Timeboxing Tool
 Exec=Pilorama
 Terminal=false
 Icon=Pilorama
