@@ -10,7 +10,7 @@
 AppId={{6EB623F6-FDAB-4FC3-8559-2BBFF1605485}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
 DefaultDirName={autopf64}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
