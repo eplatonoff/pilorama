@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-import Pilorama 1.0 as Pilorama
+import Pilorama
 
 Pilorama.Timer {
 
