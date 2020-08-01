@@ -25,7 +25,7 @@ jobs:
         mkdir executable
         mv Pilorama.app executable/Pilorama.app
         brew install create-dmg
-        create-dmg --volname pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
+        create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
     - name: Store Application
       uses: actions/upload-artifact@v2
       with:
