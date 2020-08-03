@@ -16,7 +16,7 @@ jobs:
         brew install create-dmg
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Bump Version
+    - name: Set Version
       run: |
         export VERSION=${GITHUB_REF##*v}
         sed -i '' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
@@ -68,12 +68,12 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Bump Version
+    - name: Set Version
       run: |
         export VERSION=${GITHUB_REF##*v}
         sed -i '' 's/Version=*/Version='"$VERSION"'/g' src/Pilorama.desktop
         sed -i '' 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' windows.iss
-    - name: Confirm Version Bump
+    - name: Confirm Version Set
       run: |
         cat src/Pilorama.desktop
         cat windows.iss
