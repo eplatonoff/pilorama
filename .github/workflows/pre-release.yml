@@ -10,50 +10,54 @@ jobs:
     name: Pre-build MacOS Package
     runs-on: macos-10.15
     steps:
-    - name: Setup Dependencies
-      run: |
-        brew install qt
-        brew install create-dmg
+    # - name: Setup Dependencies
+    #   run: |
+    #     brew install qt
+    #     brew install create-dmg
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Build Application
+    - name: Bump version
       run: |
-        /usr/local/opt/qt/bin/qmake -config release src/Pilorama.pro
-        make
-        /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
-    - name: Make Installer
-      run: |
-        mkdir executable
-        mv Pilorama.app executable/Pilorama.app
-        create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
-    - name: Store Application
-      uses: actions/upload-artifact@v2
-      with:
-        name: Pilorama.dmg
-        path: Pilorama.dmg
-  windows:
-    name: Pre-build Windows Package
-    runs-on: windows-2019
-    steps:
-    - name: Setup Dependencies
-      uses: jurplel/install-qt-action@v2
-      with:
-        version: '5.15.0'
-    - name: Checkout Code
-      uses: actions/checkout@v2
-    - name: Build Application
-      shell: cmd
-      run: |
-        call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake -config release src\Pilorama.pro
-        nmake
-        windeployqt release/Pilorama.exe -qmldir=./src
-    - name: Make Installer
-      shell: cmd
-      run: |
-        iscc wndws.iss
-    - name: Store Application
-      uses: actions/upload-artifact@v2
-      with:
-        name: Pilorama_Setup.exe
-        path: Pilorama_Setup.exe
+        sed 's/Version=\d\.\d\.\d/Version=0.0.0/g' src/Pilorama.desktop
+        cat src/Pilorama.desktop
+    # - name: Build Application
+    #   run: |
+    #     /usr/local/opt/qt/bin/qmake -config release src/Pilorama.pro
+    #     make
+    #     /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
+    # - name: Make Installer
+    #   run: |
+    #     mkdir executable
+    #     mv Pilorama.app executable/Pilorama.app
+    #     create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
+    # - name: Store Application
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: Pilorama.dmg
+    #     path: Pilorama.dmg
+  # windows:
+    # name: Pre-build Windows Package
+    # runs-on: windows-2019
+    # steps:
+    # - name: Setup Dependencies
+    #   uses: jurplel/install-qt-action@v2
+    #   with:
+    #     version: '5.15.0'
+    # - name: Checkout Code
+    #   uses: actions/checkout@v2
+    # - name: Build Application
+    #   shell: cmd
+    #   run: |
+    #     call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+    #     qmake -config release src\Pilorama.pro
+    #     nmake
+    #     windeployqt release/Pilorama.exe -qmldir=./src
+    # - name: Make Installer
+    #   shell: cmd
+    #   run: |
+    #     iscc wndws.iss
+    # - name: Store Application
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: Pilorama_Setup.exe
+    #     path: Pilorama_Setup.exe
