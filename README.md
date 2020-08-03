@@ -35,4 +35,4 @@ Building from source:
     $ make
     $ ./pilorama
 
-## Development [!![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/GitHub%20Actions%20/%20Pre-build)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
+## Development [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/GitHub%20Actions%20/%20Pre-build)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
