@@ -49,8 +49,8 @@ jobs:
       shell: bash
       run: |
         export VERSION=${GITHUB_REF##*v}
-        sed -i '.tmp' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
-        sed -i '.tmp' 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' wndws.iss
+        sed -i 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
+        sed -i 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' wndws.iss
         cat src/Pilorama.desktop
         cat wndws.iss
     # - name: Build Application
