@@ -35,16 +35,24 @@ jobs:
   #     with:
   #       name: Pilorama.dmg
   #       path: Pilorama.dmg
-  # windows:
-    # name: Pre-build Windows Package
-    # runs-on: windows-2019
-    # steps:
+  windows:
+    name: Pre-build Windows Package
+    runs-on: windows-2019
+    steps:
     # - name: Setup Dependencies
     #   uses: jurplel/install-qt-action@v2
     #   with:
     #     version: '5.15.0'
-    # - name: Checkout Code
-    #   uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Set Version
+      shell: bash
+      run: |
+        export VERSION=${GITHUB_REF##*v}
+        sed -i '' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
+        sed -i '' 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' wndws.iss
+        cat src/Pilorama.desktop
+        cat wndws.iss
     # - name: Build Application
     #   shell: cmd
     #   run: |
