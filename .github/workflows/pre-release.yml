@@ -20,6 +20,7 @@ jobs:
       run: |
         sed -i '' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version=0.0.0/g' src/Pilorama.desktop
         cat src/Pilorama.desktop
+        echo $GITHUB_REF;
     # - name: Build Application
     #   run: |
     #     /usr/local/opt/qt/bin/qmake -config release src/Pilorama.pro
