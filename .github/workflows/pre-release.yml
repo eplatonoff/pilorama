@@ -72,7 +72,7 @@ jobs:
       run: |
         export VERSION=${GITHUB_REF##*v}
         sed -i '' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
-        sed -i '' 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' windows.iss
+        sed -i '' 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' wndws.iss
     - name: Confirm Version Set
       run: |
         cat src/Pilorama.desktop
