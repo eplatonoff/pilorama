@@ -76,4 +76,4 @@ jobs:
     - name: Confirm Version Set
       run: |
         cat src/Pilorama.desktop
-        cat windows.iss
+        cat wndws.iss
