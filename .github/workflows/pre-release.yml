@@ -63,7 +63,7 @@ jobs:
     #     path: Pilorama_Setup.exe
   push_back:
     name: Send published version to HEAD
-    runs-on: ubuntu-20.04
+    runs-on: mac-os
     # needs: [macos]
     steps:
     - name: Checkout Code
