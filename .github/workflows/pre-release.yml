@@ -1,9 +1,9 @@
-name: GitHub Actions / Pre-build
+name: GitHub Actions / Pre-release
 
 on:
-  pull_request:
-    branches:
-      - master
+  create:
+    tags:
+      - '*.*.*'
 
 jobs:
   macos:
