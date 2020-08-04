@@ -35,4 +35,11 @@ Building from source:
     $ make
     $ ./pilorama
 
-## Development [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
+
+## Development [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
+
+#### Release Process
+
+Once the latest **Pull Request** passed all CI checks & **are merged** to master **push git tag** with required version pointed **to** merge commit on **master** branch.  
+**GitHub Actions** proccesses this tag & **builds** all **distributions**. After that **it also makes version bumps** & pushes it **to master** as a separate commit.
+
