@@ -172,7 +172,7 @@ SystemTrayIcon {
             }
         }
         MenuItem {
-            text: qsTr("Settings")
+            text: qsTr("Preferences")
             onTriggered: {
                if (stack.currentItem === content) {
                    popUp()
