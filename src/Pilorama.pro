@@ -53,5 +53,5 @@ unix:
     !android: target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION=9.9.9
+VERSION=3.0.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
