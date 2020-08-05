@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("somehumans.com");
     app.setApplicationName("QML Timer");
 
+    app.setApplicationVersion(APP_VERSION);
+
     QQmlApplicationEngine engine;
     engine.addImageProvider("tray_icon_provider", new TrayImageProvider());
 

@@ -233,7 +233,7 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            textFormat: Text.RichText;
+            textFormat: Text.RichText
             text:   "<style>a:link { color: " + colors.getColor('mid') + "; }</style>" +
                     "<a href='https://github.com/eplatonoff/pilorama'>project on github</a>"
 
@@ -245,6 +245,27 @@ Item {
         }
     }
 
+    Row {
+        id: version
+        height: 32
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 3
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            textFormat: Text.RichText
+            text:   "<style>a:link { color: " + colors.getColor('mid') + "; }</style>" +
+                    "<a href='https://github.com/eplatonoff/pilorama/releases/latest/'>ver. " + Qt.application.version + "</a>"
+
+            font.family: localFont.name
+            font.pixelSize: preferences.infoFontSize
+
+            onLinkActivated: Qt.openUrlExternally(link)
+
+        }
+    }
 
 }
 

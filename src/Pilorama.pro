@@ -52,3 +52,6 @@ unix:
     macx: target.path = /usr/local/bin
     !android: target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
+
+VERSION=9.9.9
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
