@@ -1,0 +1,11 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+body {
+	background: #3E393A url("img/dark-circle.svg") top left no-repeat;
+	font-family: Helvetica;
+	letter-spacing: 0.015em;
+}
