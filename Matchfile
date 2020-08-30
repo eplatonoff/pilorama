@@ -1,0 +1,13 @@
+git_url("git@github.com:sergeykuzmich/pilorama-codesigning.git")
+storage_mode("git")
+
+type("appstore")
+app_identifier("com.sigonna.pilorama")
+platform("macos")
+
+team_id("BF7ZL72794")
+
+
+skip_docs(true)
+
+# The docs are available on https://docs.fastlane.tools/actions/match

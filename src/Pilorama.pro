@@ -53,5 +53,9 @@ unix:
     !android: target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
 
+TARGET=app
+QMAKE_TARGET_BUNDLE_PREFIX=com.sigonna.pilorama
+
+
 VERSION=3.0.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
