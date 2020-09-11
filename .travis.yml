@@ -1,3 +1,4 @@
+os: linux
 dist: bionic    # qt5-default 5.9.5 - requires qt>=5.6
 language: cpp
 
@@ -8,5 +9,6 @@ before_install:
 - sudo apt install qt5-default qtdeclarative5-dev libqt5svg5-dev
 
 script:
+- ls src/
 - qmake src/Pilorama.pro
 - make
