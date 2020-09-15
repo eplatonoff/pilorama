@@ -1,7 +1,7 @@
 git_url("git@github.com:sergeykuzmich/pilorama-codesigning.git")
 storage_mode("git")
 
-type("appstore")
+type("developer_id")
 app_identifier("com.sigonna.opensource.Pilorama")
 platform("macos")
 
