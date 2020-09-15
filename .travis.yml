@@ -8,5 +8,5 @@ before_install:
 - sudo apt install qt5-default qtdeclarative5-dev libqt5svg5-dev
 
 script:
-- qmake src/Pilorama.pro
+- qmake src/pilorama.pro
 - make

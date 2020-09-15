@@ -19,11 +19,11 @@ jobs:
     - name: Set Version
       run: |
         export VERSION=${GITHUB_REF##*v}
-        sed -i '' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
-        sed -i '' 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/Pilorama.pro
+        sed -i '' 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/pilorama.desktop
+        sed -i '' 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/pilorama.pro
     - name: Build Application
       run: |
-        /usr/local/opt/qt/bin/qmake -config release src/Pilorama.pro
+        /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
     - name: Make Installer
@@ -50,14 +50,14 @@ jobs:
       shell: bash
       run: |
         export VERSION=${GITHUB_REF##*v}
-        sed -i 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
+        sed -i 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/pilorama.desktop
         sed -i 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]"/#define MyAppVersion "'"$VERSION"'"/g' wndws.iss
-        sed -i 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/Pilorama.pro
+        sed -i 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/pilorama.pro
     - name: Build Application
       shell: cmd
       run: |
         call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake -config release src\Pilorama.pro
+        qmake -config release src\pilorama.pro
         nmake
         windeployqt release/Pilorama.exe -qmldir=./src
     - name: Make Installer
@@ -82,9 +82,9 @@ jobs:
     - name: Set Version
       run: |
         export VERSION=${GITHUB_REF##*v}
-        sed -i 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/Pilorama.desktop
+        sed -i 's/Version=[0-9]*\.[0-9]*\.[0-9]*/Version='"$VERSION"'/g' src/pilorama.desktop
         sed -i 's/#define MyAppVersion "[0-9]*\.[0-9]*\.[0-9]*"/#define MyAppVersion "'"$VERSION"'"/g' wndws.iss
-        sed -i 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/Pilorama.pro
+        sed -i 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/pilorama.pro
     - name: Commit Version
       run: |
         export VERSION=${GITHUB_REF##*v}
