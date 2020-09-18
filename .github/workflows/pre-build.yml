@@ -14,7 +14,6 @@ jobs:
       run: |
         brew install qt
         brew install create-dmg
-        bundle install
     - name: Checkout Code
       uses: actions/checkout@v2
     - name: Build Application
@@ -22,11 +21,11 @@ jobs:
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
-    - name: Get Certificate
+    - name: Fetch Certificate
       env:
         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
       run: |
-        bundle exec fastlane match developer_id --readonly
+        fastlane match developer_id --readonly
     - name: Make Installer
       run: |
         mkdir executable
