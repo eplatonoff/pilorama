@@ -10,6 +10,13 @@ jobs:
     name: Pre-build MacOS Package
     runs-on: macos-10.15
     steps:
+    - name: Get Certificate
+      env:
+        SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}
+      run: |
+        echo $SSH_PRIVATE ~/.ssh/id_rsa
+        ssh-add -K ~/.ssh/id_rsa
+        fastlane match developer_id --readonly
     - name: Setup Dependencies
       run: |
         brew install qt
@@ -21,14 +28,6 @@ jobs:
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
-    - name: Sign Application
-      env:
-        SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}
-      run: |
-        echo $SSH_PRIVATE /tmp/acc_key
-        export MATCH_GIT_PRIVATE_KEY=/tmp/acc_key
-        bundle install
-        bundle exec fastlane match developer_id --readonly
     - name: Make Installer
       run: |
         mkdir executable
