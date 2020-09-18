@@ -3,6 +3,7 @@ storage_mode("git")
 
 type("developer_id")
 app_identifier("com.sigonna.opensource.Pilorama")
+
 platform("macos")
 
 team_id("BF7ZL72794")
