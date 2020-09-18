@@ -26,7 +26,7 @@ jobs:
       env:
         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
       run: |
-        fastlane match developer_id --readonly
+        bundle exec fastlane match developer_id --readonly
     - name: Make Installer
       run: |
         mkdir executable
