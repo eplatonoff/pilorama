@@ -21,6 +21,9 @@ jobs:
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
+    - name: Sign Application
+      run: |
+        fastlane match developer_id --readonly
     - name: Make Installer
       run: |
         mkdir executable
