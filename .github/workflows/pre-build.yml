@@ -23,8 +23,11 @@ jobs:
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
     - name: Sign Application
       env:
-        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}
       run: |
+        echo $SSH_PRIVATE /tmp/acc_key
+        export MATCH_GIT_PRIVATE_KEY=/tmp/acc_key
+        bundle install
         bundle exec fastlane match developer_id --readonly
     - name: Make Installer
       run: |
