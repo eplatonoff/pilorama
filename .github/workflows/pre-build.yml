@@ -58,7 +58,7 @@ jobs:
         STATUS="In Progress"
         TRIES=1
         echo "Wait for notarization..."
-        while [ $STATUS != "Package Approved" ]
+        while [[ $STATUS != "Package Approved" ]]
         do
           echo "- attempt $TRIES..."
           if [[ $TRIES == 30 ]]
