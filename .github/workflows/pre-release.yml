@@ -87,7 +87,7 @@ jobs:
         mkdir executable
         mv Pilorama.app executable/Pilorama.app
         create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
-    - name: Store Application
+    - name: Store Package
       uses: actions/upload-artifact@v2
       with:
         name: Pilorama.dmg
@@ -120,7 +120,7 @@ jobs:
       shell: cmd
       run: |
         iscc wndws.iss
-    - name: Store Application
+    - name: Store Package
       uses: actions/upload-artifact@v2
       with:
         name: Pilorama_Setup.exe
@@ -147,7 +147,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git commit -m "Release version $VERSION" -a
-    - name: Push changes
+    - name: Push Changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
