@@ -1,0 +1,27 @@
+desc 'Setup local keychain store'
+def make_keychain(name)
+  delete_keychain(
+    name: name
+  ) if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+
+  create_keychain(
+    name: name,
+    password: 'pilorama',
+    unlock: true,
+    timeout: false
+  )
+end
+
+platform :ios do
+  desc 'Sync certificates & Provision profiles'
+  lane :certificates do
+    make_keychain 'pilorama'
+    match(
+      git_url: ENV['GIT_URL'],
+      type: ENV['TYPE'],
+      readonly: true,
+      keychain_name: 'pilorama',
+      keychain_password: 'pilorama'
+    )
+  end
+end

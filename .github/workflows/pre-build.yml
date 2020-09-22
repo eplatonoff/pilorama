@@ -10,12 +10,13 @@ jobs:
     name: Pre-build MacOS Package
     runs-on: macos-10.15
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
     - name: Setup Dependencies
       run: |
         brew install qt
         brew install create-dmg
-    - name: Checkout Code
-      uses: actions/checkout@v2
+        bundle install
     - name: Build Application
       run: |
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
@@ -27,15 +28,10 @@ jobs:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         KEYCHAIN_PASSWORD: keychain
       run: |
-        fastlane match developer_id --readonly
+        bundle exec fastlane ios certificates
     - name: Codesign
       run: |
-        codesign -s "Developer ID Application: SIGONNA LLC (BF7ZL72794)" \
-          --timestamp \
-          --options runtime \
-          --force \
-          --deep \
-          Pilorama.app
+        codesign -s "Developer ID Application: SIGONNA LLC (BF7ZL72794)" --timestamp --options runtime --force --deep Pilorama.app
     - name: Make Installer
       run: |
         mkdir executable
@@ -50,12 +46,12 @@ jobs:
     name: Pre-build Windows Package
     runs-on: windows-2019
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
     - name: Setup Dependencies
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.15.0'
-    - name: Checkout Code
-      uses: actions/checkout@v2
     - name: Build Application
       shell: cmd
       run: |
