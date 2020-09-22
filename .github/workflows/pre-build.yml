@@ -74,6 +74,7 @@ jobs:
           )
           (( TRIES++ ))
         done
+        xcrun stapler staple "Pilorama.app"
     - name: Make Installer
       run: |
         mkdir executable
