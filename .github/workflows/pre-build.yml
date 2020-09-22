@@ -68,13 +68,7 @@ jobs:
           xcrun altool \
              --notarization-info $UUID \
              -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
-            grep -o 'Package Approved'
-          STATUS=$( \
-            xcrun altool \
-             --notarization-info $UUID \
-             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
-            grep -o 'Package Approved' \
-          )
+          grep -o 'Package Approved'
           echo $STATUS
           echo 3
         done
