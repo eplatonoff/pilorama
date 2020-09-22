@@ -62,6 +62,13 @@ jobs:
           echo 1
           sleep 30s
           echo 2
+          xcrun altool \
+             --notarization-info $UUID \
+             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD"
+          xcrun altool \
+             --notarization-info $UUID \
+             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
+            egrep -o "Package Approved" \
           STATUS=$( \
             xcrun altool \
              --notarization-info $UUID \
