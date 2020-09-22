@@ -73,6 +73,7 @@ jobs:
             egrep -o "Package Approved" \
           )
           (( TRIES++ ))
+          echo "- failed"
         done
         xcrun stapler staple "Pilorama.app"
     - name: Make Installer
