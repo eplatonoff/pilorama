@@ -48,9 +48,9 @@ jobs:
            --notarize-app \
            --primary-bundle-id "com.sigonna.opensource.Pilorama" \
            -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" \
-           --file Pilorama.zip \
-        | \
-          egrep "RequestUUID" | egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{8}' \
+           --file Pilorama.zip | \
+          egrep "RequestUUID" | \
+          egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{8}' \
         )
         echo $UUID
     - name: Make Installer
