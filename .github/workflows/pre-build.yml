@@ -45,7 +45,7 @@ jobs:
         ditto -c -k --keepParent Pilorama.app Pilorama.zip
         xcrun altool \
          --notarize-app \
-         --primary-bundle-id "<id>" \
+         --primary-bundle-id "com.sigonna.opensource.Pilorama" \
          -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" \
          --file Pilorama.zip
     - name: Make Installer
