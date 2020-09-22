@@ -56,24 +56,26 @@ jobs:
         )
         echo "Successfully uploaded UUID: $UUID"
         STATUS="In Progress"
+        TRIES=1
         echo "Wait for notarization..."
-        while [ STATUS != "Package Approved" ]
+        while [[ $STATUS != "Package Approved" ]]
         do
-          echo 1
+          echo "- attempt $TRIES..."
+          if [[ $TRIES == 30 ]]
+          then
+            exit 1
+          fi
           sleep 30s
-          echo 2
-          xcrun altool \
-             --notarization-info $UUID \
-             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD"
-          xcrun altool \
-             --notarization-info $UUID \
+          STATUS=$( \
+            xcrun altool \
+             --notarization-info "$UUID" \
              -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
-          grep -o 'Package Approved'
-          echo $STATUS
-          echo 3
+            egrep -o "Package Approved" || : \
+          )
+          (( TRIES++ ))
+          echo "- failed"
         done
         xcrun stapler staple "Pilorama.app"
-      timeout-minutes: 30
     - name: Make Installer
       run: |
         mkdir executable
