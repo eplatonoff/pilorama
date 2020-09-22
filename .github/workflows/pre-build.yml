@@ -68,7 +68,7 @@ jobs:
           xcrun altool \
              --notarization-info $UUID \
              -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
-            egrep -o "Package Approved" \
+            egrep -o "Package Approved"
           STATUS=$( \
             xcrun altool \
              --notarization-info $UUID \
