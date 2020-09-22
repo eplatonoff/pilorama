@@ -52,7 +52,7 @@ jobs:
            -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" \
            --file Pilorama.zip | \
           egrep "RequestUUID" | \
-          egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{8}' \
+          egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' \
         )
         STATUS="In Progress"
         TRIES=1
