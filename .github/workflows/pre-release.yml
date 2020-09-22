@@ -10,12 +10,13 @@ jobs:
     name: Pre-build MacOS Package
     runs-on: macos-10.15
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
     - name: Setup Dependencies
       run: |
         brew install qt
         brew install create-dmg
-    - name: Checkout Code
-      uses: actions/checkout@v2
+        bundle install
     - name: Set Version
       run: |
         export VERSION=${GITHUB_REF##*v}
@@ -26,6 +27,61 @@ jobs:
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
+    - name: Fetch Certificate
+      env:
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      run: |
+        bundle exec fastlane ios certificates
+    - name: Codesign
+      run: |
+        codesign \
+         --sign "Developer ID Application: SIGONNA LLC (BF7ZL72794)" \
+         --timestamp \
+         --options runtime \
+         --force \
+         --deep \
+         Pilorama.app
+    - name: Notarize Application
+      env:
+        ICLOUD_USER: ${{ secrets.ICLOUD_USER }}
+        ICLOUD_PASSWORD: ${{ secrets.ICLOUD_PASSWORD }}
+      run: |
+        echo "Zipping application bundle..."
+        ditto -c -k --keepParent Pilorama.app Pilorama.zip
+        echo "Uploading for notarization..."
+        UUID=$( \
+          xcrun altool \
+           --notarize-app \
+           --primary-bundle-id "com.sigonna.opensource.Pilorama" \
+           -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" \
+           --file Pilorama.zip | \
+          egrep "RequestUUID" | \
+          egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' \
+        )
+        echo "Successfully uploaded UUID: $UUID"
+        STATUS="In Progress"
+        TRIES=1
+        echo "Waiting for notarization..."
+        while [[ $STATUS != "Package Approved" ]]
+        do
+          echo "- attempt $TRIES..."
+          if [[ $TRIES == 30 ]]
+          then
+            echo "Notarization FAILED"
+            exit 1
+          fi
+          sleep 30s
+          STATUS=$( \
+            xcrun altool \
+             --notarization-info "$UUID" \
+             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
+            egrep -o "Package Approved" || : \
+          )
+          (( TRIES++ ))
+          echo "  in progress"
+        done
+        xcrun stapler staple "Pilorama.app"
     - name: Make Installer
       run: |
         mkdir executable
@@ -40,12 +96,12 @@ jobs:
     name: Pre-build Windows Package
     runs-on: windows-2019
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
     - name: Setup Dependencies
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.15.0'
-    - name: Checkout Code
-      uses: actions/checkout@v2
     - name: Set Version
       shell: bash
       run: |

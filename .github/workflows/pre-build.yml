@@ -16,66 +16,11 @@ jobs:
       run: |
         brew install qt
         brew install create-dmg
-        bundle install
     - name: Build Application
       run: |
         /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
         make
         /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
-    - name: Fetch Certificate
-      env:
-        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      run: |
-        bundle exec fastlane ios certificates
-    - name: Codesign
-      run: |
-        codesign \
-         --sign "Developer ID Application: SIGONNA LLC (BF7ZL72794)" \
-         --timestamp \
-         --options runtime \
-         --force \
-         --deep \
-         Pilorama.app
-    - name: Notarize Application
-      env:
-        ICLOUD_USER: ${{ secrets.ICLOUD_USER }}
-        ICLOUD_PASSWORD: ${{ secrets.ICLOUD_PASSWORD }}
-      run: |
-        echo "Zipping application bundle..."
-        ditto -c -k --keepParent Pilorama.app Pilorama.zip
-        echo "Uploading for notarization..."
-        UUID=$( \
-          xcrun altool \
-           --notarize-app \
-           --primary-bundle-id "com.sigonna.opensource.Pilorama" \
-           -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" \
-           --file Pilorama.zip | \
-          egrep "RequestUUID" | \
-          egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' \
-        )
-        echo "Successfully uploaded UUID: $UUID"
-        STATUS="In Progress"
-        TRIES=1
-        echo "Wait for notarization..."
-        while [[ $STATUS != "Package Approved" ]]
-        do
-          echo "- attempt $TRIES..."
-          if [[ $TRIES == 30 ]]
-          then
-            exit 1
-          fi
-          sleep 30s
-          STATUS=$( \
-            xcrun altool \
-             --notarization-info "$UUID" \
-             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
-            egrep -o "Package Approved" || : \
-          )
-          (( TRIES++ ))
-          echo "- failed"
-        done
-        xcrun stapler staple "Pilorama.app"
     - name: Make Installer
       run: |
         mkdir executable
