@@ -25,14 +25,23 @@ jobs:
       env:
         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        KEYCHAIN_PASSWORD: keychain
       run: |
         fastlane match developer_id --readonly
+    - name: Codesign
+      run: |
+        codesign -s "Developer ID Application: SIGONNA LLC (BF7ZL72794)" \
+          --timestamp \
+          --options runtime \
+          --force \
+          --deep \
+          Pilorama.app
     - name: Make Installer
       run: |
         mkdir executable
         mv Pilorama.app executable/Pilorama.app
         create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
-    - name: Store Application
+    - name: Store Package
       uses: actions/upload-artifact@v2
       with:
         name: Pilorama.dmg
@@ -58,7 +67,7 @@ jobs:
       shell: cmd
       run: |
         iscc wndws.iss
-    - name: Store Application
+    - name: Store Package
       uses: actions/upload-artifact@v2
       with:
         name: Pilorama_Setup.exe
