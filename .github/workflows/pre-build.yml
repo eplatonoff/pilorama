@@ -54,13 +54,14 @@ jobs:
           egrep "RequestUUID" | \
           egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' \
         )
+        echo "Successfully uploaded UUID: $UUID"
         STATUS="In Progress"
         TRIES=1
         echo "Wait for notarization..."
-        while [ STATUS != "Package Approved" ]
+        while [ $STATUS != "Package Approved" ]
         do
-          echo "\tattempt $TRIES..."
-          if [[ TRIES == 30 ]]
+          echo "- attempt $TRIES..."
+          if [[ $TRIES == 30 ]]
           then
             exit 1
           fi
