@@ -57,7 +57,7 @@ jobs:
         echo "Successfully uploaded UUID: $UUID"
         STATUS="In Progress"
         echo "Wait for notarization..."
-        while [[ $STATUS != "Package Approved" ]]
+        while [ STATUS != "Package Approved" ]
         do
           sleep 30s
           STATUS=$( \
