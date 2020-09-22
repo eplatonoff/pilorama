@@ -56,15 +56,9 @@ jobs:
         )
         echo "Successfully uploaded UUID: $UUID"
         STATUS="In Progress"
-        TRIES=1
         echo "Wait for notarization..."
         while [[ $STATUS != "Package Approved" ]]
         do
-          echo "- attempt $TRIES..."
-          if [[ $TRIES == 30 ]]
-          then
-            exit 1
-          fi
           sleep 30s
           STATUS=$( \
             xcrun altool \
@@ -72,10 +66,9 @@ jobs:
              -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
             egrep -o "Package Approved" \
           )
-          (( TRIES++ ))
-          echo "- failed"
         done
         xcrun stapler staple "Pilorama.app"
+      timeout-minutes: 30
     - name: Make Installer
       run: |
         mkdir executable
