@@ -26,12 +26,28 @@ jobs:
       env:
         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        KEYCHAIN_PASSWORD: keychain
       run: |
         bundle exec fastlane ios certificates
     - name: Codesign
       run: |
-        codesign -s "Developer ID Application: SIGONNA LLC (BF7ZL72794)" --timestamp --options runtime --force --deep Pilorama.app
+        codesign \
+         --sign "Developer ID Application: SIGONNA LLC (BF7ZL72794)" \
+         --timestamp \
+         --options runtime \
+         --force \
+         --deep \
+         Pilorama.app
+    - name: Notarize Application
+      env:
+        ICLOUD_USER: ${{ secrets.ICLOUD_USER }}
+        ICLOUD_PASSWORD: ${{ secrets.ICLOUD_PASSWORD }}
+      run: |
+        ditto -c -k --keepParent Pilorama.app Pilorama.zip
+        xcrun altool \
+         --notarize-app \
+         --primary-bundle-id "<id>" \
+         -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" \
+         --file Pilorama.zip
     - name: Make Installer
       run: |
         mkdir executable
