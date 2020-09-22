@@ -59,13 +59,17 @@ jobs:
         echo "Wait for notarization..."
         while [ STATUS != "Package Approved" ]
         do
+          echo 1
           sleep 30s
+          echo 2
           STATUS=$( \
             xcrun altool \
-             --notarization-info "$UUID" \
+             --notarization-info $UUID \
              -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
             egrep -o "Package Approved" \
           )
+          echo $STATUS
+          echo 3
         done
         xcrun stapler staple "Pilorama.app"
       timeout-minutes: 30
