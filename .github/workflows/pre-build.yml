@@ -52,7 +52,22 @@ jobs:
           egrep "RequestUUID" | \
           egrep -o '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{8}' \
         )
-        echo $UUID
+        STATUS="In Progress"
+        TRIES=0
+        while [ STATUS != "Package Approved" ]
+        do
+          if [ TRIES == 30]; then
+            exit 1
+          fi
+          sleep 30s
+          STATUS=$( \
+            xcrun altool \
+             --notarization-info "$UUID" \
+             -u "$ICLOUD_USER" -p "$ICLOUD_PASSWORD" | \
+            egrep -o "Package Approved" \
+          )
+          (( TRIES++ ))
+        done
     - name: Make Installer
       run: |
         mkdir executable
