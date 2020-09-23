@@ -1,6 +1,6 @@
 ![header image](/assets/cover.png?raw=true)
 
-# <a href="//pilorama.app" target="_blank">Pilorama</a>
+# <a href="//pilorama.app">Pilorama</a>
 
 *Advanced [Timeboxing](https://en.wikipedia.org/wiki/Timeboxing) Tool*
 
