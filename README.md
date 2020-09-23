@@ -36,7 +36,7 @@ Building from source:
     $ ./pilorama
 
 
-## Development [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
+## Development / Code of Conduct  [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
 
 #### Release Process
 
