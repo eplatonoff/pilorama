@@ -1,9 +1,0 @@
-codesign -s "Developer ID Application: SIGONNA LLC (BF7ZL72794)" --timestamp --options runtime -f --deep Pilorama.app
-
-ditto -c -k --keepParent Pilorama.app Pilorama.zip
-
-xcrun altool --notarize-app --primary-bundle-id "com.sigonna.opensource.Pilorama" --file ./Pilorama.zip -u "icloud@kuzmi.ch" -p "xvqb-zcqa-opfv-lyin"
-
-xcrun altool --notarization-info bba43a2e-48f8-4e96-9a0c-5f4c98108e63 -u "icloud@kuzmi.ch" -p {app-password}
-
-https://support.apple.com/en-us/HT204397
