@@ -15,11 +15,6 @@ win*: {
     RC_ICONS = assets/app_icons/icon.ico
 }
 
-osx: {
-  QMAKE_PROVISIONING_PROFILE = "match AppStore com.sigonna.opensource.Pilorama macos"
-}
-
-
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
