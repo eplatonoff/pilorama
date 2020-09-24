@@ -56,5 +56,5 @@ unix:
 TARGET=Pilorama
 QMAKE_TARGET_BUNDLE_PREFIX=com.sigonna.opensource
 
-VERSION=3.0.1
+VERSION=3.0.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
