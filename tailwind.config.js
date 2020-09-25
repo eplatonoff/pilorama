@@ -1,5 +1,11 @@
 module.exports = {
-  purge: [],
+  purge: {
+    enabled: true,
+    mode: 'all',
+    content: [
+      './docs/*.html'
+    ]
+  },
   theme: {
   	fontFamily: {
   		'body': 'Helvetica',
