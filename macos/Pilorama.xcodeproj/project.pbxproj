@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -254,6 +254,7 @@
 				F7E50F631C51CD5B5DC0BC43 /* Compile Sources */,
 				D1C883685E82D5676953459A /* Link Binary With Libraries */,
 				30414803F31797EB689AE508 /* Copy Bundle Resources */,
+				8F6BEF7F253F7BE1006DD390 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -275,10 +276,6 @@
 					New,
 				);
 				TargetAttributes = {
-					5648C5CF354FC5A62051F270 = {
-						DevelopmentTeam = BF7ZL72794;
-						ProvisioningStyle = Automatic;
-					};
 					7C5E91DEE6EF8791E9EB538C = {
 						DevelopmentTeam = BF7ZL72794;
 					};
@@ -337,6 +334,25 @@
 			shellPath = /bin/sh;
 			shellScript = "make -C /Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/macos -f Pilorama.xcodeproj/qt_preprocess.mak";
 			showEnvVarsInLog = 0;
+		};
+		8F6BEF7F253F7BE1006DD390 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/bin/macdeployqt  $CODESIGNING_FOLDER_PATH  -qmldir=/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src  -appstore-compliant -always-overwrite\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -579,7 +595,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = BF7ZL72794;
 				ENABLE_BITCODE = NO;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sigonna.opensource.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = Pilorama;
@@ -605,7 +624,10 @@
 				DEVELOPMENT_TEAM = BF7ZL72794;
 				ENABLE_BITCODE = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sigonna.opensource.${PRODUCT_NAME:rfc1034identifier}";
