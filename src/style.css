@@ -9,3 +9,13 @@ body {
 	font-family: Helvetica;
 	letter-spacing: 0.015em;
 }
+
+h1 {
+  font-size: 1.75em;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+}
