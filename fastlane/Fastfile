@@ -18,7 +18,14 @@ platform :ios do
     make_keychain 'pilorama'
     match(
       git_url: ENV['GIT_URL'],
-      type: ENV['TYPE'],
+      type: 'developer_id',
+      readonly: true,
+      keychain_name: 'pilorama',
+      keychain_password: 'pilorama'
+    )
+    match(
+      git_url: ENV['GIT_URL'],
+      type: 'appstore',
       readonly: true,
       keychain_name: 'pilorama',
       keychain_password: 'pilorama'

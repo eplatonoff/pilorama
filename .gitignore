@@ -45,6 +45,10 @@ CMakeLists.txt.user*
 
 build
 
+# MacOS Specific
 .DS_Store
 Pilorama.app
 Pilorama.zip
+
+# Fastlane
+fastlane/report.xml
