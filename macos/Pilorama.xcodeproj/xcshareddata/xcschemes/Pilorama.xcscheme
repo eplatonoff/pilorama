@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5648C5CF354FC5A62051F270"
+               BlueprintIdentifier = "0A5FA6955FB0952497A7FDE7"
                BuildableName = "Pilorama.app"
                BlueprintName = "Pilorama"
                ReferencedContainer = "container:Pilorama.xcodeproj">
@@ -31,7 +31,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5648C5CF354FC5A62051F270"
+            BlueprintIdentifier = "0A5FA6955FB0952497A7FDE7"
             BuildableName = "Pilorama.app"
             BlueprintName = "Pilorama"
             ReferencedContainer = "container:Pilorama.xcodeproj">
@@ -73,7 +73,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5648C5CF354FC5A62051F270"
+            BlueprintIdentifier = "0A5FA6955FB0952497A7FDE7"
             BuildableName = "Pilorama.app"
             BlueprintName = "Pilorama"
             ReferencedContainer = "container:Pilorama.xcodeproj">
@@ -97,7 +97,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5648C5CF354FC5A62051F270"
+            BlueprintIdentifier = "0A5FA6955FB0952497A7FDE7"
             BuildableName = "Pilorama.app"
             BlueprintName = "Pilorama"
             ReferencedContainer = "container:Pilorama.xcodeproj">
