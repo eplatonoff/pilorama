@@ -24,7 +24,6 @@
 /* Begin PBXBuildFile section */
 		46BFB04EDDED14501585372A /* qrc_qml.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = BD6A74DB23D400EC298FB2BC /* qrc_qml.cpp */; settings = {ATTRIBUTES = (); }; };
 		66040A22EC30288D805C8DCA /* moc_piloramatimer.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B81F6BA3785367CBFF520B64 /* moc_piloramatimer.cpp */; settings = {ATTRIBUTES = (); }; };
-		750F7DADE3A2F60C57283E72 /* appnap.mm in Compile Sources */ = {isa = PBXBuildFile; fileRef = 65A16B4BE4E379DACE70660D /* appnap.mm */; settings = {ATTRIBUTES = (); }; };
 		8F6BEF3B253F7515006DD390 /* Images.xcassets in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = 8F6BEF3A253F7515006DD390 /* Images.xcassets */; };
 		8F6BEF5D253F770A006DD390 /* AGL.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */; };
 		8F6BEF5F253F770A006DD390 /* AppKit.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 723F90793B2C195E2CCB2233 /* AppKit.framework */; };
@@ -42,10 +41,11 @@
 		8F6BEF77253F770B006DD390 /* QtSvg.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 028D9D55F7575CD0C087D430 /* QtSvg.framework */; };
 		8F6BEF79253F770B006DD390 /* QtWidgets.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D6B6077BE3C34630BC64545F /* QtWidgets.framework */; };
 		8F6BEF7B253F770B006DD390 /* QtXml.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 19534E57A099A878249A6CE5 /* QtXml.framework */; };
-		ADFB5B7701B21CEB2AB781B2 /* main.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 732F1FE8E6B9EF83E014FD87 /* main.cpp */; settings = {ATTRIBUTES = (); }; };
-		D98994786ED9E991256426DC /* piloramatimer.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E59A3CAFD3C25E072A32E299 /* piloramatimer.cpp */; settings = {ATTRIBUTES = (); }; };
-		E9AEB7EE403CEC390347A52C /* trayimageprovider.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 8379E43A30E9843F989B03CB /* trayimageprovider.cpp */; settings = {ATTRIBUTES = (); }; };
-		FEAEA84BA5E5F3C98128EF85 /* dummy.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B0DE439969A3F8EBFFADFE8C /* dummy.cpp */; settings = {ATTRIBUTES = (); }; };
+		A50CA5B52552A55D00CA509E /* main.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A50CA5B42552A55D00CA509E /* main.cpp */; };
+		A50CA5B92552A57400CA509E /* piloramatimer.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A50CA5B82552A57400CA509E /* piloramatimer.cpp */; };
+		A50CA5BF2552A59200CA509E /* trayimageprovider.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A50CA5BE2552A59200CA509E /* trayimageprovider.cpp */; };
+		A50CA5C32552A61D00CA509E /* dummy.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A50CA5C22552A61D00CA509E /* dummy.cpp */; };
+		A50CA5C92552A69A00CA509E /* appnap.mm in Compile Sources */ = {isa = PBXBuildFile; fileRef = A50CA5C82552A69A00CA509E /* appnap.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,7 +60,6 @@
 
 /* Begin PBXFileReference section */
 		028D9D55F7575CD0C087D430 /* QtSvg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtSvg.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtSvg.framework; sourceTree = "<absolute>"; };
-		174939CCCBEB40CB801CF0E3 /* piloramatimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = piloramatimer.h; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/piloramatimer.h"; sourceTree = "<absolute>"; };
 		174DB9E0274D153913EC24A2 /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtGui.framework; sourceTree = "<absolute>"; };
 		19534E57A099A878249A6CE5 /* QtXml.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtXml.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtXml.framework; sourceTree = "<absolute>"; };
 		1B2543FCC48E9436F21C4F63 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = /System/Library/Frameworks/Metal.framework; sourceTree = "<absolute>"; };
@@ -69,8 +68,6 @@
 		69FB1C4D217A277E85A8E495 /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtCore.framework; sourceTree = "<absolute>"; };
 		6B63B4E582B3941C2E870BBD /* QtQuick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtQuick.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtQuick.framework; sourceTree = "<absolute>"; };
 		723F90793B2C195E2CCB2233 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		732F1FE8E6B9EF83E014FD87 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/main.cpp"; sourceTree = "<absolute>"; };
-		8379E43A30E9843F989B03CB /* trayimageprovider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = trayimageprovider.cpp; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/trayimageprovider.cpp"; sourceTree = "<absolute>"; };
 		8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		8F6BEF39253F746C006DD390 /* Pilorama.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pilorama.entitlements; sourceTree = "<group>"; };
 		8F6BEF3A253F7515006DD390 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Pilorama/Images.xcassets; sourceTree = "<group>"; };
@@ -80,17 +77,21 @@
 		A1A67BEAA744704B29168D39 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		A352C76444A1E32CBF4967B1 /* qml.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; name = qml.qrc; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/qml.qrc"; sourceTree = "<absolute>"; };
 		A38FA75037D530B67030050A /* QtNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtNetwork.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtNetwork.framework; sourceTree = "<absolute>"; };
+		A50CA5B42552A55D00CA509E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
+		A50CA5B82552A57400CA509E /* piloramatimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = piloramatimer.cpp; path = ../src/piloramatimer.cpp; sourceTree = "<group>"; };
+		A50CA5BC2552A59200CA509E /* piloramatimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = piloramatimer.h; path = ../src/piloramatimer.h; sourceTree = "<group>"; };
+		A50CA5BD2552A59200CA509E /* trayimageprovider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trayimageprovider.h; path = ../src/trayimageprovider.h; sourceTree = "<group>"; };
+		A50CA5BE2552A59200CA509E /* trayimageprovider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trayimageprovider.cpp; path = ../src/trayimageprovider.cpp; sourceTree = "<group>"; };
+		A50CA5C22552A61D00CA509E /* dummy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dummy.cpp; sourceTree = "<group>"; };
+		A50CA5C82552A69A00CA509E /* appnap.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = appnap.mm; path = ../src/mac/appnap.mm; sourceTree = "<group>"; };
 		AC29FCE4D358C03541E097D3 /* .qmake.stash */ = {isa = PBXFileReference; lastKnownFileType = text; name = .qmake.stash; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/.qmake.stash"; sourceTree = "<absolute>"; };
 		AD6E2F727B095C90F78255FD /* QtQml.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtQml.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtQml.framework; sourceTree = "<absolute>"; };
-		B0DE439969A3F8EBFFADFE8C /* dummy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dummy.cpp; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/mkspecs/features/data/dummy.cpp; sourceTree = "<absolute>"; };
 		B81F6BA3785367CBFF520B64 /* moc_piloramatimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_piloramatimer.cpp; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/macos/moc_piloramatimer.cpp"; sourceTree = "<absolute>"; };
 		BD6A74DB23D400EC298FB2BC /* qrc_qml.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = qrc_qml.cpp; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/macos/qrc_qml.cpp"; sourceTree = "<absolute>"; };
 		CC0BE537EFDBF78BFFBDC5CE /* pilorama.pro */ = {isa = PBXFileReference; lastKnownFileType = text; name = pilorama.pro; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/pilorama.pro"; sourceTree = "<absolute>"; };
-		CF48F04D71AEB945D6D24DA2 /* trayimageprovider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = trayimageprovider.h; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/trayimageprovider.h"; sourceTree = "<absolute>"; };
 		D4B32C2222F82AC56BADEB21 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		D6B6077BE3C34630BC64545F /* QtWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtWidgets.framework; path = /Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/lib/QtWidgets.framework; sourceTree = "<absolute>"; };
 		D9BC5C5127BD1D34B52D8C61 /* Pilorama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pilorama.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E59A3CAFD3C25E072A32E299 /* piloramatimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = piloramatimer.cpp; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src/piloramatimer.cpp"; sourceTree = "<absolute>"; };
 		FADA5BFF852EFDDE810EE19B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = file; name = icon.icns; path = "/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/macos/assets/app_icons/icon.icns"; sourceTree = "<absolute>"; };
 		FCC237CA5AD60B9BA4447615 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -135,13 +136,13 @@
 		2EB56BE3C2D93CDAB0C52E67 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				732F1FE8E6B9EF83E014FD87 /* main.cpp */,
-				E59A3CAFD3C25E072A32E299 /* piloramatimer.cpp */,
-				8379E43A30E9843F989B03CB /* trayimageprovider.cpp */,
+				A50CA5B42552A55D00CA509E /* main.cpp */,
+				A50CA5B82552A57400CA509E /* piloramatimer.cpp */,
+				A50CA5BC2552A59200CA509E /* piloramatimer.h */,
+				A50CA5BE2552A59200CA509E /* trayimageprovider.cpp */,
+				A50CA5BD2552A59200CA509E /* trayimageprovider.h */,
 				5AF61CE04FC3E5728FB4CE68 /* mac */,
 				EA0B69EA46956A37AAD823FB /* assets */,
-				174939CCCBEB40CB801CF0E3 /* piloramatimer.h */,
-				CF48F04D71AEB945D6D24DA2 /* trayimageprovider.h */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -149,6 +150,7 @@
 		5AF61CE04FC3E5728FB4CE68 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				A50CA5C82552A69A00CA509E /* appnap.mm */,
 				65A16B4BE4E379DACE70660D /* appnap.mm */,
 			);
 			name = mac;
@@ -207,7 +209,7 @@
 		B8254625CFD509ED2A24A166 /* Sources [moc_predefs] */ = {
 			isa = PBXGroup;
 			children = (
-				B0DE439969A3F8EBFFADFE8C /* dummy.cpp */,
+				A50CA5C22552A61D00CA509E /* dummy.cpp */,
 			);
 			name = "Sources [moc_predefs]";
 			sourceTree = "<group>";
@@ -322,7 +324,7 @@
 			name = "Qt Qmake";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "make -C /Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/macos -f Pilorama.xcodeproj/qt_makeqmake.mak";
+			shellScript = "make -C $(TARGET_BUILD_DIR)/macos -f Pilorama.xcodeproj/qt_makeqmake.mak\n";
 			showEnvVarsInLog = 0;
 		};
 		7EF0942E79C014DCEC8976BC /* Qt Preprocessors */ = {
@@ -333,7 +335,7 @@
 			name = "Qt Preprocessors";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "make -C /Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/macos -f Pilorama.xcodeproj/qt_preprocess.mak";
+			shellScript = "make -C $(TARGET_BUILD_DIR)/macos -f Pilorama.xcodeproj/qt_preprocess.mak\n";
 			showEnvVarsInLog = 0;
 		};
 		8F6BEF7F253F7BE1006DD390 /* Run Script */ = {
@@ -353,7 +355,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/Users/evgenijplatonov/bin/Qt/5.15.1/clang_64/bin/macdeployqt  $CODESIGNING_FOLDER_PATH  -qmldir=/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src  -appstore-compliant -always-overwrite\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nmacdeployqt  $CODESIGNING_FOLDER_PATH  -qmldir=/Users/evgenijplatonov/programming/personal/qml-timer/qml-timer/src  -appstore-compliant -always-overwrite\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -362,13 +364,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ADFB5B7701B21CEB2AB781B2 /* main.cpp in Compile Sources */,
-				D98994786ED9E991256426DC /* piloramatimer.cpp in Compile Sources */,
-				E9AEB7EE403CEC390347A52C /* trayimageprovider.cpp in Compile Sources */,
-				750F7DADE3A2F60C57283E72 /* appnap.mm in Compile Sources */,
+				A50CA5B92552A57400CA509E /* piloramatimer.cpp in Compile Sources */,
+				A50CA5C92552A69A00CA509E /* appnap.mm in Compile Sources */,
 				46BFB04EDDED14501585372A /* qrc_qml.cpp in Compile Sources */,
+				A50CA5BF2552A59200CA509E /* trayimageprovider.cpp in Compile Sources */,
 				66040A22EC30288D805C8DCA /* moc_piloramatimer.cpp in Compile Sources */,
-				FEAEA84BA5E5F3C98128EF85 /* dummy.cpp in Compile Sources */,
+				A50CA5B52552A55D00CA509E /* main.cpp in Compile Sources */,
+				A50CA5C32552A61D00CA509E /* dummy.cpp in Compile Sources */,
 			);
 			name = "Compile Sources";
 			runOnlyForDeploymentPostprocessing = 0;
