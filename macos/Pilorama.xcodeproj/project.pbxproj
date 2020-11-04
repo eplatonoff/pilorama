@@ -602,7 +602,7 @@
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sigonna.opensource.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = Pilorama;
-				PROVISIONING_PROFILE_SPECIFIER = "Eugene Platonov Provision";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.sigonna.opensource.Pilorama macos";
 				QMAKE_FULL_VERSION = 3.0.2;
 				QMAKE_PKGINFO_TYPEINFO = "????";
 				QMAKE_SHORT_VERSION = 3.0;
@@ -618,8 +618,8 @@
 				"ARCHS[sdk=macosx*]" = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Pilorama.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = BF7ZL72794;
 				ENABLE_BITCODE = NO;
@@ -632,7 +632,7 @@
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sigonna.opensource.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = Pilorama;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.sigonna.opensource.Pilorama macos";
 				QMAKE_FULL_VERSION = 3.0.2;
 				QMAKE_PKGINFO_TYPEINFO = "????";
 				QMAKE_SHORT_VERSION = 3.0;
