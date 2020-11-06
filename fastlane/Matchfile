@@ -4,9 +4,7 @@ storage_mode("git")
 app_identifier("com.sigonna.opensource.Pilorama")
 team_id("BF7ZL72794")
 
-type("developer_id")
 platform("macos")
-
 
 # The docs are available on https://docs.fastlane.tools/actions/match
 skip_docs(true)

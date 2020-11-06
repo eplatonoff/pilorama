@@ -22,7 +22,7 @@ fastlane ios certificates
 ```
 Setup local keychain store
 
-Sync certificates & Provision profiles
+Sync Certificates & Provision profiles
 
 ----
 
