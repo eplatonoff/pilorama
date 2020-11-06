@@ -260,6 +260,7 @@
 				D1C883685E82D5676953459A /* Link Binary With Libraries */,
 				30414803F31797EB689AE508 /* Copy Bundle Resources */,
 				99542592E9780B9225F24AA8 /* Embed Frameworks */,
+				A55EB5882555EE350027CC76 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -327,7 +328,8 @@
 			name = "Qt Qmake";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "make -C $OBJROOT -f Pilorama.xcodeproj/qt_makeqmake.mak\n";
+			shellScript = "echo $OBJROOT\nmake -C $OBJROOT -f Pilorama.xcodeproj/qt_makeqmake.mak\n";
+			showEnvVarsInLog = 0;
 		};
 		7EF0942E79C014DCEC8976BC /* Qt Preprocessors */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -338,6 +340,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "make -C $OBJROOT -f Pilorama.xcodeproj/qt_preprocess.mak\n";
+			showEnvVarsInLog = 0;
+		};
+		A55EB5882555EE350027CC76 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/opt/qt/bin/macdeployqt $CODESIGNING_FOLDER_PATH -qmldir=$OBJROOT/../src -appstore-compliant -always-overwrite\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -623,11 +643,12 @@
 				"ARCHS[sdk=macosx*]" = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "Apple Distribution: SIGONNA LLC (BF7ZL72794)";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = BF7ZL72794;
 				ENABLE_BITCODE = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				MARKETING_VERSION = 3.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sigonna.opensource.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = Pilorama;
@@ -647,11 +668,12 @@
 				"ARCHS[sdk=macosx*]" = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "Apple Distribution: SIGONNA LLC (BF7ZL72794)";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = BF7ZL72794;
 				ENABLE_BITCODE = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				MARKETING_VERSION = 3.0.4;
 				ONLY_ACTIVE_ARCH = YES;
