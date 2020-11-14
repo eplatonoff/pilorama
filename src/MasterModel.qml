@@ -78,8 +78,20 @@ ListModel {
 
     function load(){
         clear()
-        if(data === "[]"){ data = demo; }
-        const datamodel = JSON.parse(data)
+
+        let datamodel;
+
+        try {
+            datamodel = JSON.parse(data);
+
+            if (datamodel.length < 1) {
+                datamodel = JSON.parse(demo);
+            }
+        }
+        catch(err) {
+            datamodel = JSON.parse(demo);
+        }
+
         for (var i = 0; i < datamodel.length; ++i) {
             append(datamodel[i])
         }
