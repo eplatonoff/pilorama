@@ -27,13 +27,13 @@ Precompiled builds are available [here](https://github.com/eplatonoff/pilorama/r
 Building from source:
 
     $ sudo pacman -S qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects qt5-multimedia  # Archlinux
-    $ sudo apt install qt5-default qtdeclarative5-dev libqt5svg5-dev  # Ubuntu Bionic
+    $ sudo apt install qtbase5-dev qtdeclarative5-dev libqt5svg5-dev  # At least Ubuntu 18.04 Bionic and up / Debian 8 "jessie" and up
 
     $ git clone https://github.com/eplatonoff/pilorama
     $ cd pilorama
     $ qmake src/pilorama.pro 
     $ make
-    $ ./pilorama
+    $ ./Pilorama
 
 
 ## Development / Code of Conduct  [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)

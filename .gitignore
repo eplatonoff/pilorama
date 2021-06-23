@@ -46,5 +46,6 @@ CMakeLists.txt.user*
 build
 
 .DS_Store
+Pilorama
 Pilorama.app
 Pilorama.zip
