@@ -31,7 +31,7 @@
         <file>MasterModel.qml</file>
         <file>ModelBurner.qml</file>
         <file>Components/Colors.qml</file>
-        <file>Components/ResetButton.qml</file>
+        <file>Components/TimerControlButton.qml</file>
         <file>Components/SoundButton.qml</file>
         <file>Components/StartScreen.qml</file>
         <file>Components/Dials.qml</file>

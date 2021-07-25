@@ -80,7 +80,7 @@ Item {
     }
 
 
-    ResetButton{
+    TimerControlButton {
         id: play
         visible: masterModel.count > 0 && masterModel.totalDuration() > 0
         anchors.bottom: parent.bottom

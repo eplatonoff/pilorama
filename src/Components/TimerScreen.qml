@@ -100,7 +100,7 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: !globalTimer.running ? "min" : pad(count(getDuration())[2]);
+            text: !globalTimer.running ? qsTr("min") : pad(count(getDuration())[2]);
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
             anchors.top: digitalMin.top
@@ -168,34 +168,60 @@ Item {
         }
     }
 
-    ResetButton {
-        id: resetButton
-        label: 'Reset'
+    Row {
+        spacing: 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
 
-        MouseArea {
-            id: digitalClockResetTrigger
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
+        TimerControlButton {
+            id: pauseToggleButton
+            label: globalTimer.running ? qsTr("Pause") : qsTr("Run")
 
-            onReleased: {
-                pomodoroQueue.infiniteMode = false;
-                pomodoroQueue.clear();
-                mouseArea._prevAngle = 0
-                mouseArea._totalRotatedSecs = 0
-                globalTimer.duration = 0
-                globalTimer.stop()
-                window.clockMode = "start"
-                notifications.stopSound();
-                sequence.setCurrentItem(-1)
+            MouseArea {
+                id: digitalClockPauseTrigger
+                anchors.fill: parent
+                hoverEnabled: true
+                propagateComposedEvents: true
+                cursorShape: Qt.PointingHandCursor
 
-                focus = true
+                onReleased: {
+                    if (globalTimer.running) {
+                        globalTimer.stop()
+                    } else {
+                        globalTimer.start()
+                    }
+
+                    focus = true
+                }
+            }
+        }
+
+        TimerControlButton {
+            id: resetButton
+            label: qsTr("Reset")
+
+            MouseArea {
+                id: digitalClockResetTrigger
+                anchors.fill: parent
+                hoverEnabled: true
+                propagateComposedEvents: true
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    pomodoroQueue.infiniteMode = false;
+                    pomodoroQueue.clear();
+                    mouseArea._prevAngle = 0
+                    mouseArea._totalRotatedSecs = 0
+                    globalTimer.duration = 0
+                    globalTimer.stop()
+                    window.clockMode = "start"
+                    notifications.stopSound();
+                    sequence.setCurrentItem(-1)
+
+                    focus = true
+                }
             }
         }
     }
-
 }
