@@ -3,8 +3,9 @@ QT += quick widgets svg xml
 CONFIG += c++17
 
 
-OBJECTIVE_SOURCES += mac/appnap.mm
+OBJECTIVE_SOURCES += mac/utility.mm
 
+QMAKE_INFO_PLIST = mac/Info.plist
 
 macx: {
     LIBS += -framework Foundation
