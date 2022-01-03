@@ -57,10 +57,13 @@ ApplicationWindow {
 
     onClosing: {
         if(!quitOnClose) {
-            close.accepted = false
-//            window.hide()
-//            console.log(window.visibility)
-            window.visibility = 3
+            close.accepted = false;
+            if (Qt.platform.os == "osx") {
+                window.hide();
+            }
+            else {
+                window.visibility = ApplicationWindow.Minimized;
+            }
         }
     }
 
