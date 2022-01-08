@@ -12,9 +12,19 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Setup Dependencies
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.15.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - name: Setup Addtional Dependencies
       run: |
-        brew install qt
         brew install create-dmg
         bundle install
     - name: Set Version
@@ -24,9 +34,9 @@ jobs:
         sed -i '' 's/VERSION=[0-9]*\.[0-9]*\.[0-9]*/VERSION='"$VERSION"'/g' src/pilorama.pro
     - name: Build Application
       run: |
-        /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
+        qmake -config release src/pilorama.pro
         make
-        /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
+        macdeployqt Pilorama.app -qmldir=./src
     - name: Fetch Certificate
       env:
         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
@@ -98,10 +108,17 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Setup Dependencies
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+    - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: '5.15.0'
+        version: '5.15.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Set Version
       shell: bash
       run: |

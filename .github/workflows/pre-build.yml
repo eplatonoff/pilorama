@@ -12,15 +12,25 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Setup Dependencies
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.15.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - name: Setup Addtional Dependencies
       run: |
-        brew install qt
         brew install create-dmg
     - name: Build Application
       run: |
-        /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
+        qmake -config release src/pilorama.pro
         make
-        /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
+        macdeployqt Pilorama.app -qmldir=./src
     - name: Make Installer
       run: |
         mkdir executable
@@ -37,10 +47,17 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Setup Dependencies
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+    - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: '5.15.0'
+        version: '5.15.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Build Application
       shell: cmd
       run: |
