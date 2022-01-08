@@ -12,10 +12,17 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.15.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Setup Addtional Dependencies
       run: |
         brew install create-dmg
@@ -40,10 +47,17 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.15.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Build Application
       shell: cmd
       run: |
