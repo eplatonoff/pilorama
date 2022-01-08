@@ -22,9 +22,9 @@ jobs:
         brew install create-dmg
     - name: Build Application
       run: |
-        /usr/local/opt/qt/bin/qmake -config release src/pilorama.pro
+        qmake -config release src/pilorama.pro
         make
-        /usr/local/opt/qt/bin/macdeployqt Pilorama.app -qmldir=./src
+        macdeployqt Pilorama.app -qmldir=./src
     - name: Make Installer
       run: |
         mkdir executable
