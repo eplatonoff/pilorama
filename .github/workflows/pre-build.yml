@@ -12,13 +12,10 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
     - name: Setup Dependencies
       run: |
-        brew install qt@5
-        echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
-        echo 'export LDFLAGS="-L/usr/local/opt/qt@5/lib"' >> /Users/runner/.bash_profile
-        echo 'export CPPFLAGS="-I/usr/local/opt/qt@5/include"' >> /Users/runner/.bash_profile
-        echo 'export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"' >> /Users/runner/.bash_profile
         brew install create-dmg
     - name: Build Application
       run: |
