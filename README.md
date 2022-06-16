@@ -28,6 +28,7 @@ Building from source:
 
     $ sudo pacman -S qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects qt5-multimedia  # Archlinux
     $ sudo apt install qtbase5-dev qtdeclarative5-dev libqt5svg5-dev  # At least Ubuntu 18.04 Bionic and up / Debian 8 "jessie" and up
+    $ sudo apt install qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-settings qml-module-qt-labs-platform qml-module-qtquick-dialogs # Kali Linux 2022
 
     $ git clone https://github.com/eplatonoff/pilorama
     $ cd pilorama
