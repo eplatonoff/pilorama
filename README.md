@@ -27,8 +27,7 @@ Precompiled builds are available [here](https://github.com/eplatonoff/pilorama/r
 Building from source:
 
     $ sudo pacman -S qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects qt5-multimedia  # Archlinux
-    $ sudo apt install qtbase5-dev qtdeclarative5-dev libqt5svg5-dev  # At least Ubuntu 18.04 Bionic and up / Debian 8 "jessie" and up
-    $ sudo apt install qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-settings qml-module-qt-labs-platform qml-module-qtquick-dialogs # Kali Linux 2022
+    $ sudo apt install build-essential libqt5svg5-dev qtdeclarative5-dev qml-module-qt-labs-platform qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs  # Debian 8 "jessie" and up, Ubuntu 18.04-22.04, Kali Linux 2022.1
 
     $ git clone https://github.com/eplatonoff/pilorama
     $ cd pilorama
@@ -43,4 +42,3 @@ Building from source:
 
 Once the latest **Pull Request** passed all CI checks & **are merged** to master **push git tag** with required version pointed **to** merge commit on **master** branch.  
 **GitHub Actions** proccesses this tag & **builds** all **distributions**. After that **it also makes version bumps** & pushes it **to master** as a separate commit.
-
