@@ -14,7 +14,9 @@
 - Night mode
 
 
-## Installation [![GitHub Release Version](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/) [![GitHub Release Date](https://img.shields.io/github/release-date/eplatonoff/pilorama?label=release%20date)](https://github.com/eplatonoff/pilorama/releases/latest/) [![GitHub Downloads](https://img.shields.io/github/downloads/eplatonoff/pilorama/total)](https://github.com/eplatonoff/pilorama/releases/latest/)
+## Installation
+
+[![GitHub Release Version](https://img.shields.io/github/v/release/eplatonoff/pilorama)](https://github.com/eplatonoff/pilorama/releases/latest/) [![GitHub Release Date](https://img.shields.io/github/release-date/eplatonoff/pilorama?label=release%20date)](https://github.com/eplatonoff/pilorama/releases/latest/) [![GitHub Downloads](https://img.shields.io/github/downloads/eplatonoff/pilorama/total)](https://github.com/eplatonoff/pilorama/releases/latest/)
 
 ### MacOS and Windows
 
@@ -35,7 +37,9 @@ Building from source:
     $ ./Pilorama
 
 
-## Development / Code of Conduct  [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
+## Development
+
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
 
 #### Release Process
 
