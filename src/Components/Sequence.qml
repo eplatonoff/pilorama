@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts
 
 import "Sequence"
 import ".."
