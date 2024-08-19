@@ -66,7 +66,7 @@ Item {
                 DropArea {
                     anchors.fill: parent
                     keys: ["sequenceItems"]
-                    onEntered: {
+                    onEntered: (drag) => {
                         var draggedId = drag.source.dragItemIndex
                         masterModel.move(draggedId, index, 1)
                     }

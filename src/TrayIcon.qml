@@ -19,7 +19,7 @@ SystemTrayIcon {
     property real runningTime: 0
 
     onMessageClicked: popUp()
-    onActivated: {
+    onActivated: (reason) => {
         if(reason === SystemTrayIcon.DoubleClick){ popUp(); !menu.visible}
     }
 

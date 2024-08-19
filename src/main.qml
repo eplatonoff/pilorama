@@ -54,7 +54,7 @@ ApplicationWindow {
         }
     }
 
-    onClosing: {
+    onClosing: (close) => {
         if(!quitOnClose) {
             close.accepted = false;
             if (Qt.platform.os === "osx") {

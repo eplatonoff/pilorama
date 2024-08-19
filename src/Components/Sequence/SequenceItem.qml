@@ -1,6 +1,6 @@
-import QtQuick 2.0
+import QtQuick
 import Qt5Compat.GraphicalEffects
-import QtQml.Models 2.13
+import QtQml.Models
 
 Rectangle {
     id: sequenceItem
@@ -130,13 +130,7 @@ Rectangle {
         color: sequenceItem.dimmer()
         anchors.verticalCenter: parent.verticalCenter
 
-        function acceptInput(){
-            model.name = itemName.text
-        }
-
-        onTextChanged: { acceptInput() }
-        onAccepted: { acceptInput() }
-
+        onEditingFinished: { model.name = itemName.text }
     }
 
     TextInput {
@@ -165,15 +159,15 @@ Rectangle {
         font.family: localFont.name
         font.pixelSize: parent.fontSize
 
-        function acceptData() {
-            if( !itemtime.text || itemtime.text == "") {
+        onActiveFocusChanged: {
+            if (!itemtime.acceptableInput) {
                 model.duration = 0
-            } else{ model.duration = itemtime.text * 60 }
+            }
         }
 
-        onTextChanged: { acceptData() }
-        onAccepted: { acceptData(); itemtime.text = model.duration / 60}
-        onFocusChanged: { acceptData(); itemtime.text = model.duration / 60 }
+        onEditingFinished: {
+            model.duration = itemtime.text * 60
+        }
     }
 
     Text {
