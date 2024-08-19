@@ -11,6 +11,7 @@
 #include <QQmlContext>
 
 void mac_disable_app_nap();
+void mac_show_in_dock();
 
 int main(int argc, char *argv[])
 {
@@ -19,8 +20,6 @@ int main(int argc, char *argv[])
         mac_disable_app_nap();
        #endif /* TARGET_OS_MAC */
     #endif /* __APPLE__ */
-
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QApplication app(argc, argv);
 
@@ -47,6 +46,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<PiloramaTimer>("Pilorama", 1, 0, "Timer");
 
     engine.load(url);
+	mac_show_in_dock();
 
     return app.exec();
 }

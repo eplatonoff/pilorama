@@ -1,43 +1,65 @@
-cmake_minimum_required(VERSION 3.15.3)
-project(Pilorama)
+cmake_minimum_required(VERSION 3.16)
+project(Pilorama VERSION 3.0.2 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package( Qt5Core REQUIRED)
-find_package( Qt5Quick REQUIRED)
-find_package( Qt5Widgets REQUIRED)
-find_package( Qt5Svg REQUIRED)
-find_package( Qt5Xml REQUIRED)
-
-include_directories(
-		"."
-		"notifications"
+find_package(Qt6 REQUIRED COMPONENTS
+        Core
+        Quick
+        Widgets
+        Svg
+        Xml
+        Core5Compat
 )
 
+include_directories(".")
+
 file(GLOB SRCS_TOP ${PROJECT_SOURCE_DIR}/*.cpp)
-
-file( GLOB_RECURSE SRCS_NESTED
-		)
-
-file( GLOB_RECURSE HDRS
-		)
-
+file( GLOB_RECURSE SRCS_NESTED)
+file( GLOB_RECURSE HDRS)
 file( GLOB_RECURSE QRCS *.qrc)
 
 IF(APPLE)
-	SET(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -w")
-
-	SET(PLATFORM_FILES
-			mac/utility.mm
-			)
+    SET(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -w")
+    SET(PLATFORM_FILES
+            mac/utility.mm
+    )
 ENDIF()
 
 set(SOURCE_FILES ${SRCS_TOP} ${SRCS_NESTED} ${HDRS} ${QRCS})
 
-add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+qt_add_resources(SOURCE_FILES qml.qrc)
 
-target_link_libraries(${PROJECT_NAME}  Qt5::Core Qt5::Quick Qt5::Widgets Qt5::Svg Qt5::Xml)
+add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${PROJECT_VERSION}")
+
+if(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+            MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/mac/Info.plist
+            MACOSX_BUNDLE_ICON_FILE assets/app_icons/icon.icns
+    )
+endif()
+
+if(WIN32)
+    set(RC_FILE assets/app_icons/icon.ico)
+    set_source_files_properties(${RC_FILE} PROPERTIES LANGUAGE RC)
+    target_sources(${PROJECT_NAME} PRIVATE ${RC_FILE})
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE QT_DEPRECATED_WARNINGS)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        Qt::Quick
+        Qt::Widgets
+        Qt::Svg
+        Qt::Xml
+        PRIVATE Qt6::Core
+        PRIVATE Qt6::Core5Compat
+)

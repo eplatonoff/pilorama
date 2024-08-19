@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Dialogs 1.3
-
+import QtQuick
+import QtQuick.Dialogs
+import QtCore
 
 Item{
 
@@ -40,8 +40,7 @@ Item{
     FileDialog {
         id: openFileDialog
         nameFilters: ["JSON files (*.json)"]
-        selectMultiple: false
-        folder: shortcuts.desktop
+        currentFolder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
 
         onAccepted: {
             masterModel.data = openFile(fileUrl).data
@@ -52,10 +51,9 @@ Item{
 
     FileDialog {
         id: saveFileDialog
-        selectExisting: false
         nameFilters: ["JSON files (*.json)"]
         defaultSuffix : 'json'
-        folder: shortcuts.desktop + "/" + masterModel.title + '.json'
+        currentFolder: StandardPaths.writableLocation(StandardPaths.DesktopLocation) + "/" + masterModel.title + '.json'
 
         onAccepted: {
             masterModel.save()

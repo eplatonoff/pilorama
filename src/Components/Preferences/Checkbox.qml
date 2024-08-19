@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import QtGraphicalEffects 1.12
+import Qt5Compat.GraphicalEffects
 
 Item {
     id: checkbox
@@ -32,7 +32,7 @@ Item {
         Behavior on opacity {PropertyAnimation{duration: 200; easing.type: Easing.OutQuad}}
 
 
-        source: "../../assets/img/check.svg"
+        source: "qrc:/assets/img/check.svg"
 
         ColorOverlay{
             id: modeSwitchOverlay

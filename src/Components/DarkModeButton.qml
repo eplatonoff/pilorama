@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import QtGraphicalEffects 1.12
+import Qt5Compat.GraphicalEffects
 
 Item {
     id: element
@@ -14,8 +14,8 @@ Item {
         sourceSize.width: 24
         sourceSize.height: 24
 
-        property string iconDark: "../assets/img/sun.svg"
-        property string iconLight: "../assets/img/moon.svg"
+        property string iconDark: "qrc:/assets/img/sun.svg"
+        property string iconLight: "qrc:/assets/img/moon.svg"
         anchors.right: parent.right
         anchors.rightMargin: 3
         anchors.top: parent.top

@@ -1,11 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Window 2.13
 import QtQuick.Controls 2.13
-import Qt.labs.settings 1.0
+import QtCore
 
 import "Components"
 import "Components/Sequence"
-
 
 ApplicationWindow {
     id: window
@@ -32,7 +31,7 @@ ApplicationWindow {
     property bool expanded: true
 
     property bool alwaysOnTop: false
-    property bool quitOnClose: true
+    property bool quitOnClose: false
 
     property string clockMode: "start"
 
@@ -58,7 +57,7 @@ ApplicationWindow {
     onClosing: {
         if(!quitOnClose) {
             close.accepted = false;
-            if (Qt.platform.os == "osx") {
+            if (Qt.platform.os === "osx") {
                 window.hide();
             }
             else {

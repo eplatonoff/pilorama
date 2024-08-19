@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtMultimedia 5.13
+import QtQuick
+import QtMultimedia
 
 
 QtObject {
@@ -10,7 +10,7 @@ QtObject {
     property SoundEffect sound: SoundEffect {
         id: soundNotification
         muted: notifications.soundMuted
-        source: "../assets/sound/drum_roll.wav"
+        source: "qrc:assets/sound/drum_roll.wav"
     }
 
     onSoundMutedChanged: {

@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtGraphicalEffects 1.12
+import Qt5Compat.GraphicalEffects
 
 Item {
     id: element
@@ -17,8 +17,8 @@ Item {
 
         property bool soundOn: !notifications.soundMuted
 
-        property string iconSound: "../assets/img/sound.svg"
-        property string iconNoSound: "../assets/img/nosound.svg"
+        property string iconSound: "qrc:/assets/img/sound.svg"
+        property string iconNoSound: "qrc:/assets/img/nosound.svg"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 3
         anchors.left: parent.left
