@@ -140,6 +140,10 @@ ApplicationWindow {
         source: "./assets/font/Inter.otf"
     }
 
+    FontLoader {
+        id: iconFont;
+        source: "./assets/font/pilorama.ttf"
+    }
 
     MasterModel {
         id: masterModel
@@ -225,22 +229,40 @@ ApplicationWindow {
                 id: digitalClock
             }
 
-            DarkModeButton {
+            Icon {
                 id: darkModeButton
+                glyph: appSettings.darkMode ? "\uea05" : "\uea0a"
                 anchors.top: parent.top
                 anchors.topMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 0
+
+                onReleased: {
+                    appSettings.darkMode = !appSettings.darkMode
+                }
             }
 
+            // DarkModeButton {
+            //     id: darkModeButton
+            //     anchors.top: parent.top
+            //     anchors.topMargin: 0
+            //     anchors.right: parent.right
+            //     anchors.rightMargin: 0
+            // }
 
-            SoundButton {
+            Icon {
                 id: soundButton
+                glyph: notifications.soundMuted ? "\uea09" : "\uea06"
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
+
+                onReleased: {
+                     notifications.toggleSoundNotifications();
+                }
             }
+
 
             PreferencesButton {
                 id: preferencesButton

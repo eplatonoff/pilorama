@@ -32,12 +32,10 @@
         <file>ModelBurner.qml</file>
         <file>Components/Colors.qml</file>
         <file>Components/ResetButton.qml</file>
-        <file>Components/SoundButton.qml</file>
         <file>Components/StartScreen.qml</file>
         <file>Components/Dials.qml</file>
         <file>Components/TimerScreen.qml</file>
         <file>Components/Preferences.qml</file>
-        <file>Components/DarkModeButton.qml</file>
         <file>Components/PreferencesButton.qml</file>
         <file>Components/Sequence.qml</file>
         <file>Components/Sequence/SequenceItem.qml</file>
@@ -53,5 +51,7 @@
         <file>Components/Sequence/PrefsButton.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
+        <file>assets/font/pilorama.ttf</file>
+        <file>Components/Icon.qml</file>
     </qresource>
 </RCC>
