@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
     app.setOrganizationName("Some Humans");
     app.setOrganizationDomain("somehumans.com");
-    app.setApplicationName("QML Timer");
+    app.setApplicationName("Pilorama");
 
     app.setApplicationVersion(APP_VERSION);
 
