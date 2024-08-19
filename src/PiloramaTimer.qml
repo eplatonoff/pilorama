@@ -27,7 +27,7 @@ Pilorama.Timer {
         }
     }
 
-    onTriggered: {
+    onTriggered: (elapsedSecs) => {
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
                 duration -= elapsedSecs;
