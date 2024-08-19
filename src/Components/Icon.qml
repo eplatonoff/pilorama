@@ -6,6 +6,7 @@ Text {
     property string glyph
     property int size: 24
     property string source
+    property bool propagateComposedEvents: true
 
     signal pressed()
     signal released()
@@ -23,7 +24,7 @@ Text {
     MouseArea {
        anchors.fill: parent
        cursorShape: Qt.PointingHandCursor
-       propagateComposedEvents: true
+       propagateComposedEvents: parent.propagateComposedEvents
        onReleased: parent.released()
        onPressed: parent.pressed()
        onEntered: parent.entered()

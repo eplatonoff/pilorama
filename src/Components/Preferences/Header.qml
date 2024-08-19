@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream
 import QtQuick
+=======
+import QtQuick 2.0
+import ".."
+>>>>>>> Stashed changes
 
 Rectangle {
     id: rectangle
@@ -8,9 +13,12 @@ Rectangle {
 
     property real headingFontSize: 18
 
-
-    BackButton {
+    Icon {
         id: backButton
+        glyph: "\uea08"
+        onReleased: {
+            stack.pop()
+        }
     }
 
     Text {

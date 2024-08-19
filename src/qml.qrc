@@ -36,19 +36,14 @@
         <file>Components/Dials.qml</file>
         <file>Components/TimerScreen.qml</file>
         <file>Components/Preferences.qml</file>
-        <file>Components/PreferencesButton.qml</file>
         <file>Components/Sequence.qml</file>
         <file>Components/Sequence/SequenceItem.qml</file>
         <file>Components/Sequence/Header.qml</file>
         <file>Components/Sequence/Footer.qml</file>
         <file>Components/Sequence/ColorSelector.qml</file>
         <file>Components/ExternalDrop.qml</file>
-        <file>Components/Sequence/SaveButton.qml</file>
         <file>Components/Preferences/Header.qml</file>
-        <file>Components/Preferences/BackButton.qml</file>
         <file>Components/Preferences/Checkbox.qml</file>
-        <file>Components/Sequence/LoadButton.qml</file>
-        <file>Components/Sequence/PrefsButton.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
         <file>assets/font/pilorama.ttf</file>

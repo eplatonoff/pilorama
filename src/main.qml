@@ -242,13 +242,6 @@ ApplicationWindow {
                 }
             }
 
-            // DarkModeButton {
-            //     id: darkModeButton
-            //     anchors.top: parent.top
-            //     anchors.topMargin: 0
-            //     anchors.right: parent.right
-            //     anchors.rightMargin: 0
-            // }
 
             Icon {
                 id: soundButton
@@ -264,18 +257,20 @@ ApplicationWindow {
             }
 
 
-            PreferencesButton {
+            Icon {
                 id: preferencesButton
+                glyph: "\uea04"
+
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+
+                onReleased: {
+                    stack.push(preferences)
+                }
             }
 
-
-//            PreferencesButton {
-//                id: preferencesButton
-//                anchors.top: parent.top
-//                anchors.topMargin: 0
-//                anchors.left: parent.left
-//                anchors.leftMargin: 0
-//            }
 
             ExternalDrop {
                 id: externalDrop

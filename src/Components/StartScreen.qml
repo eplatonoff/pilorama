@@ -18,8 +18,6 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
-//        cursorShape: Qt.PointingHandCursor
-
         onPressed: { focus = true }
     }
 

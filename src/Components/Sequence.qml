@@ -18,10 +18,6 @@ Item {
         sequenceView.currentIndex = id
     }
 
-//    Header {
-//        id: sequenceHeader
-//        z: 3
-//    }
 
     Footer {
         id: sequenceFooter
@@ -94,11 +90,3 @@ Item {
         }
     }
 }
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

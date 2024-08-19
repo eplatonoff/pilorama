@@ -1,6 +1,8 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
 
+import ".."
+
 Item {
     id: checkbox
 
@@ -20,34 +22,14 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
     }
-    Image {
-        opacity: checkbox.checked
-        anchors.verticalCenter: parent.verticalCenter
-        sourceSize.width: 24
-        sourceSize.height: 24
-        antialiasing: true
-        smooth: true
-        fillMode: Image.PreserveAspectFit
 
+    Icon {
+        visible: checkbox.checked
+        glyph: "\uea0c"
+        color: colors.getColor('dark')
+        anchors.verticalCenter: parent.verticalCenter
         Behavior on opacity {PropertyAnimation{duration: 200; easing.type: Easing.OutQuad}}
 
-
-        source: "qrc:/assets/img/check.svg"
-
-        ColorOverlay{
-            id: modeSwitchOverlay
-            anchors.fill: parent
-            source: parent
-            color: colors.getColor('dark')
-            antialiasing: true
-        }
     }
 
 }
-
-
-/*##^##
-Designer {
-    D{i:2;anchors_width:16}
-}
-##^##*/

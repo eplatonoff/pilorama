@@ -47,25 +47,33 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 23
 
-        Image {
+        Icon {
             id: bellIcon
+            glyph: "\uea02"
+            size: 18
             anchors.left: parent.left
-            anchors.leftMargin: 0
             anchors.verticalCenter: digitalTime.verticalCenter
-            sourceSize.height: 16
-            sourceSize.width: 16
-            source: "../assets/img/bell.svg"
-            antialiasing: true
-            fillMode: Image.PreserveAspectFit
-
-            ColorOverlay{
-                id: bellIconOverlay
-                anchors.fill: parent
-                source: parent
-                color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-                antialiasing: true
-            }
         }
+
+        // Image {
+        //     id: bellIcon
+        //     anchors.left: parent.left
+        //     anchors.leftMargin: 0
+        //     anchors.verticalCenter: digitalTime.verticalCenter
+        //     sourceSize.height: 16
+        //     sourceSize.width: 16
+        //     source: "../assets/img/bell.svg"
+        //     antialiasing: true
+        //     fillMode: Image.PreserveAspectFit
+
+        //     ColorOverlay{
+        //         id: bellIconOverlay
+        //         anchors.fill: parent
+        //         source: parent
+        //         color: appSettings.darkMode ? colors.accentDark : colors.accentLight
+        //         antialiasing: true
+        //     }
+        // }
 
         Text {
             id: digitalTime

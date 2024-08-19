@@ -1,6 +1,6 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
 import QtQml.Models
+import ".."
 
 Rectangle {
     id: sequenceItem
@@ -52,6 +52,23 @@ Rectangle {
         }
     ]
 
+    Icon {
+        id: handler
+        glyph: "\uea0d"
+        visible: !sequence.blockEdits
+        width: sequence.blockEdits ? 0 : 24
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+
+        propagateComposedEvents: false
+
+        color: colors.getColor('lighter')
+
+
+        Behavior on width { NumberAnimation { properties: "width"; duration: 150 }}
+
+    }
+
     MouseArea {
         id: itemDragTrigger
         anchors.fill: parent
@@ -76,31 +93,6 @@ Rectangle {
         onExited: {
             itemControls.visible = false
             itemControls.width = 0
-        }
-    }
-
-    Image {
-        id: handler
-        visible: !sequence.blockEdits
-        width: sequence.blockEdits ? 0 : 23
-        source: "../../assets/img/dragger.svg"
-        fillMode: Image.PreserveAspectFit
-
-        sourceSize.height: 24
-        sourceSize.width: 24
-
-        Behavior on width { NumberAnimation { properties: "width"; duration: 150 }}
-
-        property bool prefsToggle: false
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-
-        ColorOverlay{
-            id: prefsIconOverlay
-            anchors.fill: parent
-            source: parent
-            color: colors.getColor('lighter')
-            antialiasing: true
         }
     }
 
@@ -175,7 +167,6 @@ Rectangle {
         width: 30
         text: qsTr("min")
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor('mid')
 
@@ -188,7 +179,6 @@ Rectangle {
 
     ColorSelector {
         id: colorSelector
-        anchors.leftMargin: 0
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: handler.right
         lineId: index
@@ -206,86 +196,33 @@ Rectangle {
         Behavior on width { PropertyAnimation { duration: 100 } }
 
         anchors.right: parent.right
-        anchors.rightMargin: 0
 
-        Item {
-            id: copy
-            height: parent.height
-            width: 20
-            anchors.right: close.left
-            anchors.rightMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-
-
-            Image {
-                id: copyIcon
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                source: "../../assets/img/copy.svg"
-                fillMode: Image.PreserveAspectFit
-
-                sourceSize.height: 24
-                sourceSize.width: 24
-
-                ColorOverlay{
-                    id: copyOverlay
-                    anchors.fill: parent
-                    source: parent
-                    color: colors.getColor('light')
-                    antialiasing: true
-                }
-            }
-
-            MouseArea {
-                id: copyTrigger
-                anchors.fill: parent
-                propagateComposedEvents: true
-                cursorShape: Qt.PointingHandCursor
-                onReleased: {
-                    masterModel.add(model.name, model.color, model.duration)
-                }
-            }
-        }
-
-        Item {
-            id: close
-            height: parent.height
-            width: 20
-
+        Icon {
+            id: closeButton
+            glyph: "\uea0f"
             anchors.right: parent.right
-            anchors.rightMargin: 0
             anchors.verticalCenter: parent.verticalCenter
+            color: colors.getColor('light')
 
-            Image {
-                id: closeIcon
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                source: "../../assets/img/close.svg"
-                fillMode: Image.PreserveAspectFit
-
-                sourceSize.height: 24
-                sourceSize.width: 24
-
-
-                ColorOverlay{
-                    id: closeOverlay
-                    source: parent
-                    color: colors.getColor('light')
-                    anchors.fill: parent
-                    antialiasing: true
-                }
-            }
-            MouseArea {
-                id: closeTrigger
-                anchors.fill: parent
-                propagateComposedEvents: true
-                cursorShape: Qt.PointingHandCursor
-                onReleased: {
-                    globalTimer.stop()
-                    masterModel.remove(index)
-                }
+            onReleased: {
+                globalTimer.stop()
+                masterModel.remove(index)
             }
         }
+
+        Icon {
+            id: copyButton
+            glyph: "\uea0e"
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            color: colors.getColor('light')
+
+            onReleased: {
+                masterModel.add(model.name, model.color, model.duration)
+            }
+        }
+
+
     }
 }
 

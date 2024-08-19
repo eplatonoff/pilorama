@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import QtQuick
 import Qt5Compat.GraphicalEffects
+=======
+import QtQuick 2.0
+import ".."
+>>>>>>> Stashed changes
 
 Rectangle {
     id: rectangle
@@ -65,24 +70,11 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 32
 
-            Image {
+            Icon {
                 id: addIcon
-                source: "../../assets/img/add.svg"
-                fillMode: Image.PreserveAspectFit
-
-                sourceSize.height: 24
-                sourceSize.width: 24
-
-                property bool prefsToggle: false
+                glyph: "\uea10"
+                color: colors.getColor("mid")
                 anchors.verticalCenter: parent.verticalCenter
-
-                ColorOverlay{
-                    id: addIconOverlay
-                    anchors.fill: parent
-                    source: parent
-                    color: colors.getColor("mid")
-                    antialiasing: true
-                }
             }
 
             Text {
@@ -102,15 +94,24 @@ Rectangle {
 
     }
 
-    LoadButton {
+    Icon {
         id: loadButton
+        glyph: "\uea0b"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
+
+        onReleased: { fileDialogue.openDialogue() }
+
     }
 
-    SaveButton {
+    Icon {
         id: saveButton
+        glyph: "\uea07"
         anchors.left: loadButton.right
         anchors.verticalCenter: parent.verticalCenter
+
+        onReleased: { fileDialogue.saveDialogue() }
+
     }
+
 }
