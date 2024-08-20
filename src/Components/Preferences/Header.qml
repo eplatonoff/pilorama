@@ -1,9 +1,5 @@
-<<<<<<< Updated upstream
 import QtQuick
-=======
-import QtQuick 2.0
 import ".."
->>>>>>> Stashed changes
 
 Rectangle {
     id: rectangle

@@ -1,10 +1,5 @@
-<<<<<<< Updated upstream
 import QtQuick
-import Qt5Compat.GraphicalEffects
-=======
-import QtQuick 2.0
 import ".."
->>>>>>> Stashed changes
 
 Rectangle {
     id: rectangle
