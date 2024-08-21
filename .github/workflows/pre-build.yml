@@ -27,7 +27,7 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
-        macdeployqt Pilorama.app -qmldir=../src
+        macdeployqt Pilorama -qmldir=../src
     - name: Make Installer
       run: |
         mkdir executable
