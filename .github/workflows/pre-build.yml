@@ -8,69 +8,66 @@ on:
 jobs:
   macos:
     name: Pre-build MacOS Package
-    runs-on: macos-10.15
+    runs-on: macos-14
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1  # not v2!
-      with:
-        path: ../Qt
-        key: ${{ runner.os }}-QtCache
+      uses: actions/checkout@v4
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '5.15.2'
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
-    - name: Setup Addtional Dependencies
+        version: '6.7.2'
+        cache: true
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+    - name: Setup Additional Dependencies
       run: |
-        brew install create-dmg
+        brew install create-dmg cmake
     - name: Build Application
       run: |
-        qmake -config release src/pilorama.pro
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
         make
-        macdeployqt Pilorama.app -qmldir=./src
+        macdeployqt Pilorama.app -qmldir=../src
     - name: Make Installer
       run: |
         mkdir executable
-        mv Pilorama.app executable/Pilorama.app
+        mv build/Pilorama.app executable/Pilorama.app
         create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
     - name: Store Package
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Pilorama.dmg
         path: Pilorama.dmg
   windows:
     name: Pre-build Windows Package
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1  # not v2!
-      with:
-        path: ../Qt
-        key: ${{ runner.os }}-QtCache
+      uses: actions/checkout@v4
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '5.15.2'
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        version: '6.7.2'
+        cache: true
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+    - name: Setup Additional Dependencies
+      shell: cmd
+      run: |
+        choco install cmake
     - name: Build Application
       shell: cmd
       run: |
-        call "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake -config release src\pilorama.pro
-        nmake
-        windeployqt release/Pilorama.exe -qmldir=./src
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --config Release
+        windeployqt release\Pilorama.exe -qmldir=../src
     - name: Make Installer
       shell: cmd
       run: |
         iscc wndws.iss
     - name: Store Package
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Pilorama_Setup.exe
         path: Pilorama_Setup.exe
