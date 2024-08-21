@@ -15,7 +15,6 @@ find_package(Qt6 REQUIRED COMPONENTS
         Widgets
         Svg
         Xml
-        Core5Compat
 )
 
 include_directories(".")
@@ -61,5 +60,4 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         Qt::Svg
         Qt::Xml
         PRIVATE Qt6::Core
-        PRIVATE Qt6::Core5Compat
 )
