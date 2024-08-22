@@ -46,7 +46,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<PiloramaTimer>("Pilorama", 1, 0, "Timer");
 
     engine.load(url);
-	mac_show_in_dock();
+
+    #ifdef __APPLE__
+        #if TARGET_OS_MAC
+            mac_show_in_dock();
+        #endif /* TARGET_OS_MAC */
+    #endif /* __APPLE__ */
 
     return app.exec();
 }
