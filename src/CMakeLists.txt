@@ -44,13 +44,13 @@ if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/mac/Info.plist
-            MACOSX_BUNDLE_ICON_FILE assets/app_icons/icon.icns
+            MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/assets/app_icons/icon.icns
             MACOSX_BUNDLE_BUNDLE_IDENTIFIER "com.sigonna.opensource"
     )
 endif()
 
 if(WIN32)
-    set(RC_FILE assets/app_icons/icon.ico)
+    set(RC_FILE ${CMAKE_SOURCE_DIR}/assets/app_icons/icon.ico)
     set_source_files_properties(${RC_FILE} PROPERTIES LANGUAGE RC)
     target_sources(${PROJECT_NAME} PRIVATE ${RC_FILE})
 endif()
