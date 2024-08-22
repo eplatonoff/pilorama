@@ -41,8 +41,10 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${PROJECT_VERSIO
 
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
+            MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/mac/Info.plist
             MACOSX_BUNDLE_ICON_FILE assets/app_icons/icon.icns
+            MACOSX_BUNDLE_BUNDLE_IDENTIFIER "com.sigonna.opensource"
     )
 endif()
 
