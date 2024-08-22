@@ -22,7 +22,11 @@ jobs:
     - name: Setup Additional Dependencies
       run: |
         brew install create-dmg cmake
-        bundle install
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.4'
+        bundler-cache: true
     - name: Build Application
       run: |
         mkdir build
