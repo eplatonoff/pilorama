@@ -36,15 +36,34 @@ set(SOURCE_FILES ${SRCS_TOP} ${SRCS_NESTED} ${HDRS} ${QRCS})
 
 qt_add_resources(SOURCE_FILES qml.qrc)
 
-add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
+if (APPLE)
+    set(MACOSX_BUNDLE_ICON_FILE icon.icns)
+
+    set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.icns")
+    set_source_files_properties(${app_icon_macos} PROPERTIES
+           MACOSX_PACKAGE_LOCATION "Resources")
+
+    qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES} ${app_icon_macos})
+endif ()
+
+if(WIN32)
+    set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.ico")
+    set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
+
+    add_custom_command(
+        OUTPUT ${app_icon_resource_windows}
+        COMMAND ${CMAKE_COMMAND} -E echo "IDI_ICON1 ICON DISCARDABLE \"${app_icon}\"" > ${app_icon_resource_windows}
+        DEPENDS ${app_icon}
+    )
+
+    qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES} ${app_icon_resource_windows})
+endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${PROJECT_VERSION}")
 
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
             MACOSX_BUNDLE TRUE
-            MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/mac/Info.plist
-            MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/assets/app_icons/icon.icns
             MACOSX_BUNDLE_BUNDLE_IDENTIFIER "com.sigonna.opensource"
     )
 endif()
