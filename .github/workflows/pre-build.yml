@@ -16,6 +16,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         version: '6.7.2'
+        modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
     - name: Setup Additional Dependencies

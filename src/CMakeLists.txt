@@ -15,6 +15,7 @@ find_package(Qt6 REQUIRED COMPONENTS
         Widgets
         Svg
         Xml
+        Multimedia
 )
 
 include_directories(".")
@@ -62,4 +63,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         Qt::Svg
         Qt::Xml
         PRIVATE Qt6::Core
+        PRIVATE Qt6::Multimedia
 )
