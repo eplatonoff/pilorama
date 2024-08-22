@@ -79,15 +79,18 @@ jobs:
     name: Pre-build Linux Package
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt install build-essential libqt6svg6-dev libqt6qml6-dev qml6-module-qt-labs-platform qml6-module-qt-labs-settings qml6-module-qtmultimedia qml6-module-qtquick-controls qml6-module-qtquick-controls2 qml6-module-qtquickdialogs6
-      - name: Build Application
-        run: |
-          mkdir build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=Release ../src
-          cmake --build . --config Release
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.7.2'
+        modules: qtmultimedia
+        cache: true
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+    - name: Build Application
+      run: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ../src
+        cmake --build . --config Release
