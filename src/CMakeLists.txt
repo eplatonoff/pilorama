@@ -43,7 +43,7 @@ if (APPLE)
     set_source_files_properties(${app_icon_macos} PROPERTIES
            MACOSX_PACKAGE_LOCATION "Resources")
 
-    qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES} ${app_icon_macos})
+    list(APPEND PLATFORM_FILES ${app_icon_macos})
 endif ()
 
 if(WIN32)
@@ -56,8 +56,10 @@ if(WIN32)
         DEPENDS ${app_icon}
     )
 
-    qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES} ${app_icon_resource_windows})
+    list(APPEND PLATFORM_FILES ${app_icon_resource_windows})
 endif()
+
+qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${PROJECT_VERSION}")
 
