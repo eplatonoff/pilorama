@@ -30,8 +30,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: ".\release\Pilorama.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ".\Release\Pilorama.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
