@@ -46,18 +46,14 @@ if (APPLE)
     list(APPEND PLATFORM_FILES ${app_icon_macos})
 endif ()
 
-#if(WIN32)
-#    set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.ico")
-#    set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.rc")
-#
-#    add_custom_command(
-#        OUTPUT ${app_icon_resource_windows}
-#        COMMAND ${CMAKE_COMMAND} -E echo "IDI_ICON1 ICON DISCARDABLE \"${app_icon}\"" > ${app_icon_resource_windows}
-#        DEPENDS ${app_icon}
-#    )
-#
-#    list(APPEND PLATFORM_FILES ${app_icon_resource_windows})
-#endif()
+if(WIN32)
+    set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.ico")
+    set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
+
+    file(WRITE ${app_icon_resource_windows} "IDI_ICON1 ICON DISCARDABLE \"${app_icon}\"")
+
+    list(APPEND PLATFORM_FILES ${app_icon_resource_windows})
+endif()
 
 qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
 
@@ -70,11 +66,11 @@ if(APPLE)
     )
 endif()
 
-if(WIN32)
-    set(RC_FILE ${CMAKE_SOURCE_DIR}/assets/app_icons/icon.ico)
-    set_source_files_properties(${RC_FILE} PROPERTIES LANGUAGE RC)
-    target_sources(${PROJECT_NAME} PRIVATE ${RC_FILE})
-endif()
+# if(WIN32)
+#     set(RC_FILE ${CMAKE_SOURCE_DIR}/assets/app_icons/icon.ico)
+#     set_source_files_properties(${RC_FILE} PROPERTIES LANGUAGE RC)
+#     target_sources(${PROJECT_NAME} PRIVATE ${RC_FILE})
+# endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE QT_DEPRECATED_WARNINGS)
 
