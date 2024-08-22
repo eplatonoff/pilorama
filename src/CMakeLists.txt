@@ -48,7 +48,7 @@ endif ()
 
 if(WIN32)
     set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.ico")
-    set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
+    set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/assets/app_icons/icon.rc")
 
     add_custom_command(
         OUTPUT ${app_icon_resource_windows}
