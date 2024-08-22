@@ -63,7 +63,7 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         cmake --build . --config Release
-        windeployqt release\Pilorama.exe -qmldir=../src
+        windeployqt Release\Pilorama.exe -qmldir=../src
     - name: Make Installer
       shell: cmd
       run: |
