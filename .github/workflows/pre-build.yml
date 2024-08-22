@@ -73,3 +73,21 @@ jobs:
       with:
         name: Pilorama_Setup.exe
         path: Pilorama_Setup.exe
+
+  # just to test the build passes on linux
+  linux:
+    name: Pre-build Linux Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential qt6-base-dev qt6-svg-dev qt6-declarative-dev qt6-multimedia-dev cmake
+      - name: Build Application
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ../src
+          cmake --build . --config Release
