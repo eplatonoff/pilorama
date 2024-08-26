@@ -3,27 +3,6 @@ import QtQuick
 ListModel{
     id: colors
 
-    property color bgDark: "#282828"
-    property color bgLight: "#F3F3F3"
-
-    property color fakeDark: "#4F5655"
-    property color fakeLight: "#D0CBCC"
-
-    property color accentDark: "#859391"
-    property color accentLight: "#999394"
-
-    property color accentTextDark: "#fff"
-    property color accentTextLight: "#0A1A39"
-
-    property color pomodoroLight: "#E26767"
-    property color pomodoroDark: "#C23E3E"
-
-    property color shortBreakLight: "#7DCF6F"
-    property color shortBreakDark: "#5BB44C"
-
-    property color longBreakLight: "#6F85CF"
-    property color longBreakDark: "#5069BE"
-
     ListElement{
         name: "bg"
         night: "#282828"
