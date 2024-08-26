@@ -214,7 +214,14 @@ ApplicationWindow {
 
             Dials {
                 id: canvas
-
+                anchors.fill: parent
+                duration: globalTimer.duration
+                splitDuration: globalTimer.splitDuration
+                isRunning: globalTimer.running
+                splitToSequence: appSettings.splitToSequence
+                pomodoroQueue: pomodoroQueue
+                masterModel: masterModel
+                colors: colors
             }
 
             MouseTracker {
