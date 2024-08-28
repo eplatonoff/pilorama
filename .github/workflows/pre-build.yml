@@ -15,7 +15,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.7.2'
+        version: "6.7.2"
         modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
@@ -34,11 +34,33 @@ jobs:
         mkdir executable
         mv build/Pilorama.app executable/Pilorama.app
         create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
+
+    - name: Write PEM encoded private key data to a file
+      env:
+        SIGNING_KEY_PEM: ${{ secrets.APPLE_SIGN_PEM_KEY }}
+      run: |
+        echo $SIGNING_KEY_PEM | tr ' ' '\n' > key.pem
+
+    - name: Install App Store Connect API Key
+      run: |
+        mkdir -p private_keys/
+        echo '${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}' > appstoreconnect.json
+
+    - name: Sign and Notarize
+      uses: indygreg/apple-code-sign-action@v1
+      with:
+        input_path: executable/Pilorama.app
+        notarize: true
+        staple: true
+        pem_file: key.pem
+        app_store_connect_api_key_json_file: appstoreconnect.json
+
     - name: Store Package
       uses: actions/upload-artifact@v4
       with:
         name: Pilorama.dmg
         path: Pilorama.dmg
+
   windows:
     name: Pre-build Windows Package
     runs-on: windows-2022
