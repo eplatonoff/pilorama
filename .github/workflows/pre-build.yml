@@ -29,11 +29,6 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
         macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
-    - name: Make Installer
-      run: |
-        mkdir executable
-        mv build/Pilorama.app executable/Pilorama.app
-        create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
 
     - name: Write PEM encoded private key data to a file
       env:
@@ -49,11 +44,18 @@ jobs:
     - name: Sign and Notarize
       uses: indygreg/apple-code-sign-action@v1
       with:
-        input_path: executable/Pilorama.app
+        rcodesign_version: 0.27.0
+        input_path: build/Pilorama.app
         notarize: true
         staple: true
         pem_file: key.pem
         app_store_connect_api_key_json_file: appstoreconnect.json
+
+    - name: Make Installer
+      run: |
+        mkdir executable
+        mv build/Pilorama.app executable/Pilorama.app
+        create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
 
     - name: Store Package
       uses: actions/upload-artifact@v4
