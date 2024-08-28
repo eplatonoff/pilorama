@@ -48,7 +48,6 @@ jobs:
         sign_args: |
           --exclude 
           '*.dSYM' 
-          --for-notarization
         input_path: build/Pilorama.app
         notarize: true
         staple: true
