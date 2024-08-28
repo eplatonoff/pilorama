@@ -46,9 +46,6 @@ jobs:
       uses: indygreg/apple-code-sign-action@v1
       with:
         rcodesign_version: 0.27.0
-        sign_args: |
-          --exclude 
-          '*/.dSYM/**'
         input_path: build/Pilorama.app
         notarize: true
         staple: true
