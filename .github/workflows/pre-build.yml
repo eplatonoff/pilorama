@@ -29,6 +29,7 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
         macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
+        find Pilorama.app -name '*.dSYM' -exec rm -r {} +
 
     - name: Write PEM encoded private key data to a file
       env:
