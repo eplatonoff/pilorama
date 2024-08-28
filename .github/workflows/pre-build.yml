@@ -46,7 +46,7 @@ jobs:
       with:
         rcodesign_version: 0.27.0
         sign_args: |
-          --exclude "*.dSYM" 
+          --exclude '*.dSYM' 
           --for-notarization
         input_path: build/Pilorama.app
         notarize: true
