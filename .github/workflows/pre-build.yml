@@ -29,7 +29,7 @@ jobs:
       with:
         crate: apple-codesign
         git: https://github.com/indygreg/apple-platform-rs
-        tag: apple-codesign/0.27.0
+#        tag: apple-codesign/0.27.0
         args: --bin rcodesign
 
     - name: Build Application
