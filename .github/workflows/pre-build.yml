@@ -42,18 +42,24 @@ jobs:
         mkdir -p private_keys/
         echo '${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}' > appstoreconnect.json
 
-    - name: Sign and Notarize
-      uses: indygreg/apple-code-sign-action@v1
-      with:
-        rcodesign_version: 0.27.0
-        sign_args: |
-          --exclude 
-          '*dSYM*'
-        input_path: build/Pilorama.app
+#    - name: Sign and Notarize
+#      uses: indygreg/apple-code-sign-action@v1
+#      with:
+#        rcodesign_version: 0.27.0
+#        sign: 'false'
+#        sign_args: |
+#          --exclude
+#          '*dSYM*'
+#        input_path: build/Pilorama.app
 #        notarize: true
 #        staple: true
-        pem_file: key.pem
-        app_store_connect_api_key_json_file: appstoreconnect.json
+#        pem_file: key.pem
+#        app_store_connect_api_key_json_file: appstoreconnect.json
+
+    - name: Sign
+      run: |
+        cargo install --git https://github.com/indygreg/apple-platform-rs --branch main --bin rcodesign apple-codesign
+        rcodesign sign --pem-file key.pem --exclude '*dSYM*' build/Pilorama.app
 
     - name: Make Installer
       run: |
