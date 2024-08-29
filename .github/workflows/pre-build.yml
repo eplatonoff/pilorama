@@ -1,4 +1,4 @@
-name: Pull Request
+name: Test Buildability
 
 on:
   pull_request:
