@@ -41,6 +41,7 @@ jobs:
         make
 
     - name: Create a deployable application bundle
+      run: |
         cd build
         macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
 
