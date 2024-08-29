@@ -2,16 +2,18 @@ name: Pull Request
 
 on:
   pull_request:
+    types: [ready_for_review]
     branches:
       - master
 
 jobs:
   macos:
-    name: Pre-build MacOS Package
+    name: Test MacOS Buildability
     runs-on: macos-14
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -20,67 +22,19 @@ jobs:
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
 
-    - name: Setup Additional Dependencies
-      run: |
-        brew install create-dmg 
-
-    - name: Install rcodesign from git
-      uses: baptiste0928/cargo-install@v3
-      with:
-        crate: apple-codesign
-        git: https://github.com/indygreg/apple-platform-rs
-        tag: apple-codesign/0.27.0
-        args: --bin rcodesign
-        locked: false # due to compile error
-
     - name: Build Application
       run: |
-        mkdir build
-        cd build
+        mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
 
-    - name: Create a deployable application bundle
-      run: |
-        cd build
-        macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
-
-    - name: Write P12 cert to a file
-      run: |
-        echo '${{ secrets.APPLE_CERT_BASE64 }}' | base64 --decode > cert.p12
-
-    - name: Write App Store Connect API Key to file
-      run: |
-        echo '${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}' > appstoreconnect.json
-
-    - name: Sign
-      env:
-        APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
-      run: |
-        rcodesign sign --p12-file cert.p12 --p12-password $APPLE_CERT_PASSWORD --for-notarization --exclude '*dSYM*' build/Pilorama.app
-
-    - name: Notarize
-      run: |
-        rcodesign notary-submit --staple --api-key-file appstoreconnect.json build/Pilorama.app
-
-    - name: Make Apple Disk Image
-      run: |
-        mkdir executable
-        mv build/Pilorama.app executable/Pilorama.app
-        create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
-
-    - name: Store Package
-      uses: actions/upload-artifact@v4
-      with:
-        name: Pilorama.dmg
-        path: Pilorama.dmg
-
   windows:
-    name: Pre-build Windows Package
+    name: Test Windows Buildability
     runs-on: windows-2022
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -95,38 +49,27 @@ jobs:
     - name: Build Application
       shell: cmd
       run: |
-        mkdir build
-        cd build
+        mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         cmake --build . --config Release
-        windeployqt Release\Pilorama.exe -qmldir=../src
-    - name: Make Installer
-      shell: cmd
-      run: |
-        iscc wndws.iss
-    - name: Store Package
-      uses: actions/upload-artifact@v4
-      with:
-        name: Pilorama_Setup.exe
-        path: Pilorama_Setup.exe
 
-  # just to test the build passes on linux
   linux:
-    name: Pre-build Linux Package
+    name: Test Linux Buildability
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: '6.7.2'
-        modules: qtmultimedia
-        cache: true
-        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
-    - name: Build Application
-      run: |
-        mkdir build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ../src
-        cmake --build . --config Release
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.7.2"
+          modules: qtmultimedia
+          cache: true
+          cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+
+      - name: Build Application
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ../src
+          cmake --build . --config Release

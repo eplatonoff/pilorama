@@ -66,12 +66,6 @@ if(APPLE)
     )
 endif()
 
-# if(WIN32)
-#     set(RC_FILE ${CMAKE_SOURCE_DIR}/assets/app_icons/icon.ico)
-#     set_source_files_properties(${RC_FILE} PROPERTIES LANGUAGE RC)
-#     target_sources(${PROJECT_NAME} PRIVATE ${RC_FILE})
-# endif()
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE QT_DEPRECATED_WARNINGS)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
