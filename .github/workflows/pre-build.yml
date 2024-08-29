@@ -19,9 +19,19 @@ jobs:
         modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+
     - name: Setup Additional Dependencies
       run: |
-        brew install create-dmg cmake
+        brew install create-dmg 
+
+    - name: Install rcodesign from git
+      uses: baptiste0928/cargo-install@v3
+      with:
+        crate: apple-codesign
+        git: https://github.com/indygreg/apple-platform-rs
+        tag: apple-codesign/0.27.0
+        args: --bin rcodesign
+
     - name: Build Application
       run: |
         mkdir build
@@ -58,8 +68,11 @@ jobs:
 
     - name: Sign
       run: |
-        cargo install --git https://github.com/indygreg/apple-platform-rs --branch main --bin rcodesign apple-codesign
-        rcodesign sign --pem-file key.pem --exclude '*dSYM*' build/Pilorama.app
+        rcodesign sign --pem-file key.pem --for-notarization --exclude '*dSYM*' build/Pilorama.app
+
+    - name: Notarize
+      run: |
+        rcodesign notary-submit --staple --api-key-json appstoreconnect.json build/Pilorama.app
 
     - name: Make Installer
       run: |
