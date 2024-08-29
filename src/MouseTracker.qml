@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 
 import "utils/geometry.mjs" as GeometryScripts
 
@@ -35,7 +35,7 @@ MouseArea {
         }
     }
 
-    onRotated: {
+    onRotated: (delta) => {
 
         const deltaSecs = delta * 10;
 
@@ -53,7 +53,7 @@ MouseArea {
         }
     }
 
-    onPressed: {
+    onPressed: (mouse) => {
         focus = true
 
         cursorShape = Qt.ClosedHandCursor
@@ -70,7 +70,7 @@ MouseArea {
 
     }
 
-    onPositionChanged: {
+    onPositionChanged: (mouse) => {
         globalTimer.stop();
 
         const angle = GeometryScripts.mouseAngle(

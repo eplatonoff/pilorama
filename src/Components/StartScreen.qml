@@ -1,5 +1,4 @@
-import QtQuick 2.0
-import QtGraphicalEffects 1.12
+import QtQuick
 
 import "Sequence"
 
@@ -18,8 +17,6 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
-//        cursorShape: Qt.PointingHandCursor
-
         onPressed: { focus = true }
     }
 

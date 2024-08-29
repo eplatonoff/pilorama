@@ -1,5 +1,4 @@
-import QtQuick 2.0
-import QtGraphicalEffects 1.12
+import QtQuick
 
 Rectangle {
     id: rectangle

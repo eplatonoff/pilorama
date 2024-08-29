@@ -1,5 +1,4 @@
-import QtQuick 2.0
-import QtGraphicalEffects 1.12
+import QtQuick
 
 import "Preferences"
 
@@ -213,22 +212,10 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
 
-        Image {
+        Icon {
+            glyph: "\uea03"
             anchors.verticalCenter: parent.verticalCenter
-            sourceSize.width: 24
-            sourceSize.height: 24
-            antialiasing: true
-            smooth: true
-            fillMode: Image.PreserveAspectFit
 
-            source: "../assets/img/github.svg"
-
-            ColorOverlay{
-                anchors.fill: parent
-                source: parent
-                color: colors.getColor('mid')
-                antialiasing: true
-            }
         }
 
         Text {
@@ -268,9 +255,3 @@ Item {
     }
 
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:5;anchors_width:115}D{i:9;anchors_width:115}
-}
-##^##*/

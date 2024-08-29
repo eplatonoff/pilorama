@@ -1,0 +1,75 @@
+name: Test Buildability
+
+on:
+  pull_request:
+    types: [ready_for_review]
+    branches:
+      - master
+
+jobs:
+  macos:
+    name: Test MacOS Buildability
+    runs-on: macos-14
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: "6.7.2"
+        modules: qtmultimedia
+        cache: true
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+
+    - name: Build Application
+      run: |
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ../src
+        make
+
+  windows:
+    name: Test Windows Buildability
+    runs-on: windows-2022
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.7.2'
+        modules: qtmultimedia
+        cache: true
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+    - name: Setup Additional Dependencies
+      shell: cmd
+      run: |
+        choco install cmake
+    - name: Build Application
+      shell: cmd
+      run: |
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ../src
+        cmake --build . --config Release
+
+  linux:
+    name: Test Linux Buildability
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.7.2"
+          modules: qtmultimedia
+          cache: true
+          cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+
+      - name: Build Application
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ../src
+          cmake --build . --config Release

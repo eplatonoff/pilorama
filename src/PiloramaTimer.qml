@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 
 import Pilorama 1.0 as Pilorama
 
@@ -27,7 +27,7 @@ Pilorama.Timer {
         }
     }
 
-    onTriggered: {
+    onTriggered: (elapsedSecs) => {
         if (!pomodoroQueue.infiniteMode) {
             if (duration >= 1){
                 duration -= elapsedSecs;

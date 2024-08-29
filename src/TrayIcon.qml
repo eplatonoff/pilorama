@@ -1,12 +1,12 @@
-import QtQuick 2.0
-import Qt.labs.platform 1.1
+import QtQuick
+import Qt.labs.platform
 
 
 SystemTrayIcon {
     id: tray
     visible: true
-    iconSource: iconURL()
-    iconName: qsTr("test")
+    icon.source: iconURL()
+    icon.name: qsTr("Pilorama")
     tooltip : window.title
     property string appTitle: window.title
     property string messageText: ""
@@ -19,7 +19,7 @@ SystemTrayIcon {
     property real runningTime: 0
 
     onMessageClicked: popUp()
-    onActivated: {
+    onActivated: (reason) => {
         if(reason === SystemTrayIcon.DoubleClick){ popUp(); !menu.visible}
     }
 
@@ -48,9 +48,9 @@ SystemTrayIcon {
 
     function messageIcon() {
         if (systemPalette.sysemDarkMode) {
-            return './assets/tray/static-night.svg';
+            return 'qrc:/assets/tray/static-night.svg';
         } else {
-            return './assets/tray/static-day.svg'
+            return 'qrc:/assets/tray/static-day.svg'
         }
     }
 
@@ -58,9 +58,9 @@ SystemTrayIcon {
     {
         if (!globalTimer.running)
             if (systemPalette.sysemDarkMode) {
-                return './assets/tray/static-night.svg';
+                return 'qrc:/assets/tray/static-night.svg';
             } else {
-                return './assets/tray/static-day.svg'
+                return 'qrc:/assets/tray/static-day.svg'
             }
 
         const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");

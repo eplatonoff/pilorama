@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.12
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 import "Sequence"
 import ".."
@@ -18,10 +17,6 @@ Item {
         sequenceView.currentIndex = id
     }
 
-//    Header {
-//        id: sequenceHeader
-//        z: 3
-//    }
 
     Footer {
         id: sequenceFooter
@@ -66,7 +61,7 @@ Item {
                 DropArea {
                     anchors.fill: parent
                     keys: ["sequenceItems"]
-                    onEntered: {
+                    onEntered: (drag) => {
                         var draggedId = drag.source.dragItemIndex
                         masterModel.move(draggedId, index, 1)
                     }
@@ -94,11 +89,3 @@ Item {
         }
     }
 }
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

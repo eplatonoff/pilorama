@@ -28,7 +28,7 @@ Precompiled builds are available [here](https://github.com/eplatonoff/pilorama/r
 
 Building from source:
 
-    $ sudo apt install build-essential libqt5svg5-dev qtdeclarative5-dev qml-module-qt-labs-platform qml-module-qt-labs-settings qml-module-qtmultimedia qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs  # Debian 8 "jessie" and up, Ubuntu 18.04-22.04, Kali Linux 2022.1
+    $ sudo apt install build-essential qt6-declarative-dev libqt6svg6-dev qt6-base-dev qt6-multimedia-dev qml6-module-qt-labs-platform qml6-module-qt-labs-settings qml6-module-qtmultimedia qml6-module-qtquick-controls qml6-module-qtquick-controls qml6-module-qtquick-dialogs  # Ubuntu 24.04
 
     $ git clone https://github.com/eplatonoff/pilorama
     $ cd pilorama
@@ -37,10 +37,7 @@ Building from source:
     $ ./Pilorama
 
 
-## Development
-
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/eplatonoff/pilorama/Pull%20Request?label=GitHub%20Actions)](https://github.com/eplatonoff/pilorama/actions) [![Travis (.com)](https://img.shields.io/travis/com/eplatonoff/pilorama?label=Travis%20CI)](https://travis-ci.com/eplatonoff/pilorama)
-
+## Development / Code of Conduct 
 #### Release Process
 
 Once the latest **Pull Request** passed all CI checks & **are merged** to master **push git tag** with required version pointed **to** merge commit on **master** branch.  

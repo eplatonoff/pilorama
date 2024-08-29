@@ -1,11 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Window 2.13
-import QtQuick.Controls 2.13
-import Qt.labs.settings 1.0
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtCore
 
 import "Components"
 import "Components/Sequence"
-
 
 ApplicationWindow {
     id: window
@@ -32,7 +31,7 @@ ApplicationWindow {
     property bool expanded: true
 
     property bool alwaysOnTop: false
-    property bool quitOnClose: true
+    property bool quitOnClose: false
 
     property string clockMode: "start"
 
@@ -55,10 +54,10 @@ ApplicationWindow {
         }
     }
 
-    onClosing: {
+    onClosing: (close) => {
         if(!quitOnClose) {
             close.accepted = false;
-            if (Qt.platform.os == "osx") {
+            if (Qt.platform.os === "osx") {
                 window.hide();
             }
             else {
@@ -141,6 +140,10 @@ ApplicationWindow {
         source: "./assets/font/Inter.otf"
     }
 
+    FontLoader {
+        id: iconFont;
+        source: "./assets/font/pilorama.ttf"
+    }
 
     MasterModel {
         id: masterModel
@@ -211,7 +214,14 @@ ApplicationWindow {
 
             Dials {
                 id: canvas
-
+                anchors.fill: parent
+                duration: globalTimer.duration
+                splitDuration: globalTimer.splitDuration
+                isRunning: globalTimer.running
+                splitToSequence: appSettings.splitToSequence
+                pomodoroQueue: pomodoroQueue
+                masterModel: masterModel
+                colors: colors
             }
 
             MouseTracker {
@@ -226,35 +236,48 @@ ApplicationWindow {
                 id: digitalClock
             }
 
-            DarkModeButton {
+            Icon {
                 id: darkModeButton
+                glyph: appSettings.darkMode ? "\uea05" : "\uea0a"
                 anchors.top: parent.top
                 anchors.topMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 0
+
+                onReleased: {
+                    appSettings.darkMode = !appSettings.darkMode
+                }
             }
 
 
-            SoundButton {
+            Icon {
                 id: soundButton
+                glyph: notifications.soundMuted ? "\uea09" : "\uea06"
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
+
+                onReleased: {
+                     notifications.toggleSoundNotifications();
+                }
             }
 
-            PreferencesButton {
+
+            Icon {
                 id: preferencesButton
+                glyph: "\uea04"
+
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+
+                onReleased: {
+                    stack.push(preferences)
+                }
             }
 
-
-//            PreferencesButton {
-//                id: preferencesButton
-//                anchors.top: parent.top
-//                anchors.topMargin: 0
-//                anchors.left: parent.left
-//                anchors.leftMargin: 0
-//            }
 
             ExternalDrop {
                 id: externalDrop
