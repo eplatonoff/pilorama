@@ -10,14 +10,20 @@
 #include <QApplication>
 #include <QQmlContext>
 
+#ifdef __APPLE__
+#if TARGET_OS_MAC
 void mac_disable_app_nap();
 void mac_show_in_dock();
+void mac_hide_from_dock();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+
 
 int main(int argc, char *argv[])
 {
     #ifdef __APPLE__
        #if TARGET_OS_MAC
-        mac_disable_app_nap();
+         mac_disable_app_nap();
        #endif /* TARGET_OS_MAC */
     #endif /* __APPLE__ */
 
@@ -49,7 +55,7 @@ int main(int argc, char *argv[])
 
     #ifdef __APPLE__
         #if TARGET_OS_MAC
-            mac_show_in_dock();
+             mac_hide_from_dock();
         #endif /* TARGET_OS_MAC */
     #endif /* __APPLE__ */
 
