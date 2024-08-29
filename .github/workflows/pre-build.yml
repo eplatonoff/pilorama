@@ -29,9 +29,9 @@ jobs:
       with:
         crate: apple-codesign
         git: https://github.com/indygreg/apple-platform-rs
-#        tag: apple-codesign/0.27.0
+        tag: apple-codesign/0.27.0
         args: --bin rcodesign
-        locked: false
+        locked: false # due to compile error
 
     - name: Build Application
       run: |
@@ -39,35 +39,18 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
+
+    - name: Create a deployable application bundle
+        cd build
         macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
-#        find Pilorama.app -name '*.dSYM' -exec rm -r {} +
 
-    - name: Write PEM encoded private key data to a file
-      env:
-        SIGNING_KEY_PEM: ${{ secrets.APPLE_SIGN_PEM_KEY }}
-        APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
+    - name: Write P12 cert to a file
       run: |
-        echo $SIGNING_KEY_PEM | tr ' ' '\n' > key.pem
-        echo $APPLE_CERT_BASE64 | base64 --decode > cert.p12
+        echo '${{ secrets.APPLE_CERT_BASE64 }}' | base64 --decode > cert.p12
 
-    - name: Install App Store Connect API Key
+    - name: Write App Store Connect API Key to file
       run: |
-        mkdir -p private_keys/
         echo '${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}' > appstoreconnect.json
-
-#    - name: Sign and Notarize
-#      uses: indygreg/apple-code-sign-action@v1
-#      with:
-#        rcodesign_version: 0.27.0
-#        sign: 'false'
-#        sign_args: |
-#          --exclude
-#          '*dSYM*'
-#        input_path: build/Pilorama.app
-#        notarize: true
-#        staple: true
-#        pem_file: key.pem
-#        app_store_connect_api_key_json_file: appstoreconnect.json
 
     - name: Sign
       env:
@@ -79,7 +62,7 @@ jobs:
       run: |
         rcodesign notary-submit --staple --api-key-file appstoreconnect.json build/Pilorama.app
 
-    - name: Make Installer
+    - name: Make Apple Disk Image
       run: |
         mkdir executable
         mv build/Pilorama.app executable/Pilorama.app
