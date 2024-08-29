@@ -45,8 +45,10 @@ jobs:
     - name: Write PEM encoded private key data to a file
       env:
         SIGNING_KEY_PEM: ${{ secrets.APPLE_SIGN_PEM_KEY }}
+        APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
       run: |
         echo $SIGNING_KEY_PEM | tr ' ' '\n' > key.pem
+        echo $APPLE_CERT_BASE64 | base64 --decode > cert.p12
 
     - name: Install App Store Connect API Key
       run: |
@@ -68,8 +70,10 @@ jobs:
 #        app_store_connect_api_key_json_file: appstoreconnect.json
 
     - name: Sign
+      env:
+        APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
       run: |
-        rcodesign sign --pem-file key.pem --for-notarization --exclude '*dSYM*' build/Pilorama.app
+        rcodesign sign --p12-file cert.p12 --p12-password $APPLE_CERT_PASSWORD --for-notarization --exclude '*dSYM*' build/Pilorama.app
 
     - name: Notarize
       run: |
