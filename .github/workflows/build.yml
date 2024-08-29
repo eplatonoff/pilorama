@@ -55,19 +55,21 @@ jobs:
 
   linux:
     name: Test Linux Buildability
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: "6.7.2"
-          modules: qtmultimedia
-          cache: true
-          cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
-
+        run: |
+          sudo apt install build-essential libqt6svg6-dev qt6-base-dev qml6-module-qt-labs-platform qml6-module-qt-labs-settings qml6-module-qtmultimedia qml6-module-qtquick-controls qml6-module-qtquick-controls2 qml6-module-qtquick-dialogs
+#        uses: jurplel/install-qt-action@v4
+#        with:
+#          version: "6.7.2"
+#          modules: qtmultimedia
+#          cache: true
+#          cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+#
       - name: Build Application
         run: |
           mkdir build && cd build
