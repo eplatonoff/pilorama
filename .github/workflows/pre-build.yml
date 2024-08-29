@@ -29,7 +29,7 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
         macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
-        find Pilorama.app -name '*.dSYM' -exec rm -r {} +
+#        find Pilorama.app -name '*.dSYM' -exec rm -r {} +
 
     - name: Write PEM encoded private key data to a file
       env:
@@ -46,9 +46,12 @@ jobs:
       uses: indygreg/apple-code-sign-action@v1
       with:
         rcodesign_version: 0.27.0
+        sign_args: |
+          --exclude 
+          '*dSYM*'
         input_path: build/Pilorama.app
-        notarize: true
-        staple: true
+#        notarize: true
+#        staple: true
         pem_file: key.pem
         app_store_connect_api_key_json_file: appstoreconnect.json
 
