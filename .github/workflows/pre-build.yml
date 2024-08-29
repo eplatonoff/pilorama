@@ -77,7 +77,7 @@ jobs:
 
     - name: Notarize
       run: |
-        rcodesign notary-submit --staple --api-key-json appstoreconnect.json build/Pilorama.app
+        rcodesign notary-submit --staple --api-key-file appstoreconnect.json build/Pilorama.app
 
     - name: Make Installer
       run: |
