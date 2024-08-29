@@ -31,6 +31,7 @@ jobs:
         git: https://github.com/indygreg/apple-platform-rs
 #        tag: apple-codesign/0.27.0
         args: --bin rcodesign
+        locked: false
 
     - name: Build Application
       run: |
