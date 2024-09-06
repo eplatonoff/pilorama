@@ -15,7 +15,7 @@ DefaultDirName={autopf64}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
+PrivilegesRequired=lowest
 OutputDir=.\
 OutputBaseFilename=Pilorama_Setup
 SetupIconFile=.\src\assets\app_icons\icon.ico
