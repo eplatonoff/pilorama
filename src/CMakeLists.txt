@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
-project(Pilorama VERSION 4.0.1 LANGUAGES CXX)
+project(Pilorama VERSION 4.0.3 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -60,13 +60,30 @@ qt_add_executable( ${PROJECT_NAME} ${SOURCE_FILES} ${PLATFORM_FILES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${PROJECT_VERSION}")
 
 if(APPLE)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+        add_custom_command(
+            TARGET ${PROJECT_NAME}
+            POST_BUILD
+            COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/mac/bundle.sh 
+            COMMENT "Bundle Qt plugins and frameworks into the app bundle"
+        )
+    endif()
+    
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
+
     set_target_properties(${PROJECT_NAME} PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist"
             MACOSX_BUNDLE_GUI_IDENTIFIER "com.sigonna.opensource.Pilorama"
-            MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
             MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
-            MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+            MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+            
+            XCODE_ATTRIBUTE_INFOPLIST_KEY_LSApplicationCategoryType "public.app-category.utilities"
+            XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/mac/Entitlements.plist"
+            XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--deep"
+            XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "UT7K2SYU3T"
+            XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
+            XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
     )
 endif()
 
