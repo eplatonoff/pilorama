@@ -7,14 +7,10 @@ QT_BIN_DIR="${HOME}/bin/Qt/6.7.2/macos/bin"  # Adjust this if your Qt installati
 
 
 if [ "${CONFIGURATION}" == "Release" ] || [ "${CONFIGURATION}" == "MinSizeRel" ]; then
+    "${QT_BIN_DIR}/macdeployqt" "$APP_BUNDLE_PATH" -qmldir="${SRCROOT}" -appstore-compliant  -codesign="$EXPANDED_CODE_SIGN_IDENTITY" -hardened-runtime
 
-    # Run macdeployqt using absolute paths derived from Xcode environment variables
-    "${QT_BIN_DIR}/macdeployqt" "$APP_BUNDLE_PATH" -appstore-compliant -qmldir="${SRCROOT}"
-
-    # Find and remove all .dSYM directories inside the PlugIns directory before signing
     find "$APP_BUNDLE_PATH/" -type d -name "*.dSYM" | while read dsym; do
         echo "Removing .dSYM from the bundle: $dsym"
         rm -rf "$dsym"
     done
-
 fi

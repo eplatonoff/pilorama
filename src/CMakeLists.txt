@@ -64,11 +64,11 @@ if(APPLE)
         add_custom_command(
             TARGET ${PROJECT_NAME}
             POST_BUILD
-            COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/mac/bundle.sh 
+            COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/mac/bundle.sh
             COMMENT "Bundle Qt plugins and frameworks into the app bundle"
         )
     endif()
-    
+
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -77,10 +77,9 @@ if(APPLE)
             MACOSX_BUNDLE_GUI_IDENTIFIER "com.sigonna.opensource.Pilorama"
             MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
             MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
-            
+
             XCODE_ATTRIBUTE_INFOPLIST_KEY_LSApplicationCategoryType "public.app-category.utilities"
             XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/mac/Entitlements.plist"
-            XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--deep"
             XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "UT7K2SYU3T"
             XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
             XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
