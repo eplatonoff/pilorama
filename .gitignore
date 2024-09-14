@@ -39,9 +39,9 @@ target_wrapper.*
 *.qmlproject.user
 *.qmlproject.user.*
 
-# QtCreator CMake
 CMakeLists.txt.user*
 .idea/
+.zed/
 
 build
 
