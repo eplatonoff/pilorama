@@ -1,6 +1,7 @@
 name: Release Builds
 
 on:
+  # TODO maybe rework a triggered by pre-release creation
   workflow_dispatch:
   create:
     tags:
@@ -45,6 +46,7 @@ jobs:
       run: |
         cd build
         macdeployqt Pilorama.app -qmldir=../src -appstore-compliant
+        find Pilorama.app -name "*.dSYM" -exec rm -rf {} +
 
     - name: Write P12 cert to a file
       run: |
