@@ -36,7 +36,6 @@ MouseArea {
     }
 
     onRotated: (delta) => {
-
         const deltaSecs = delta * 10;
 
         this._totalRotated += delta;
@@ -61,13 +60,18 @@ MouseArea {
         const angle = GeometryScripts.mouseAngle(
                         Qt.point(mouse.x, mouse.y),
                         Qt.point(canvas.centreX, canvas.centreY));
+
+        // instantly rotate to the angle under the mouse in unitiated state
+        if (this._totalRotatedSecs === 0) {
+            this.rotated(angle < 0 ? (180 - angle) : angle);
+        }
+
         this._prevAngle = angle;
 
         globalTimer.stop();
         pomodoroQueue.count > 1 ? pomodoroQueue.restoreDuration(0) : undefined
         pomodoroQueue.infiniteMode = false
         sequence.setCurrentItem(-1)
-
     }
 
     onPositionChanged: (mouse) => {
@@ -77,12 +81,10 @@ MouseArea {
                         Qt.point(mouse.x, mouse.y),
                         Qt.point(canvas.centreX, canvas.centreY));
 
-
         const delta = GeometryScripts.lessDelta(angle, this._prevAngle);
 
         this._prevAngle = angle;
 
         this.rotated(delta);
     }
-
 }
