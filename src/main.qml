@@ -54,7 +54,7 @@ ApplicationWindow {
         id: systemPalette
 
         property color lightColor: '#ffffff'
-        property bool sysemDarkMode: base !== lightColor
+        property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
         property alias follow: appSettings.followSystemTheme
 
         onSysemDarkModeChanged: setSystemColors()
