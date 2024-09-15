@@ -132,7 +132,7 @@ Item {
             Text {
                 id: closeOnQuitLabel
                 height: 19
-                text: qsTr("On close hide to system tray ")
+                text: qsTr("On close hide to system tray")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.left: closeOnQuitCheck.right
@@ -190,7 +190,6 @@ Item {
 
             }
 
-
             MouseArea {
                 id: followSystemThemeTrigger
                 anchors.fill: parent
@@ -202,6 +201,48 @@ Item {
             }
         }
 
+        Item {
+            visible: Qt.platform.os === "osx"
+
+            id: showInDock
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Checkbox {
+                id: showInDockCheck
+                checked: appSettings.showInDock
+            }
+
+            Text {
+                id: showInDockLabel
+                height: 19
+                text: qsTr("Show app in Dock")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: showInDockCheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
+                anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+            }
+
+            MouseArea {
+                id: showInDockCheckTrigger
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    appSettings.showInDock = !appSettings.showInDock
+                }
+            }
+        }
     }
 
     Row {

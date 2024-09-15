@@ -121,8 +121,12 @@ SystemTrayIcon {
     }
 
     function popUp(){
-        window.raise()
-        window.show()
+       if (appSettings.showInDock) { // TODO don't use global variable
+            MacOSController.showInDock()
+       }
+
+       window.raise()
+       window.show()
     }
 
     menu: Menu {

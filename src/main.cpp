@@ -1,5 +1,6 @@
 #include "piloramatimer.h"
 #include "trayimageprovider.h"
+#include "mac/MacOSController.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -10,22 +11,11 @@
 #include <QApplication>
 #include <QQmlContext>
 
-#ifdef __APPLE__
-#if TARGET_OS_MAC
-void mac_disable_app_nap();
-void mac_show_in_dock();
-void mac_hide_from_dock();
-#endif /* TARGET_OS_MAC */
-#endif /* __APPLE__ */
-
 
 int main(int argc, char *argv[])
 {
-    #ifdef __APPLE__
-       #if TARGET_OS_MAC
-         mac_disable_app_nap();
-       #endif /* TARGET_OS_MAC */
-    #endif /* __APPLE__ */
+    MacOSController macOSController;
+    macOSController.disableAppNap();
 
     QApplication app(argc, argv);
 
@@ -43,7 +33,6 @@ int main(int argc, char *argv[])
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl)
     {
-
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
 
@@ -51,13 +40,9 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PiloramaTimer>("Pilorama", 1, 0, "Timer");
 
-    engine.load(url);
+    engine.rootContext()->setContextProperty("MacOSController", &macOSController);
 
-    #ifdef __APPLE__
-        #if TARGET_OS_MAC
-             mac_hide_from_dock();
-        #endif /* TARGET_OS_MAC */
-    #endif /* __APPLE__ */
+    engine.load(url);
 
     return app.exec();
 }
