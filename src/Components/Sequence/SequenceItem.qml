@@ -1,5 +1,4 @@
 import QtQuick
-//import QtQml.Models
 import ".."
 
 Rectangle {

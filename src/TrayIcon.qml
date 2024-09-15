@@ -121,8 +121,12 @@ SystemTrayIcon {
     }
 
     function popUp(){
-        window.raise()
-        window.show()
+       if (appSettings.showInDock) { // TODO don't use global variable
+            MacOSController.showInDock()
+       }
+
+       window.raise()
+       window.show()
     }
 
     menu: Menu {
@@ -174,8 +178,8 @@ SystemTrayIcon {
         MenuItem {
             text: qsTr("Preferences")
             onTriggered: {
+               popUp()
                if (stack.currentItem === content) {
-                   popUp()
                    stack.push(preferences)
                }
             }

@@ -35,6 +35,21 @@ ApplicationWindow {
 
     property string clockMode: "start"
 
+    Component.onCompleted: {
+        updateDockVisibility();
+    }
+
+    function updateDockVisibility() {
+        if (appSettings.showInDock) {
+            MacOSController.showInDock()
+        }
+        else {
+            MacOSController.hideFromDock()
+            window.raise()
+            window.show()
+        }
+    }
+
     SystemPalette{
         id: systemPalette
 
@@ -59,6 +74,9 @@ ApplicationWindow {
             close.accepted = false;
             if (Qt.platform.os === "osx") {
                 window.hide();
+                if (appSettings.showInDock) {
+                    MacOSController.hideFromDock()
+                }
             }
             else {
                 window.visibility = ApplicationWindow.Minimized;
@@ -97,6 +115,7 @@ ApplicationWindow {
 
         property bool darkMode: false
         property bool followSystemTheme: true
+        property bool showInDock: false
 
         property alias soundMuted: notifications.soundMuted
         property alias splitToSequence: preferences.splitToSequence
@@ -112,6 +131,7 @@ ApplicationWindow {
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
+        onShowInDockChanged: { updateDockVisibility(); }
     }
 
     Settings {
