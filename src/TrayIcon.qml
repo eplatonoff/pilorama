@@ -178,8 +178,8 @@ SystemTrayIcon {
         MenuItem {
             text: qsTr("Preferences")
             onTriggered: {
+               popUp()
                if (stack.currentItem === content) {
-                   popUp()
                    stack.push(preferences)
                }
             }
