@@ -27,7 +27,6 @@ ApplicationWindow {
 
     Behavior on color { ColorAnimation { duration: 200 } }
 
-    property real padding: 16
     property bool expanded: true
 
     property bool alwaysOnTop: false
@@ -53,18 +52,22 @@ ApplicationWindow {
     SystemPalette{
         id: systemPalette
 
-        property color lightColor: '#ffffff'
         property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
-        property alias follow: appSettings.followSystemTheme
+        property alias colorTheme: appSettings.colorTheme
 
-        onSysemDarkModeChanged: setSystemColors()
-        onFollowChanged: setSystemColors()
-        Component.onCompleted: setSystemColors()
+        onColorThemeChanged: updateTheme()
+        onSysemDarkModeChanged: updateTheme()
+        Component.onCompleted: updateTheme()
 
-
-        function setSystemColors(){
-            if(appSettings.followSystemTheme){
+        function updateTheme(){
+            if(systemPalette.colorTheme === "System"){
                 appSettings.darkMode = sysemDarkMode
+            }
+            else if (systemPalette.colorTheme === "Dark") {
+                appSettings.darkMode = true
+            }
+            else {
+                appSettings.darkMode = false
             }
         }
     }
@@ -114,7 +117,7 @@ ApplicationWindow {
         id: appSettings
 
         property bool darkMode: false
-        property bool followSystemTheme: true
+        property string colorTheme: "System"
         property bool showInDock: false
 
         property alias soundMuted: notifications.soundMuted
@@ -157,12 +160,12 @@ ApplicationWindow {
 
     FontLoader {
         id: localFont;
-        source: "./assets/font/Inter.otf"
+        source: "qrc:/assets/font/Inter.otf"
     }
 
     FontLoader {
         id: iconFont;
-        source: "./assets/font/pilorama.ttf"
+        source: "qrc:/assets/font/pilorama.ttf"
     }
 
     MasterModel {
@@ -212,17 +215,54 @@ ApplicationWindow {
 
     StackView {
         id: stack
-        anchors.bottomMargin: 3
-        anchors.rightMargin: window.padding
-        anchors.leftMargin: window.padding
-//        anchors.bottomMargin: window.padding
-        anchors.topMargin: window.padding
         anchors.fill: parent
 
         initialItem: content
 
+        popEnter: Transition {
+            XAnimator {
+                from: stack.width
+                to: 16
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        popExit: Transition {
+            XAnimator {
+                from: 0
+                to: -stack.width
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        pushExit: Transition {
+            XAnimator {
+                from: 16
+                to: stack.width
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        pushEnter: Transition {
+            XAnimator {
+                from: -stack.width
+                to: 0
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
         Item {
         id: content
+
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 16
 
         Item {
             id: timerLayout
@@ -257,26 +297,10 @@ ApplicationWindow {
             }
 
             Icon {
-                id: darkModeButton
-                glyph: appSettings.darkMode ? "\uea05" : "\uea0a"
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-
-                onReleased: {
-                    appSettings.darkMode = !appSettings.darkMode
-                }
-            }
-
-
-            Icon {
                 id: soundButton
                 glyph: notifications.soundMuted ? "\uea09" : "\uea06"
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
+                anchors.top: parent.top
+                anchors.right: parent.right
 
                 onReleased: {
                      notifications.toggleSoundNotifications();
@@ -289,9 +313,7 @@ ApplicationWindow {
                 glyph: "\uea04"
 
                 anchors.top: parent.top
-                anchors.topMargin: 0
                 anchors.left: parent.left
-                anchors.leftMargin: 0
 
                 onReleased: {
                     stack.push(preferences)
@@ -315,22 +337,11 @@ ApplicationWindow {
         }
         }
 
-        Preferences {
+                Preferences {
                 id: preferences
         }
     }
 
 }
 
-
-
-
-
-
-/*##^##
-Designer {
-    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
-D{i:22;anchors_y:486}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
-}
-##^##*/
 

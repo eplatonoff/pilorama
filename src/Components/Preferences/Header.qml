@@ -4,8 +4,11 @@ import ".."
 Rectangle {
     id: rectangle
     height: 32
-    width: parent.width
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.left: parent.left
     color: "transparent"
+    anchors.margins: 16
 
     property real headingFontSize: 18
 

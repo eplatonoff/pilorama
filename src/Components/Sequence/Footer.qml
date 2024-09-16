@@ -8,7 +8,7 @@ Rectangle {
     color: "transparent"
 
     visible: !sequence.blockEdits
-    height: sequence.blockEdits ? 0 : 50
+    height: sequence.blockEdits ? 0 : 42
 
     property real fontSize: 14
 
@@ -18,7 +18,7 @@ Rectangle {
             duration: 150
         }}
 
-    Rectangle {
+        Rectangle {
         id: layoutDivider
         height: 1
         width: parent.width - 6
@@ -29,6 +29,13 @@ Rectangle {
         property real padding: 18
 
     }
+
+    Rectangle {
+
+        width: parent.width
+        height: 32
+        anchors.bottom: parent.bottom
+        color: "transparent"
 
     Rectangle {
         id: addButton
@@ -108,5 +115,5 @@ Rectangle {
         onReleased: { fileDialogue.saveDialogue() }
 
     }
-
+}
 }
