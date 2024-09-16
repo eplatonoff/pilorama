@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 
 import "Preferences"
 
@@ -160,48 +161,6 @@ Item {
         }
 
         Item {
-            id: followSystemTheme
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: followSystemThemeCheck
-                checked: appSettings.followSystemTheme
-            }
-
-            Text {
-                id: followSystemThemeLabel
-                height: 19
-                text: qsTr("Follow system color theme")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: followSystemThemeCheck.right
-                anchors.leftMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-            }
-
-            MouseArea {
-                id: followSystemThemeTrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    appSettings.followSystemTheme = !appSettings.followSystemTheme
-                }
-            }
-        }
-
-        Item {
             visible: Qt.platform.os === "osx"
 
             id: showInDock
@@ -242,6 +201,46 @@ Item {
                     appSettings.showInDock = !appSettings.showInDock
                 }
             }
+        }
+        
+        Item {
+            id: colorTheme
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Text {
+                id: colorThemeLabel
+                height: 19
+                text: qsTr("Color theme")
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.verticalCenter: parent.verticalCenter
+                color: colors.getColor("dark")
+
+                font.family: localFont.name
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+            }
+
+            ComboBox {
+                id: colorThemeCombo
+                model: ["Light", "Dark", "System"]
+                currentIndex: {
+                    var index = colorThemeCombo.model.indexOf(appSettings.colorTheme);
+                    return index !== -1 ? index : 0;
+                }
+                anchors.left: colorThemeLabel.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                onActivated: {
+                    appSettings.colorTheme = colorThemeCombo.currentText
+                }
+            }
+
         }
     }
 
