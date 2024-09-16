@@ -230,7 +230,7 @@ Item {
                 id: colorThemeCombo
                 model: ["Light", "Dark", "System"]
                 currentIndex: {
-                    var index = colorThemeCombo.model.indexOf(appSettings.colorTheme);
+                    const index = colorThemeCombo.model.indexOf(appSettings.colorTheme);
                     return index !== -1 ? index : 0;
                 }
                 anchors.left: colorThemeLabel.right
