@@ -161,12 +161,12 @@ ApplicationWindow {
 
     FontLoader {
         id: localFont;
-        source: "./assets/font/Inter.otf"
+        source: "qrc:/assets/font/Inter.otf"
     }
 
     FontLoader {
         id: iconFont;
-        source: "./assets/font/pilorama.ttf"
+        source: "qrc:/assets/font/pilorama.ttf"
     }
 
     MasterModel {
