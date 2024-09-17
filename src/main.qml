@@ -53,18 +53,22 @@ ApplicationWindow {
     SystemPalette{
         id: systemPalette
 
-        property color lightColor: '#ffffff'
         property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
-        property alias follow: appSettings.followSystemTheme
+        property alias colorTheme: appSettings.colorTheme
 
-        onSysemDarkModeChanged: setSystemColors()
-        onFollowChanged: setSystemColors()
-        Component.onCompleted: setSystemColors()
+        onColorThemeChanged: updateTheme()
+        onSysemDarkModeChanged: updateTheme()
+        Component.onCompleted: updateTheme()
 
-
-        function setSystemColors(){
-            if(appSettings.followSystemTheme){
+        function updateTheme(){
+            if(systemPalette.colorTheme === "System"){
                 appSettings.darkMode = sysemDarkMode
+            }
+            else if (systemPalette.colorTheme === "Dark") {
+                appSettings.darkMode = true
+            }
+            else {
+                appSettings.darkMode = false
             }
         }
     }
@@ -114,7 +118,7 @@ ApplicationWindow {
         id: appSettings
 
         property bool darkMode: false
-        property bool followSystemTheme: true
+        property string colorTheme: "System"
         property bool showInDock: false
 
         property alias soundMuted: notifications.soundMuted
@@ -157,12 +161,12 @@ ApplicationWindow {
 
     FontLoader {
         id: localFont;
-        source: "./assets/font/Inter.otf"
+        source: "qrc:/assets/font/Inter.otf"
     }
 
     FontLoader {
         id: iconFont;
-        source: "./assets/font/pilorama.ttf"
+        source: "qrc:/assets/font/pilorama.ttf"
     }
 
     MasterModel {
@@ -255,20 +259,6 @@ ApplicationWindow {
             TimerScreen {
                 id: digitalClock
             }
-
-            Icon {
-                id: darkModeButton
-                glyph: appSettings.darkMode ? "\uea05" : "\uea0a"
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-
-                onReleased: {
-                    appSettings.darkMode = !appSettings.darkMode
-                }
-            }
-
 
             Icon {
                 id: soundButton
