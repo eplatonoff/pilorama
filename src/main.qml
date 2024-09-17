@@ -27,7 +27,6 @@ ApplicationWindow {
 
     Behavior on color { ColorAnimation { duration: 200 } }
 
-    property real padding: 16
     property bool expanded: true
 
     property bool alwaysOnTop: false
@@ -216,17 +215,54 @@ ApplicationWindow {
 
     StackView {
         id: stack
-        anchors.bottomMargin: 3
-        anchors.rightMargin: window.padding
-        anchors.leftMargin: window.padding
-//        anchors.bottomMargin: window.padding
-        anchors.topMargin: window.padding
         anchors.fill: parent
 
         initialItem: content
 
+        popEnter: Transition {
+            XAnimator {
+                from: stack.width
+                to: 16
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        popExit: Transition {
+            XAnimator {
+                from: 0
+                to: -stack.width
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        pushExit: Transition {
+            XAnimator {
+                from: 16
+                to: stack.width
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        pushEnter: Transition {
+            XAnimator {
+                from: -stack.width
+                to: 0
+                duration: 250
+                easing.type: Easing.InOutCubic
+            }
+        }
+
         Item {
         id: content
+
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 16
 
         Item {
             id: timerLayout
@@ -263,10 +299,8 @@ ApplicationWindow {
             Icon {
                 id: soundButton
                 glyph: notifications.soundMuted ? "\uea09" : "\uea06"
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
+                anchors.top: parent.top
+                anchors.right: parent.right
 
                 onReleased: {
                      notifications.toggleSoundNotifications();
@@ -279,9 +313,7 @@ ApplicationWindow {
                 glyph: "\uea04"
 
                 anchors.top: parent.top
-                anchors.topMargin: 0
                 anchors.left: parent.left
-                anchors.leftMargin: 0
 
                 onReleased: {
                     stack.push(preferences)
@@ -305,22 +337,11 @@ ApplicationWindow {
         }
         }
 
-        Preferences {
+                Preferences {
                 id: preferences
         }
     }
 
 }
 
-
-
-
-
-
-/*##^##
-Designer {
-    D{i:1;anchors_height:200;anchors_width:200;anchors_x:0;anchors_y:0}D{i:18;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
-D{i:22;anchors_y:486}D{i:16;anchors_height:200;anchors_width:200;anchors_x:104;anchors_y:54}
-}
-##^##*/
 

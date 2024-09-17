@@ -14,9 +14,11 @@ Item {
     property int fontSize: 14
     property int infoFontSize: 12
 
-    Header {
-        id: prefsHeader
-    }
+    
+
+        Header {
+            id: prefsHeader
+        }
 
     Column {
 
@@ -24,12 +26,14 @@ Item {
 
         spacing: 0
 
+
+
         anchors.top: prefsHeader.bottom
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.left: parent.left
 
-        anchors.topMargin: 7
+        anchors.margins: 16
 
         Item {
             id: splitToSequence
