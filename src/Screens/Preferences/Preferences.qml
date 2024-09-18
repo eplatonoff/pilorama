@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 
-import "Preferences"
+import "Components"
+import "../../Components"
 
 Item {
     id: preferences

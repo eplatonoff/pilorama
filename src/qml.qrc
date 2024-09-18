@@ -35,18 +35,19 @@
         <file>Components/StartScreen.qml</file>
         <file>Components/Dials.qml</file>
         <file>Components/TimerScreen.qml</file>
-        <file>Components/Preferences.qml</file>
         <file>Components/Sequence.qml</file>
         <file>Components/Sequence/SequenceItem.qml</file>
         <file>Components/Sequence/Header.qml</file>
         <file>Components/Sequence/Footer.qml</file>
         <file>Components/Sequence/ColorSelector.qml</file>
         <file>Components/ExternalDrop.qml</file>
-        <file>Components/Preferences/Header.qml</file>
-        <file>Components/Preferences/Checkbox.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
         <file>assets/font/pilorama.ttf</file>
         <file>Components/Icon.qml</file>
+
+        <file>Screens/Preferences/Preferences.qml</file>
+        <file>Screens/Preferences/Components/Header.qml</file>
+        <file>Screens/Preferences/Components/Checkbox.qml</file>
     </qresource>
 </RCC>

@@ -5,343 +5,318 @@ import QtCore
 
 import "Components"
 import "Components/Sequence"
+import "Screens/Preferences"
 
 ApplicationWindow {
     id: window
-    visible: true
 
+    property bool alwaysOnTop: false
+    property string clockMode: "start"
+    property bool expanded: true
+    property bool quitOnClose: false
+
+    function checkClockMode() {
+        if (pomodoroQueue.infiniteMode && globalTimer.running) {
+            clockMode = "pomodoro";
+        } else if (!pomodoroQueue.infiniteMode) {
+            clockMode = "timer";
+        } else {
+            clockMode = "start";
+        }
+    }
+    function updateDockVisibility() {
+        if (appSettings.showInDock) {
+            MacOSController.showInDock();
+        } else {
+            MacOSController.hideFromDock();
+            window.raise();
+            window.show();
+        }
+    }
+
+    color: colors.getColor("bg")
+    flags: Qt.Window
+    height: 600
+    maximumWidth: width
+    minimumHeight: timerLayout.height + 16 * 2 + 50
+    minimumWidth: timerLayout.width + 16 * 2
+    title: qsTr("Pilorama")
+    visible: true
+    width: 320
     x: 100
     y: 100
 
-    width: 320
-    height: 600
-    flags: Qt.Window
-
-    minimumHeight: timerLayout.height + padding * 2 + 50
-    minimumWidth: timerLayout.width + padding * 2
-
-    maximumWidth: width
-
-    color: colors.getColor("bg")
-    title: qsTr("Pilorama")
-
-    Behavior on color { ColorAnimation { duration: 200 } }
-
-    property bool expanded: true
-
-    property bool alwaysOnTop: false
-    property bool quitOnClose: false
-
-    property string clockMode: "start"
+    Behavior on color {
+        ColorAnimation {
+            duration: 200
+        }
+    }
 
     Component.onCompleted: {
         updateDockVisibility();
     }
-
-    function updateDockVisibility() {
-        if (appSettings.showInDock) {
-            MacOSController.showInDock()
-        }
-        else {
-            MacOSController.hideFromDock()
-            window.raise()
-            window.show()
-        }
+    onAlwaysOnTopChanged: {
+        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window;
+        requestActivate();
     }
-
-    SystemPalette{
-        id: systemPalette
-
-        property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
-        property alias colorTheme: appSettings.colorTheme
-
-        onColorThemeChanged: updateTheme()
-        onSysemDarkModeChanged: updateTheme()
-        Component.onCompleted: updateTheme()
-
-        function updateTheme(){
-            if(systemPalette.colorTheme === "System"){
-                appSettings.darkMode = sysemDarkMode
-            }
-            else if (systemPalette.colorTheme === "Dark") {
-                appSettings.darkMode = true
-            }
-            else {
-                appSettings.darkMode = false
-            }
-        }
+    onClockModeChanged: {
+        canvas.requestPaint();
     }
-
-    onClosing: (close) => {
-        if(!quitOnClose) {
+    onClosing: close => {
+        if (!quitOnClose) {
             close.accepted = false;
             if (Qt.platform.os === "osx") {
                 window.hide();
                 if (appSettings.showInDock) {
-                    MacOSController.hideFromDock()
+                    MacOSController.hideFromDock();
                 }
-            }
-            else {
+            } else {
                 window.visibility = ApplicationWindow.Minimized;
             }
         }
     }
-
-    onAlwaysOnTopChanged: {
-        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window
-        requestActivate()
-    }
-
-    onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
-        if(expanded === true){
-            height = padding * 2 + timerLayout.height + sequence.height
+        if (expanded === true) {
+            height = padding * 2 + timerLayout.height + sequence.height;
         } else {
-            height = padding * 2 + timerLayout.height
+            height = padding * 2 + timerLayout.height;
         }
     }
 
+    SystemPalette {
+        id: systemPalette
 
-    function checkClockMode (){
+        property alias colorTheme: appSettings.colorTheme
+        property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
 
-        if (pomodoroQueue.infiniteMode && globalTimer.running){
-            clockMode = "pomodoro"
-        } else if (!pomodoroQueue.infiniteMode){
-            clockMode = "timer"
-        } else {
-            clockMode = "start"
+        function updateTheme() {
+            if (systemPalette.colorTheme === "System") {
+                appSettings.darkMode = sysemDarkMode;
+            } else if (systemPalette.colorTheme === "Dark") {
+                appSettings.darkMode = true;
+            } else {
+                appSettings.darkMode = false;
+            }
         }
-    }
 
+        Component.onCompleted: updateTheme()
+        onColorThemeChanged: updateTheme()
+        onSysemDarkModeChanged: updateTheme()
+    }
     Settings {
         id: appSettings
 
-        property bool darkMode: false
+        property alias alwaysOnTop: window.alwaysOnTop
         property string colorTheme: "System"
+        property bool darkMode: false
+        property alias quitOnClose: window.quitOnClose
         property bool showInDock: false
-
+        property alias showQueue: sequence.showQueue
         property alias soundMuted: notifications.soundMuted
         property alias splitToSequence: preferences.splitToSequence
-
+        property alias windowHeight: window.height
         property alias windowX: window.x
         property alias windowY: window.y
 
-        property alias windowHeight: window.height
-
-        property alias alwaysOnTop: window.alwaysOnTop
-        property alias quitOnClose: window.quitOnClose
-        property alias showQueue: sequence.showQueue
-
-        onDarkModeChanged: { canvas.requestPaint(); }
-        onSplitToSequenceChanged: { canvas.requestPaint(); }
-        onShowInDockChanged: { updateDockVisibility(); }
+        onDarkModeChanged: {
+            canvas.requestPaint();
+        }
+        onShowInDockChanged: {
+            updateDockVisibility();
+        }
+        onSplitToSequenceChanged: {
+            canvas.requestPaint();
+        }
     }
-
     Settings {
         id: durationSettings
 
-        property real timer: 0
-
-        property real pomodoro: 25 * 60
-        property real pause: 10 * 60
         property real breakTime: 15 * 60
-        property int repeatBeforeBreak: 2
-
         property alias data: masterModel.data
+        property real pause: 10 * 60
+        property real pomodoro: 25 * 60
+        property int repeatBeforeBreak: 2
+        property real timer: 0
         property alias title: masterModel.title
-
-        onDataChanged: console.log("Settings data:" + data)
-
     }
-
     Colors {
         id: colors
-    }
 
+    }
     FontLoader {
-        id: localFont;
+        id: localFont
+
         source: "qrc:/assets/font/Inter.otf"
     }
-
     FontLoader {
-        id: iconFont;
+        id: iconFont
+
         source: "qrc:/assets/font/pilorama.ttf"
     }
-
     MasterModel {
         id: masterModel
+
         data: data
         title: title
     }
-
     ModelBurner {
         id: pomodoroQueue
+
         durationSettings: durationSettings
     }
-
     TrayIcon {
         id: tray
-    }
 
+    }
     NotificationSystem {
         id: notifications
-    }
 
+    }
     PiloramaTimer {
         id: globalTimer
-    }
 
+    }
     Clock {
         id: clock
-    }
 
+    }
     FileDialogue {
         id: fileDialogue
-    }
 
+    }
     QtObject {
         id: time
+
         property real hours: 0
         property real minutes: 0
         property real seconds: 0
 
         function updateTime() {
-            var currentDate = new Date()
-            hours = currentDate.getHours()
-            minutes = currentDate.getMinutes()
-            seconds = currentDate.getSeconds()
+            var currentDate = new Date();
+            hours = currentDate.getHours();
+            minutes = currentDate.getMinutes();
+            seconds = currentDate.getSeconds();
         }
     }
-
     StackView {
         id: stack
-        anchors.fill: parent
 
+        anchors.fill: parent
         initialItem: content
 
         popEnter: Transition {
             XAnimator {
+                duration: 250
+                easing.type: Easing.InOutCubic
                 from: stack.width
                 to: 16
-                duration: 250
-                easing.type: Easing.InOutCubic
             }
         }
-
         popExit: Transition {
             XAnimator {
+                duration: 250
+                easing.type: Easing.InOutCubic
                 from: 0
                 to: -stack.width
-                duration: 250
-                easing.type: Easing.InOutCubic
             }
         }
-
-        pushExit: Transition {
-            XAnimator {
-                from: 16
-                to: stack.width
-                duration: 250
-                easing.type: Easing.InOutCubic
-            }
-        }
-
         pushEnter: Transition {
             XAnimator {
-                from: -stack.width
-                to: 0
                 duration: 250
                 easing.type: Easing.InOutCubic
+                from: -stack.width
+                to: 0
+            }
+        }
+        pushExit: Transition {
+            XAnimator {
+                duration: 250
+                easing.type: Easing.InOutCubic
+                from: 16
+                to: stack.width
             }
         }
 
         Item {
-        id: content
+            id: content
 
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 16
-
-        Item {
-            id: timerLayout
-            width: parent.width
-            height: width
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.top: parent.top
-
-            Dials {
-                id: canvas
-                anchors.fill: parent
-                duration: globalTimer.duration
-                splitDuration: globalTimer.splitDuration
-                isRunning: globalTimer.running
-                splitToSequence: appSettings.splitToSequence
-                pomodoroQueue: pomodoroQueue
-                masterModel: masterModel
-                colors: colors
-            }
-
-            MouseTracker {
-                id: mouseArea
-            }
-
-            StartScreen {
-                id: startControls
-            }
-
-            TimerScreen {
-                id: digitalClock
-            }
-
-            Icon {
-                id: soundButton
-                glyph: notifications.soundMuted ? "\uea09" : "\uea06"
-                anchors.top: parent.top
-                anchors.right: parent.right
-
-                onReleased: {
-                     notifications.toggleSoundNotifications();
-                }
-            }
-
-
-            Icon {
-                id: preferencesButton
-                glyph: "\uea04"
-
-                anchors.top: parent.top
-                anchors.left: parent.left
-
-                onReleased: {
-                    stack.push(preferences)
-                }
-            }
-
-
-            ExternalDrop {
-                id: externalDrop
-            }
-
-        }
-
-        Sequence {
-            id: sequence
-            anchors.top: timerLayout.bottom
-            anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.topMargin: 18
-        }
-        }
+            anchors.margins: 16
+            anchors.right: parent.right
+            anchors.top: parent.top
 
-                Preferences {
-                id: preferences
+            Item {
+                id: timerLayout
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: parent.width
+                width: parent.width
+
+                Dials {
+                    id: canvas
+
+                    anchors.fill: parent
+                    colors: colors
+                    duration: globalTimer.duration
+                    isRunning: globalTimer.running
+                    masterModel: masterModel
+                    pomodoroQueue: pomodoroQueue
+                    splitDuration: globalTimer.splitDuration
+                    splitToSequence: appSettings.splitToSequence
+                }
+                MouseTracker {
+                    id: mouseArea
+
+                }
+                StartScreen {
+                    id: startControls
+
+                }
+                TimerScreen {
+                    id: digitalClock
+
+                }
+                Icon {
+                    id: soundButton
+
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    glyph: notifications.soundMuted ? "\uea09" : "\uea06"
+
+                    onReleased: {
+                        notifications.toggleSoundNotifications();
+                    }
+                }
+                Icon {
+                    id: preferencesButton
+
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    glyph: "\uea04"
+
+                    onReleased: {
+                        stack.push(preferences);
+                    }
+                }
+                ExternalDrop {
+                    id: externalDrop
+
+                }
+            }
+            Sequence {
+                id: sequence
+
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: timerLayout.bottom
+                anchors.topMargin: 18
+            }
+        }
+        Preferences {
+            id: preferences
         }
     }
-
 }
-
-

@@ -5,7 +5,6 @@ Text {
 
     property string glyph
     property int size: 24
-    property string source
     property bool propagateComposedEvents: true
 
     signal pressed()

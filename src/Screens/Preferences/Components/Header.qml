@@ -1,5 +1,6 @@
 import QtQuick
-import ".."
+
+import "../../../Components"
 
 Rectangle {
     id: rectangle
@@ -35,4 +36,3 @@ Rectangle {
     }
 
 }
-
