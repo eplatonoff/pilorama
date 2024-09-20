@@ -240,6 +240,7 @@ Item {
                 anchors.left: colorThemeLabel.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
+                palette.buttonText: colors.getColor("dark")
                 onActivated: {
                     appSettings.colorTheme = colorThemeCombo.currentText
                 }
