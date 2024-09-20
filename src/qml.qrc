@@ -3,13 +3,11 @@
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
-        <file>assets/sound/drum_roll.wav</file>
         <file>assets/tray/static-day.svg</file>
         <file>assets/tray/static-night.svg</file>
         <file>assets/img/github.svg</file>
 
         <file>utils/geometry.mjs</file>
-        <file>Components/NotificationSystem.qml</file>
         <file>Components/PiloramaTimer.qml</file>
         <file>Components/MouseTracker.qml</file>
         <file>Components/TrayIcon.qml</file>
@@ -28,12 +26,15 @@
         <file>Components/Sequence/ColorSelector.qml</file>
         <file>Components/ExternalDrop.qml</file>
         <file>Components/Clock.qml</file>
-        <file>assets/font/Inter.otf</file>
+
         <file>assets/font/pilorama.ttf</file>
         <file>Components/Icon.qml</file>
 
         <!-- Refactored -->
         <file>main.qml</file>
+
+        <file>Components/Notification.qml</file>
+        <file>assets/sound/drum_roll.wav</file>
 
         <file>Screens/Timer/Timer.qml</file>
         <file>Screens/Timer/Components/Header.qml</file>
@@ -45,9 +46,11 @@
 
         <file>Components/FaIcon.qml</file>
 
+        <file>assets/font/inter.otf</file>
         <file>assets/font/fa-regular.otf</file>
         <file>assets/font/fa-solid.otf</file>
 
         <file>assets/img/white-logo.svg</file>
+        <file>assets/img/dark-logo.svg</file>
     </qresource>
 </RCC>

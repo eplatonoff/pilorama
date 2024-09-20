@@ -13,7 +13,7 @@ SystemTrayIcon {
     property string messageText: ""
     property string messageTitle: ""
     property string menuItemText: checkMenuItemText()
-    property string soundItemText: "Turn sound " + checkSoundItemText()
+    property string soundItemText: appSettings.audioNotificationsEnabled ? "Mute" : "Unmute"
 
 
     property real dialTime: 0
@@ -173,7 +173,7 @@ SystemTrayIcon {
         MenuItem {
             text: tray.soundItemText
             onTriggered: {
-                notifications.toggleSoundNotifications();
+                appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled
             }
         }
         MenuItem {

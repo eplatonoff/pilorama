@@ -18,10 +18,10 @@ Rectangle {
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
 
-        glyph: notifications.soundMuted ? "\uf1f6" : "\uf0f3"
+        glyph: appSettings.audioNotificationsEnabled ? "\uf0f3" : "\uf1f6"
 
         onReleased: {
-            notifications.toggleSoundNotifications();
+            appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled;
         }
     }
 
@@ -31,7 +31,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        source: "qrc:/assets/img/white-logo.svg"
+        source: appSettings.darkMode ? "qrc:/assets/img/white-logo.svg" : "qrc:/assets/img/dark-logo.svg"
     }
 
     FaIcon {

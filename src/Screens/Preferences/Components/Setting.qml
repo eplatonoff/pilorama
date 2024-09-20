@@ -8,22 +8,16 @@ Item {
 
     signal released()
 
-    height: 24
+    height: 32
     anchors.right: parent.right
     anchors.left: parent.left
-
-    Checkbox {
-        id: checkbox
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        checked: setting.checked
-    }
 
     Text {
         id: label
         text: parent.label
-        anchors.left: checkbox.right
-        anchors.leftMargin: 8
+        anchors.left: parent.left
+        anchors.right: checkbox.left
+        anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor("dark")
 
@@ -31,6 +25,13 @@ Item {
         font.pixelSize: 16
 
         renderType: Text.NativeRendering
+    }
+
+    Checkbox {
+        id: checkbox
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        checked: setting.checked
     }
 
 

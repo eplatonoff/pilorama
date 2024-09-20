@@ -44,7 +44,7 @@ ListModel {
 // Random color without repeats
 
     function randomColor(){
-        const col = colors.list()
+        const col = colors.palette()
         var cl = col.length
         var colMod = []
         var remained
@@ -112,7 +112,3 @@ ListModel {
         console.log("MASTER:", JSON.stringify(datamodel), "Total items: " + count)
     }
 }
-
-
-
-

@@ -11,7 +11,9 @@ ApplicationWindow {
     id: window
     title: qsTr("Pilorama")
 
-    flags: Qt.FramelessWindowHint
+    property int windowType: Qt.FramelessWindowHint
+
+    flags: windowType
 
     height: 600
     width: 320
@@ -44,50 +46,73 @@ ApplicationWindow {
         }
     }
 
-    function checkClockMode() {
-        if (pomodoroQueue.infiniteMode && globalTimer.running) {
-            clockMode = "pomodoro";
-        } else if (!pomodoroQueue.infiniteMode) {
-            clockMode = "timer";
-        } else {
-            clockMode = "start";
+    // Load fonts
+    FontLoader {
+        id: localFont
+        source: "qrc:/assets/font/inter.otf"
+    }
+    FontLoader {
+        id: iconFont
+        source: "qrc:/assets/font/pilorama.ttf"
+    }
+    FontLoader {
+        id: awesomeFont
+        source: "qrc:/assets/font/fa-solid.otf"
+    }
+
+    font.family: localFont.name
+    font.pixelSize: 16
+
+    // Load colors schemes
+    Colors {
+        id: colors
+    }
+
+    // Define settings
+    Settings {
+        id: appSettings
+
+        property alias alwaysOnTop: window.alwaysOnTop
+        property string colorTheme: "System"
+        property bool darkMode: true
+        property alias quitOnClose: window.quitOnClose
+        property bool showInDock: false
+
+        property bool audioNotificationsEnabled: true
+
+        onColorThemeChanged: {
+            // canvas.requestPaint();
         }
     }
 
-    function updateDockVisibility() {
-        if (appSettings.showInDock) {
-            MacOSController.showInDock();
-        } else {
-            MacOSController.hideFromDock();
-            window.raise();
-            window.show();
+    // System theme provider
+    SystemPalette {
+        id: systemPalette
+
+        property alias colorTheme: appSettings.colorTheme
+        property bool sysemDarkMode: (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
+
+        function updateTheme() {
+            if (systemPalette.colorTheme === "System") {
+                appSettings.darkMode = sysemDarkMode;
+            } else appSettings.darkMode = systemPalette.colorTheme === "Dark";
         }
+
+        Component.onCompleted: updateTheme()
+        onColorThemeChanged: updateTheme()
+        onSysemDarkModeChanged: updateTheme()
     }
 
-
-
-    Behavior on color {
-        ColorAnimation {
-            duration: 200
-        }
-    }
-
-    Component.onCompleted: {
-        updateDockVisibility();
-    }
     onAlwaysOnTopChanged: {
-        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window;
+        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | windowType : flags = windowType;
         requestActivate();
     }
-    // onClockModeChanged: {
-    //     canvas.requestPaint();
-    // }
     onClosing: close => {
         if (!quitOnClose) {
             close.accepted = false;
             if (Qt.platform.os === "osx") {
                 window.hide();
-                if (appSettings.showInDock) {
+                if (!appSettings.showInDock) {
                     MacOSController.hideFromDock();
                 }
             } else {
@@ -103,117 +128,33 @@ ApplicationWindow {
         }
     }
 
-    SystemPalette {
-        id: systemPalette
-
-        property alias colorTheme: appSettings.colorTheme
-        property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
-
-        function updateTheme() {
-            if (systemPalette.colorTheme === "System") {
-                appSettings.darkMode = sysemDarkMode;
-            } else appSettings.darkMode = systemPalette.colorTheme === "Dark";
-        }
-
-        Component.onCompleted: updateTheme()
-        onColorThemeChanged: updateTheme()
-        onSysemDarkModeChanged: updateTheme()
+    // Sound notifications
+    Notification {
+        id: notifications
     }
-    Settings {
-        id: appSettings
 
-        property alias alwaysOnTop: window.alwaysOnTop
-        property string colorTheme: "System"
-        property bool darkMode: false
-        property alias quitOnClose: window.quitOnClose
-        property bool showInDock: false
-        // property alias showQueue: timer.showQueue
-        // property alias soundMuted: notifications.soundMuted
-        // property alias splitToSequence: preferences.splitToSequence
-        property alias windowHeight: window.height
-        property alias windowX: window.x
-        property alias windowY: window.y
-
-        onDarkModeChanged: {
-            canvas.requestPaint();
-        }
-        onShowInDockChanged: {
-            updateDockVisibility();
-        }
-        // onSplitToSequenceChanged: {
-        //     canvas.requestPaint();
-        // }
-    }
-    Settings {
-        id: durationSettings
-
-        property real breakTime: 15 * 60
-        property alias data: masterModel.data
-        property real pause: 10 * 60
-        property real pomodoro: 25 * 60
-        property int repeatBeforeBreak: 2
-        property real timer: 0
-        property alias title: masterModel.title
-    }
-    Colors {
-        id: colors
-
-    }
-    MasterModel {
-        id: masterModel
-
-        data: data
-        title: title
-    }
-    ModelBurner {
-        id: pomodoroQueue
-
-        durationSettings: durationSettings
-    }
     TrayIcon {
         id: tray
-
-    }
-    NotificationSystem {
-        id: notifications
-
-    }
-    PiloramaTimer {
-        id: globalTimer
-
-    }
-    Clock {
-        id: clock
-
-    }
-    FileDialogue {
-        id: fileDialogue
-
-    }
-    QtObject {
-        id: time
-
-        property real hours: 0
-        property real minutes: 0
-        property real seconds: 0
-
-        function updateTime() {
-            var currentDate = new Date();
-            hours = currentDate.getHours();
-            minutes = currentDate.getMinutes();
-            seconds = currentDate.getSeconds();
-        }
     }
 
+
+    // Main application "window"
     Rectangle {
         id: container
+
+        // Animate dark/light mode change
+        Behavior on color {
+            ColorAnimation {
+                duration: 150
+            }
+        }
 
         color: colors.getColor("bg")
 
         anchors.fill: parent
         radius: 10
         border {
-            color: "#56FFFFFF"
+            color: colors.getColor("light")
             width: 1
         }
 
@@ -265,6 +206,68 @@ ApplicationWindow {
             Preferences {
                 id: preferences
             }
+        }
+    }
+
+    // to be refactored
+
+    function checkClockMode() {
+        if (pomodoroQueue.infiniteMode && globalTimer.running) {
+            clockMode = "pomodoro";
+        } else if (!pomodoroQueue.infiniteMode) {
+            clockMode = "timer";
+        } else {
+            clockMode = "start";
+        }
+    }
+
+    Settings {
+        id: durationSettings
+
+        property real breakTime: 15 * 60
+        property alias data: masterModel.data
+        property real pause: 10 * 60
+        property real pomodoro: 25 * 60
+        property int repeatBeforeBreak: 2
+        property real timer: 0
+        property alias title: masterModel.title
+    }
+    MasterModel {
+        id: masterModel
+
+        data: data
+        title: title
+    }
+    ModelBurner {
+        id: pomodoroQueue
+
+        durationSettings: durationSettings
+    }
+
+    PiloramaTimer {
+        id: globalTimer
+
+    }
+    Clock {
+        id: clock
+
+    }
+    FileDialogue {
+        id: fileDialogue
+
+    }
+    QtObject {
+        id: time
+
+        property real hours: 0
+        property real minutes: 0
+        property real seconds: 0
+
+        function updateTime() {
+            var currentDate = new Date();
+            hours = currentDate.getHours();
+            minutes = currentDate.getMinutes();
+            seconds = currentDate.getSeconds();
         }
     }
 }
