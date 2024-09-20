@@ -7,22 +7,22 @@ Item {
 
     property bool checked: false
 
-    height: parent.height
-    width: 30
+    height: 24
+    width: 24
 
-    Rectangle {
-        anchors.left: parent.left
-        anchors.leftMargin: 5
+    FaIcon {
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         color: colors.getColor('lighter')
-        height: 14
-        radius: 3
-        width: 14
+        glyph: "\uf0c8"
+        size: 16
     }
-    Icon {
+
+    FaIcon {
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         color: colors.getColor('dark')
-        glyph: "\uea0c"
+        glyph: "\uf00c"
         visible: checkbox.checked
 
         Behavior on opacity {

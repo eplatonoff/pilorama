@@ -1,10 +1,13 @@
 import QtQuick
+
 import ".."
 
 Rectangle {
     id: rectangle
-    width: parent.width
-    anchors.bottomMargin: 0
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+
     color: "transparent"
 
     visible: !sequence.blockEdits
@@ -16,18 +19,16 @@ Rectangle {
         NumberAnimation {
             property: "height"
             duration: 150
-        }}
+        }
+    }
 
-        Rectangle {
+    Rectangle {
         id: layoutDivider
         height: 1
-        width: parent.width - 6
+        width: parent.width - 18
         color: colors.getColor("lighter")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-
-        property real padding: 18
-
     }
 
     Rectangle {
@@ -37,83 +38,86 @@ Rectangle {
         anchors.bottom: parent.bottom
         color: "transparent"
 
-    Rectangle {
-        id: addButton
+        Rectangle {
+            id: addButton
 
-        color:  "transparent"
-        radius: 3
-        anchors.rightMargin: 10
-        anchors.leftMargin: 10
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        anchors.left: saveButton.right
-        anchors.right: parent.right
+            color: "transparent"
+            radius: 3
+            anchors.rightMargin: 10
+            anchors.leftMargin: 10
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.left: saveButton.right
+            anchors.right: parent.right
 
-        MouseArea {
-            id: paddButtonTrigger
-            anchors.rightMargin: 0
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
+            MouseArea {
+                id: paddButtonTrigger
+                anchors.rightMargin: 0
+                anchors.fill: parent
+                hoverEnabled: true
+                propagateComposedEvents: true
+                cursorShape: Qt.PointingHandCursor
 
-            onReleased: {
-                masterModel.add()
-                focus = true
+                onReleased: {
+                    masterModel.add()
+                    focus = true
+                }
             }
+
+            Item {
+
+                height: parent.height
+
+                anchors.left: parent.left
+                anchors.leftMargin: 32
+
+                FaIcon {
+                    id: addIcon
+                    glyph: "\u002b"
+                    size: 12
+                    color: colors.getColor("mid")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: qsTr('Add split')
+                    anchors.left: addIcon.right
+                    anchors.leftMargin: 4
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    font.family: localFont.name
+                    font.pixelSize: fontSize
+
+                    renderType: Text.NativeRendering
+
+                    color: colors.getColor("dark")
+                }
+            }
+
+
         }
 
-        Item {
-
-            height: parent.height
-
+        FaIcon {
+            id: loadButton
+            glyph: "\uf07c"
             anchors.left: parent.left
-            anchors.leftMargin: 32
+            anchors.verticalCenter: parent.verticalCenter
 
-            Icon {
-                id: addIcon
-                glyph: "\uea10"
-                color: colors.getColor("mid")
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            onReleased: { fileDialogue.openDialogue() }
 
-            Text {
-                text: qsTr('Add split')
-                anchors.left: addIcon.right
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-                color: colors.getColor("dark")
-            }
         }
 
+        FaIcon {
+            id: saveButton
+            glyph: "\uf0c7"
+            anchors.left: loadButton.right
+            anchors.leftMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
 
+            onReleased: { fileDialogue.saveDialogue() }
+
+        }
     }
-
-    Icon {
-        id: loadButton
-        glyph: "\uea0b"
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-
-        onReleased: { fileDialogue.openDialogue() }
-
-    }
-
-    Icon {
-        id: saveButton
-        glyph: "\uea07"
-        anchors.left: loadButton.right
-        anchors.verticalCenter: parent.verticalCenter
-
-        onReleased: { fileDialogue.saveDialogue() }
-
-    }
-}
 }

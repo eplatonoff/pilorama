@@ -4,16 +4,45 @@ import QtQuick.Controls
 import QtCore
 
 import "Components"
-import "Components/Sequence"
 import "Screens/Preferences"
+import "Screens/Timer"
 
 ApplicationWindow {
     id: window
+    title: qsTr("Pilorama")
+
+    flags: Qt.FramelessWindowHint
+
+    height: 600
+    width: 320
+    maximumWidth: width
+    minimumWidth: width
+
+    visible: true
+
+    color: "transparent"
 
     property bool alwaysOnTop: false
     property string clockMode: "start"
     property bool expanded: true
     property bool quitOnClose: false
+
+    // Allow window to be dragged by any part of the window
+    MouseArea {
+        property variant origin: "1,1"
+
+        anchors.fill: parent
+
+        onPressed: (mouse) => {
+            origin = Qt.point(mouse.x, mouse.y)
+        }
+
+        onPositionChanged: (mouse) => {
+            let delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
+            window.x += delta.x;
+            window.y += delta.y;
+        }
+    }
 
     function checkClockMode() {
         if (pomodoroQueue.infiniteMode && globalTimer.running) {
@@ -24,6 +53,7 @@ ApplicationWindow {
             clockMode = "start";
         }
     }
+
     function updateDockVisibility() {
         if (appSettings.showInDock) {
             MacOSController.showInDock();
@@ -34,17 +64,7 @@ ApplicationWindow {
         }
     }
 
-    color: colors.getColor("bg")
-    flags: Qt.Window
-    height: 600
-    maximumWidth: width
-    minimumHeight: timerLayout.height + 16 * 2 + 50
-    minimumWidth: timerLayout.width + 16 * 2
-    title: qsTr("Pilorama")
-    visible: true
-    width: 320
-    x: 100
-    y: 100
+
 
     Behavior on color {
         ColorAnimation {
@@ -59,9 +79,9 @@ ApplicationWindow {
         alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window;
         requestActivate();
     }
-    onClockModeChanged: {
-        canvas.requestPaint();
-    }
+    // onClockModeChanged: {
+    //     canvas.requestPaint();
+    // }
     onClosing: close => {
         if (!quitOnClose) {
             close.accepted = false;
@@ -77,7 +97,7 @@ ApplicationWindow {
     }
     onExpandedChanged: {
         if (expanded === true) {
-            height = padding * 2 + timerLayout.height + sequence.height;
+            height = padding * 2 + timerLayout.height + timer.height;
         } else {
             height = padding * 2 + timerLayout.height;
         }
@@ -92,11 +112,7 @@ ApplicationWindow {
         function updateTheme() {
             if (systemPalette.colorTheme === "System") {
                 appSettings.darkMode = sysemDarkMode;
-            } else if (systemPalette.colorTheme === "Dark") {
-                appSettings.darkMode = true;
-            } else {
-                appSettings.darkMode = false;
-            }
+            } else appSettings.darkMode = systemPalette.colorTheme === "Dark";
         }
 
         Component.onCompleted: updateTheme()
@@ -111,9 +127,9 @@ ApplicationWindow {
         property bool darkMode: false
         property alias quitOnClose: window.quitOnClose
         property bool showInDock: false
-        property alias showQueue: sequence.showQueue
-        property alias soundMuted: notifications.soundMuted
-        property alias splitToSequence: preferences.splitToSequence
+        // property alias showQueue: timer.showQueue
+        // property alias soundMuted: notifications.soundMuted
+        // property alias splitToSequence: preferences.splitToSequence
         property alias windowHeight: window.height
         property alias windowX: window.x
         property alias windowY: window.y
@@ -124,9 +140,9 @@ ApplicationWindow {
         onShowInDockChanged: {
             updateDockVisibility();
         }
-        onSplitToSequenceChanged: {
-            canvas.requestPaint();
-        }
+        // onSplitToSequenceChanged: {
+        //     canvas.requestPaint();
+        // }
     }
     Settings {
         id: durationSettings
@@ -142,16 +158,6 @@ ApplicationWindow {
     Colors {
         id: colors
 
-    }
-    FontLoader {
-        id: localFont
-
-        source: "qrc:/assets/font/Inter.otf"
-    }
-    FontLoader {
-        id: iconFont
-
-        source: "qrc:/assets/font/pilorama.ttf"
     }
     MasterModel {
         id: masterModel
@@ -198,125 +204,67 @@ ApplicationWindow {
             seconds = currentDate.getSeconds();
         }
     }
-    StackView {
-        id: stack
+
+    Rectangle {
+        id: container
+
+        color: colors.getColor("bg")
 
         anchors.fill: parent
-        initialItem: content
-
-        popEnter: Transition {
-            XAnimator {
-                duration: 250
-                easing.type: Easing.InOutCubic
-                from: stack.width
-                to: 16
-            }
-        }
-        popExit: Transition {
-            XAnimator {
-                duration: 250
-                easing.type: Easing.InOutCubic
-                from: 0
-                to: -stack.width
-            }
-        }
-        pushEnter: Transition {
-            XAnimator {
-                duration: 250
-                easing.type: Easing.InOutCubic
-                from: -stack.width
-                to: 0
-            }
-        }
-        pushExit: Transition {
-            XAnimator {
-                duration: 250
-                easing.type: Easing.InOutCubic
-                from: 16
-                to: stack.width
-            }
+        radius: 10
+        border {
+            color: "#56FFFFFF"
+            width: 1
         }
 
-        Item {
-            id: content
+        StackView {
+            id: stack
 
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.margins: 16
-            anchors.right: parent.right
-            anchors.top: parent.top
+            property int transitionDuration: 750
+            property int transitionType: Easing.InOutBack
 
-            Item {
-                id: timerLayout
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                height: parent.width
-                width: parent.width
+            anchors.fill: parent
+            initialItem: timer
 
-                Dials {
-                    id: canvas
-
-                    anchors.fill: parent
-                    colors: colors
-                    duration: globalTimer.duration
-                    isRunning: globalTimer.running
-                    masterModel: masterModel
-                    pomodoroQueue: pomodoroQueue
-                    splitDuration: globalTimer.splitDuration
-                    splitToSequence: appSettings.splitToSequence
-                }
-                MouseTracker {
-                    id: mouseArea
-
-                }
-                StartScreen {
-                    id: startControls
-
-                }
-                TimerScreen {
-                    id: digitalClock
-
-                }
-                Icon {
-                    id: soundButton
-
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    glyph: notifications.soundMuted ? "\uea09" : "\uea06"
-
-                    onReleased: {
-                        notifications.toggleSoundNotifications();
-                    }
-                }
-                Icon {
-                    id: preferencesButton
-
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    glyph: "\uea04"
-
-                    onReleased: {
-                        stack.push(preferences);
-                    }
-                }
-                ExternalDrop {
-                    id: externalDrop
-
+            pushExit: Transition {
+                XAnimator {
+                    duration: stack.transitionDuration
+                    easing.type: stack.transitionType
+                    to: stack.width
                 }
             }
-            Sequence {
-                id: sequence
-
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: timerLayout.bottom
-                anchors.topMargin: 18
+            pushEnter: Transition {
+                XAnimator {
+                    duration: stack.transitionDuration
+                    easing.type: stack.transitionType
+                    from: -stack.width
+                    to: 0
+                }
             }
-        }
-        Preferences {
-            id: preferences
+
+            popEnter: Transition {
+                XAnimator {
+                    duration: stack.transitionDuration
+                    easing.type: stack.transitionType
+                    from: stack.width
+                    to: 0
+                }
+            }
+            popExit: Transition {
+                XAnimator {
+                    duration: stack.transitionDuration
+                    easing.type: stack.transitionType
+                    to: -stack.width
+                }
+            }
+
+            Timer {
+                id: timer
+            }
+
+            Preferences {
+                id: preferences
+            }
         }
     }
 }

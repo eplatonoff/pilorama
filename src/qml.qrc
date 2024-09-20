@@ -1,19 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>assets/img/moon.svg</file>
-        <file>assets/img/sun.svg</file>
-        <file>assets/img/sound.svg</file>
-        <file>assets/img/prefs.svg</file>
-        <file>assets/img/nosound.svg</file>
-        <file>assets/img/bell.svg</file>
-        <file>assets/img/dragger.svg</file>
-        <file>assets/img/close.svg</file>
-        <file>assets/img/copy.svg</file>
-        <file>assets/img/add.svg</file>
-        <file>assets/img/back.svg</file>
-        <file>assets/img/save.svg</file>
-        <file>assets/img/check.svg</file>
-        <file>assets/img/load.svg</file>
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
@@ -21,15 +7,15 @@
         <file>assets/tray/static-day.svg</file>
         <file>assets/tray/static-night.svg</file>
         <file>assets/img/github.svg</file>
-        <file>main.qml</file>
+
         <file>utils/geometry.mjs</file>
-        <file>NotificationSystem.qml</file>
-        <file>PiloramaTimer.qml</file>
-        <file>MouseTracker.qml</file>
-        <file>TrayIcon.qml</file>
-        <file>FileDialogue.qml</file>
-        <file>MasterModel.qml</file>
-        <file>ModelBurner.qml</file>
+        <file>Components/NotificationSystem.qml</file>
+        <file>Components/PiloramaTimer.qml</file>
+        <file>Components/MouseTracker.qml</file>
+        <file>Components/TrayIcon.qml</file>
+        <file>Components/FileDialogue.qml</file>
+        <file>Components/MasterModel.qml</file>
+        <file>Components/ModelBurner.qml</file>
         <file>Components/Colors.qml</file>
         <file>Components/ResetButton.qml</file>
         <file>Components/StartScreen.qml</file>
@@ -46,8 +32,22 @@
         <file>assets/font/pilorama.ttf</file>
         <file>Components/Icon.qml</file>
 
+        <!-- Refactored -->
+        <file>main.qml</file>
+
+        <file>Screens/Timer/Timer.qml</file>
+        <file>Screens/Timer/Components/Header.qml</file>
+
         <file>Screens/Preferences/Preferences.qml</file>
         <file>Screens/Preferences/Components/Header.qml</file>
+        <file>Screens/Preferences/Components/Setting.qml</file>
         <file>Screens/Preferences/Components/Checkbox.qml</file>
+
+        <file>Components/FaIcon.qml</file>
+
+        <file>assets/font/fa-regular.otf</file>
+        <file>assets/font/fa-solid.otf</file>
+
+        <file>assets/img/white-logo.svg</file>
     </qresource>
 </RCC>

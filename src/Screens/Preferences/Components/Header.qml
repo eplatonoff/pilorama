@@ -4,30 +4,35 @@ import "../../../Components"
 
 Rectangle {
     id: rectangle
-    height: 32
+
+
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.left: parent.left
+    height: 28
+
     color: "transparent"
-    anchors.margins: 16
 
-    property real headingFontSize: 18
-
-    Icon {
+    FaIcon {
         id: backButton
-        glyph: "\uea08"
+
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+
+        glyph: "\uf053"
         onReleased: {
             stack.pop()
         }
     }
 
     Text {
-        text: qsTr('Preferences')
+        text: qsTr('PREFERENCES')
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
         font.family: localFont.name
-        font.pixelSize: headingFontSize
+        font.pixelSize: 18
+        font.weight: Font.Bold
 
         color: colors.getColor("dark")
 

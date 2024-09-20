@@ -1,7 +1,6 @@
 #include "trayimageprovider.h"
 
 #include <QPainter>
-#include <QDebug>
 #include <QPainterPath>
 
 TrayImageProvider::TrayImageProvider() : QQuickImageProvider(QQuickImageProvider::Pixmap)
@@ -26,9 +25,9 @@ QPixmap TrayImageProvider::requestPixmap(const QString &id, QSize *size, const Q
     const auto placeholderColor = QColor(colorInfo[1]);
     Q_ASSERT(color.isValid());
 
-    const int width = 320, height = 320;
-    const int hPadding = 30, vPadding = 30;
-    const int penWidth = 48;
+    constexpr int width = 320, height = 320;
+    constexpr int hPadding = 30, vPadding = 30;
+    constexpr int penWidth = 48;
 
     QPoint startPoint(width / 2, vPadding);
 
@@ -68,7 +67,7 @@ QPixmap TrayImageProvider::requestPixmap(const QString &id, QSize *size, const Q
         width - 2 * hPadding,
         height - 2 * vPadding,
         90, // start angle
-        - secs / 10 // clock-wise
+        secs * -1.0 / 10 // clock-wise
     );
 
     painter.drawPath(path);

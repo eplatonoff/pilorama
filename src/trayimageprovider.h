@@ -4,14 +4,12 @@
 #include <QQuickImageProvider>
 
 
-
-class TrayImageProvider : public QQuickImageProvider
+class TrayImageProvider final : public QQuickImageProvider
 {
 public:
     TrayImageProvider();
 
-
-    QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override;
+    QPixmap requestPixmap(const QString& id, QSize* size, const QSize& requestedSize) override;
 };
 
 #endif // TRAYIMAGEPROVIDER_H
