@@ -8,22 +8,9 @@ Rectangle {
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.left: parent.left
-    height: 28
+    height: 24
 
     color: "transparent"
-
-    FaIcon {
-        id: soundButton
-
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-
-        glyph: appSettings.audioNotificationsEnabled ? "\uf0f3" : "\uf1f6"
-
-        onReleased: {
-            appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled;
-        }
-    }
 
     Image {
         id: logo
@@ -37,7 +24,9 @@ Rectangle {
     FaIcon {
         id: preferencesButton
 
-        anchors.left: parent.left
+        anchors.right: Qt.platform.os === "osx" ? parent.right : undefined
+        anchors.left: Qt.platform.os !== "osx" ? parent.left : undefined
+
         anchors.verticalCenter: parent.verticalCenter
 
         glyph: "\uf0c9"
@@ -45,6 +34,15 @@ Rectangle {
         onReleased: {
             stack.push(preferences);
         }
+    }
+
+    MacWindowControls {
+        id: macWindowControls
+        visible: Qt.platform.os === "osx"
+
+        anchors.left: parent.left
+
+        anchors.verticalCenter: parent.verticalCenter
     }
 
 }

@@ -121,6 +121,10 @@ SystemTrayIcon {
         showMessage(title, message, iconURL(), showfor)
     }
 
+    function ping(message) {
+        showMessage('debug', message, iconURL(), 5000)
+    }
+
     function popUp(){
        if (appSettings.showInDock) { // TODO don't use global variable
             MacOSController.showInDock()

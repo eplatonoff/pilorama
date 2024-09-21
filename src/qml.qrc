@@ -38,6 +38,7 @@
 
         <file>Screens/Timer/Timer.qml</file>
         <file>Screens/Timer/Components/Header.qml</file>
+        <file>Screens/Timer/Components/MacWindowControls.qml</file>
 
         <file>Screens/Preferences/Preferences.qml</file>
         <file>Screens/Preferences/Components/Header.qml</file>

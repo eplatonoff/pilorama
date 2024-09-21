@@ -9,7 +9,7 @@ Rectangle {
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.left: parent.left
-    height: 28
+    height: 24
 
     color: "transparent"
 

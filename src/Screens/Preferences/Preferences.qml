@@ -132,7 +132,15 @@ Item {
             }
 
             Setting {
-                label: qsTr("Always in Dock")
+                label: qsTr("Close to system tray")
+                checked: !appSettings.quitOnClose
+                onReleased: {
+                    appSettings.quitOnClose = !appSettings.quitOnClose
+                }
+            }
+
+            Setting {
+                label: qsTr("Keep in Dock")
                 checked: appSettings.showInDock
                 onReleased: {
                     appSettings.showInDock = !appSettings.showInDock
@@ -140,10 +148,10 @@ Item {
             }
 
             Setting {
-                label: qsTr("Close to system tray")
-                checked: !appSettings.quitOnClose
+                label: qsTr("Enable sounds")
+                checked: appSettings.audioNotificationsEnabled
                 onReleased: {
-                    appSettings.quitOnClose = !appSettings.quitOnClose
+                    appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled
                 }
             }
         }

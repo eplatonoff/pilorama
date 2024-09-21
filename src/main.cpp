@@ -11,6 +11,16 @@
 #include <QApplication>
 #include <QQmlContext>
 
+class AppStateHandler : public QObject
+{
+    Q_OBJECT
+public:
+    AppStateHandler() {}
+
+    signals:
+        void applicationStateChanged(Qt::ApplicationState state);
+};
+
 
 int main(int argc, char *argv[])
 {
@@ -30,6 +40,13 @@ int main(int argc, char *argv[])
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
+
+    AppStateHandler appStateHandler;
+    QObject::connect(&app, &QApplication::applicationStateChanged,
+                     &appStateHandler, &AppStateHandler::applicationStateChanged);
+
+    engine.rootContext()->setContextProperty("appStateHandler", &appStateHandler);
+
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl)
     {
@@ -46,3 +63,5 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
+
+#include "main.moc"

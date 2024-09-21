@@ -94,6 +94,34 @@ QtObject {
             "trayNight": "#D15BFB",
             "trayDay": "#C729FF",
             "type": "palette"
+        },
+        "osxClose": {
+            "night": "#FF5F57",
+            "day": "#FF6058",
+            "trayNight": "#FF5F52",
+            "trayDay": "#FF5F52",
+            "type": "ui"
+        },
+        "osxMinimize": {
+            "night": "#FEBC2D",
+            "day": "#FEBC2C",
+            "trayNight": "#FF5F52",
+            "trayDay": "#FF5F52",
+            "type": "ui"
+        },
+        "osxMaximize": {
+            "night": "#29C741",
+            "day": "#28C841",
+            "trayNight": "#FF5F52",
+            "trayDay": "#FF5F52",
+            "type": "ui"
+        },
+        "osxInactive": {
+            "night": "#4C4C48",
+            "day": "#CCCCCA",
+            "trayNight": "#FF5F52",
+            "trayDay": "#FF5F52",
+            "type": "ui"
         }
     })
 

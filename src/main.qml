@@ -127,6 +127,24 @@ ApplicationWindow {
             height = padding * 2 + timerLayout.height;
         }
     }
+    onVisibleChanged: {
+        if (visible) {
+            if (Qt.platform.os === "osx") {
+                MacOSController.showInDock();
+            }
+        }
+    }
+
+    Connections {
+        target: appStateHandler
+
+        function onApplicationStateChanged(applicationState) {
+            if (applicationState === Qt.ApplicationActive) {
+                window.showNormal()
+            }
+        }
+    }
+
 
     // Sound notifications
     Notification {
@@ -155,7 +173,7 @@ ApplicationWindow {
         radius: 10
         border {
             color: colors.getColor("light")
-            width: 1
+            width: 0.5
         }
 
         StackView {
