@@ -17,17 +17,23 @@ Item {
             id: header
         }
 
-        FaIcon {
-            id: soundButton
+        TimerModel {
+            id: timerModel
+            data: data
+            title: title
+        }
 
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+        PiloramaTimer {
+            id: globalTimer
+        }
 
-            glyph: appSettings.audioNotificationsEnabled ? "\uf0f3" : "\uf1f6"
+        Sequence {
+            id: sequence
 
-            onReleased: {
-                appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled;
-            }
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
         }
 
     }

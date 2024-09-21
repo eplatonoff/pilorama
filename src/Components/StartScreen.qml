@@ -102,12 +102,4 @@ Item {
             }
         }
     }
-
-
 }
-
-/*##^##
-Designer {
-    D{i:2;anchors_width:30}
-}
-##^##*/
