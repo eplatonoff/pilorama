@@ -44,6 +44,8 @@
         <file>Screens/Preferences/Components/Header.qml</file>
         <file>Screens/Preferences/Components/Setting.qml</file>
         <file>Screens/Preferences/Components/Checkbox.qml</file>
+        <file>Screens/Preferences/Components/ThemeChoice.qml</file>
+        <file>Screens/Preferences/Components/Credits.qml</file>
 
         <file>Components/FaIcon.qml</file>
 

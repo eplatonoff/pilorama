@@ -16,6 +16,7 @@ ApplicationWindow {
     flags: windowType
 
     height: 600
+    minimumHeight: 400
     width: 320
     maximumWidth: width
     minimumWidth: width
@@ -60,9 +61,6 @@ ApplicationWindow {
         source: "qrc:/assets/font/fa-solid.otf"
     }
 
-    font.family: localFont.name
-    font.pixelSize: 16
-
     // Load colors schemes
     Colors {
         id: colors
@@ -90,17 +88,17 @@ ApplicationWindow {
         id: systemPalette
 
         property alias colorTheme: appSettings.colorTheme
-        property bool sysemDarkMode: (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
+        property bool systemDarkMode: (Application.styleHints.colorScheme === Qt.ColorScheme.Dark)
 
         function updateTheme() {
             if (systemPalette.colorTheme === "System") {
-                appSettings.darkMode = sysemDarkMode;
+                appSettings.darkMode = systemDarkMode;
             } else appSettings.darkMode = systemPalette.colorTheme === "Dark";
         }
 
         Component.onCompleted: updateTheme()
         onColorThemeChanged: updateTheme()
-        onSysemDarkModeChanged: updateTheme()
+        onSystemDarkModeChanged: updateTheme()
     }
 
     onAlwaysOnTopChanged: {
@@ -120,21 +118,8 @@ ApplicationWindow {
             }
         }
     }
-    onExpandedChanged: {
-        if (expanded === true) {
-            height = padding * 2 + timerLayout.height + timer.height;
-        } else {
-            height = padding * 2 + timerLayout.height;
-        }
-    }
-    onVisibleChanged: {
-        if (visible) {
-            if (Qt.platform.os === "osx") {
-                MacOSController.showInDock();
-            }
-        }
-    }
 
+    // Make application visible when it's activated
     Connections {
         target: appStateHandler
 
@@ -151,6 +136,7 @@ ApplicationWindow {
         id: notifications
     }
 
+    // Tray icon
     TrayIcon {
         id: tray
     }
@@ -200,7 +186,6 @@ ApplicationWindow {
                     to: 0
                 }
             }
-
             popEnter: Transition {
                 XAnimator {
                     duration: stack.transitionDuration
@@ -224,68 +209,6 @@ ApplicationWindow {
             Preferences {
                 id: preferences
             }
-        }
-    }
-
-    // to be refactored
-
-    function checkClockMode() {
-        if (pomodoroQueue.infiniteMode && globalTimer.running) {
-            clockMode = "pomodoro";
-        } else if (!pomodoroQueue.infiniteMode) {
-            clockMode = "timer";
-        } else {
-            clockMode = "start";
-        }
-    }
-
-    Settings {
-        id: durationSettings
-
-        property real breakTime: 15 * 60
-        property alias data: masterModel.data
-        property real pause: 10 * 60
-        property real pomodoro: 25 * 60
-        property int repeatBeforeBreak: 2
-        property real timer: 0
-        property alias title: masterModel.title
-    }
-    MasterModel {
-        id: masterModel
-
-        data: data
-        title: title
-    }
-    ModelBurner {
-        id: pomodoroQueue
-
-        durationSettings: durationSettings
-    }
-
-    PiloramaTimer {
-        id: globalTimer
-
-    }
-    Clock {
-        id: clock
-
-    }
-    FileDialogue {
-        id: fileDialogue
-
-    }
-    QtObject {
-        id: time
-
-        property real hours: 0
-        property real minutes: 0
-        property real seconds: 0
-
-        function updateTime() {
-            var currentDate = new Date();
-            hours = currentDate.getHours();
-            minutes = currentDate.getMinutes();
-            seconds = currentDate.getSeconds();
         }
     }
 }
