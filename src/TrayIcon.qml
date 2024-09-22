@@ -5,7 +5,7 @@ import Qt.labs.platform
 SystemTrayIcon {
     id: tray
     visible: true
-    icon.mask: true
+    icon.mask: globalTimer.running ? false : true
     icon.source: iconURL()
     icon.name: qsTr("Pilorama")
     tooltip : window.title
