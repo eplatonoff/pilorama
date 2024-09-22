@@ -17,6 +17,8 @@ ApplicationWindow {
     height: 600
     flags: Qt.Window
 
+    property real padding: 16
+
     minimumHeight: timerLayout.height + padding * 2 + 50
     minimumWidth: timerLayout.width + padding * 2
 
