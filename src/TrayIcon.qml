@@ -128,7 +128,6 @@ SystemTrayIcon {
 
        window.show()
        window.raise()
-       window.show()
     }
 
     menu: Menu {
