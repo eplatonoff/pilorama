@@ -126,6 +126,7 @@ SystemTrayIcon {
             MacOSController.showInDock()
        }
 
+       window.show()
        window.raise()
        window.show()
     }
