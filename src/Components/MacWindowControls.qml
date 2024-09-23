@@ -1,7 +1,5 @@
 import QtQuick
 
-import "../../../Components"
-
 Item {
     id: macWindowControls
 

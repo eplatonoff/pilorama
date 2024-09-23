@@ -1,16 +1,14 @@
 import QtQuick
 
-import "../../../Components"
 
-Rectangle {
+Item {
     id: rectangle
 
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.left: parent.left
+    anchors.margins: 16
     height: 24
-
-    color: "transparent"
 
     Image {
         id: logo
@@ -19,21 +17,6 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
 
         source: appSettings.darkMode ? "qrc:/assets/img/white-logo.svg" : "qrc:/assets/img/dark-logo.svg"
-    }
-
-    FaIcon {
-        id: preferencesButton
-
-        anchors.right: Qt.platform.os === "osx" ? parent.right : undefined
-        anchors.left: Qt.platform.os !== "osx" ? parent.left : undefined
-
-        anchors.verticalCenter: parent.verticalCenter
-
-        glyph: "\uf0c9"
-
-        onReleased: {
-            stack.push(preferences);
-        }
     }
 
     MacWindowControls {
@@ -45,4 +28,14 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
     }
 
+    Rectangle {
+        id: border
+
+        anchors.top: logo.bottom
+        anchors.topMargin: 16
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 0.5
+        color: colors.getColor("light")
+    }
 }

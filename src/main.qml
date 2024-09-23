@@ -16,7 +16,7 @@ ApplicationWindow {
     flags: windowType
 
     height: 600
-    minimumHeight: 400
+    minimumHeight: 420
     width: 320
     maximumWidth: width
     minimumWidth: width
@@ -44,6 +44,14 @@ ApplicationWindow {
             let delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
             window.x += delta.x;
             window.y += delta.y;
+        }
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            if (Qt.platform.os === "osx") {
+                MacOSController.showInDock();
+            }
         }
     }
 
@@ -162,13 +170,21 @@ ApplicationWindow {
             width: 0.5
         }
 
+        Header {
+            id: header
+        }
+
         StackView {
             id: stack
 
-            property int transitionDuration: 750
-            property int transitionType: Easing.InOutBack
+            property int transitionDuration: 500
+            property int transitionType: Easing.OutQuint
 
-            anchors.fill: parent
+            anchors.top: header.bottom
+            anchors.topMargin: 16
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
             initialItem: timer
 
             pushExit: Transition {

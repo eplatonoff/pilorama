@@ -13,7 +13,7 @@ Item {
         anchors.fill: parent
         anchors.margins: 16
 
-        Header {
+        Title {
             id: header
         }
 

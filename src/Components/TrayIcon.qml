@@ -52,7 +52,7 @@ SystemTrayIcon {
     //
     function iconURL() {
         // if (!globalTimer.running)
-        return 'qrc:/assets/tray/static-day.svg'
+        return 'qrc:/assets/tray/static.svg'
     }
 
     //     const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");

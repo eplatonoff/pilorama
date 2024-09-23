@@ -15,33 +15,32 @@
         <file>Components/Clock.qml</file>
 
 
-
-
         <!-- Refactored -->
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
 
+        <file>Components/Header.qml</file>
+        <file>Components/MacWindowControls.qml</file>
+
         <file>Components/Colors.qml</file>
 
         <file>Components/TrayIcon.qml</file>
+        <file>assets/tray/static.svg</file>
 
         <file>Components/Notification.qml</file>
         <file>assets/sound/drum_roll.wav</file>
 
         <file>Screens/Timer/Timer.qml</file>
-        <file>Screens/Timer/Components/Header.qml</file>
-        <file>Screens/Timer/Components/MacWindowControls.qml</file>
         <file>Screens/Timer/Components/PiloramaTimer.qml</file>
         <file>Screens/Timer/Components/TimerModel.qml</file>
         <file>Screens/Timer/Components/Sequence.qml</file>
 
         <file>Screens/Timer/Components/Sequence/SequenceItem.qml</file>
-        <file>Screens/Timer/Components/Sequence/Header.qml</file>
         <file>Screens/Timer/Components/Sequence/Footer.qml</file>
         <file>Screens/Timer/Components/Sequence/ColorSelector.qml</file>
 
         <file>Screens/Preferences/Preferences.qml</file>
-        <file>Screens/Preferences/Components/Header.qml</file>
+        <file>Screens/Preferences/Components/Title.qml</file>
         <file>Screens/Preferences/Components/Setting.qml</file>
         <file>Screens/Preferences/Components/Checkbox.qml</file>
         <file>Screens/Preferences/Components/ThemeChoice.qml</file>

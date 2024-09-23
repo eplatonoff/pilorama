@@ -31,6 +31,7 @@ Item {
             color: colors.getColor('mid')
             anchors.verticalCenter: parent.verticalCenter
             glyph: "\uea03"
+            size: 16
 
             onReleased: {
                 Qt.openUrlExternally("https://github.com/eplatonoff/pilorama/releases")
