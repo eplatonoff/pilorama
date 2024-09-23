@@ -177,8 +177,8 @@ ApplicationWindow {
         StackView {
             id: stack
 
-            property int transitionDuration: 500
-            property int transitionType: Easing.OutQuint
+            property int transitionDuration: 750
+            property int transitionType: Easing.OutExpo
 
             anchors.top: header.bottom
             anchors.topMargin: 16

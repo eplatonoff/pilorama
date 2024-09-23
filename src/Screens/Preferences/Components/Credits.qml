@@ -13,6 +13,18 @@ Item {
         spacing: 4
         height: 24
 
+        Icon {
+            id: github
+            color: colors.getColor('mid')
+            anchors.verticalCenter: parent.verticalCenter
+            glyph: "\uea03"
+            size: 16
+
+            onReleased: {
+                Qt.openUrlExternally("https://github.com/eplatonoff/pilorama/releases")
+            }
+        }
+
         Text {
             id: version
 
@@ -24,18 +36,6 @@ Item {
             text: Qt.application.version
 
             onLinkActivated: Qt.openUrlExternally(link)
-        }
-
-        Icon {
-            id: github
-            color: colors.getColor('mid')
-            anchors.verticalCenter: parent.verticalCenter
-            glyph: "\uea03"
-            size: 16
-
-            onReleased: {
-                Qt.openUrlExternally("https://github.com/eplatonoff/pilorama/releases")
-            }
         }
     }
 }
