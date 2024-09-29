@@ -7,9 +7,6 @@ import "Sequence"
 Item {
     id: sequence
 
-    // property bool blockEdits: globalTimer.duration || globalTimer.running
-    // property bool showQueue: true
-
     function setCurrentItem(id) {
         if (id === undefined) {
             id = -1
@@ -17,18 +14,15 @@ Item {
         sequenceView.currentIndex = id
     }
 
-
-    // Footer {
-    //     id: sequenceFooter
-    //     anchors.bottom: parent.bottom
-    //     anchors.bottomMargin: 0
-    //     z: 3
-    // }
-
-
     ListView {
         id: sequenceView
-        anchors.fill: parent
+
+        anchors.top: parent.top
+        anchors.bottom: sequenceToolbar.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        width: parent.width
         spacing: 0
         clip: true
         orientation: ListView.Vertical
@@ -40,7 +34,7 @@ Item {
         delegate: Item {
             id: delegateItem
 
-            width: parent.width
+            width: parent ? parent.width : 0
             height: 32
 
             SequenceItem {
@@ -87,5 +81,12 @@ Item {
                 properties: "x, y"; duration: 100
             }
         }
+    }
+
+    Toolbar {
+        id: sequenceToolbar
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        z: 3
     }
 }

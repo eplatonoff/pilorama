@@ -15,7 +15,7 @@ ApplicationWindow {
 
     flags: windowType
 
-    height: 600
+    height: 680
     minimumHeight: 420
     width: 320
     maximumWidth: width
@@ -149,6 +149,10 @@ ApplicationWindow {
         id: tray
     }
 
+    PiloramaTimer {
+        id: globalTimer
+    }
+
 
     // Main application "window"
     Rectangle {
@@ -177,8 +181,8 @@ ApplicationWindow {
         StackView {
             id: stack
 
-            property int transitionDuration: 750
-            property int transitionType: Easing.OutExpo
+            property int transitionDuration: 250
+            property int transitionType: Easing.OutQuad
 
             anchors.top: header.bottom
             anchors.topMargin: 16

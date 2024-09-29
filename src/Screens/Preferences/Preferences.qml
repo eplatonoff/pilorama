@@ -32,14 +32,6 @@ Item {
             }
 
             Setting {
-                label: qsTr("Split timer to sequences")
-                checked: appSettings.alwaysOnTop
-                onReleased: {
-                    appSettings.alwaysOnTop = !appSettings.alwaysOnTop
-                }
-            }
-
-            Setting {
                 label: qsTr("Keep on top")
                 checked: appSettings.alwaysOnTop
                 onReleased: {

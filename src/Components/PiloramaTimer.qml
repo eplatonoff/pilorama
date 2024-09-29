@@ -9,7 +9,7 @@ Pilorama.Timer {
     // property real durationBound: 0
     // property real splitDuration: 0
     //
-    // property real timerLimit: 6 * 3600
+    property real timerLimit: 6 * 3600
     //
     // onDurationChanged: {
     //     window.checkClockMode();

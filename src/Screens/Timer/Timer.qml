@@ -25,36 +25,31 @@ Item {
             }
         }
 
-        // Item {
-        //     id: content
-        //
-        //     anchors.fill: parent
-        //     anchors.margins: 16
-        //
-        //
-        //     Header {
-        //         id: header
-        //     }
-        //
-        //     TimerModel {
-        //         id: timerModel
-        //         data: data
-        //         title: title
-        //     }
-        //
-        //     PiloramaTimer {
-        //         id: globalTimer
-        //     }
-        //
-        //     Sequence {
-        //         id: sequence
-        //
-        //         anchors.top: header.bottom
-        //         anchors.left: parent.left
-        //         anchors.right: parent.right
-        //         anchors.bottom: parent.bottom
-        //     }
-        //
-        // }
+        TimerModel {
+            id: timerModel
+            data: data
+            title: title
+        }
+
+        Rectangle {
+            id: clockFace
+
+            radius: 5000
+            color: '#FF00FF'
+
+            anchors.top: parent.top
+            width: parent.width
+            height: parent.width
+        }
+
+        Sequence {
+            id: sequence
+
+            anchors.top: clockFace.bottom
+            anchors.topMargin: 16
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+        }
     }
 }

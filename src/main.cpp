@@ -4,6 +4,8 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QProcessEnvironment>
+#include <QFile>
 #include <QTimer>
 #include <QDebug>
 #include <QSystemTrayIcon>
@@ -21,9 +23,30 @@ public:
         void applicationStateChanged(Qt::ApplicationState state);
 };
 
+class FileSaver : public QObject {
+    Q_OBJECT
+public:
+    explicit FileSaver(QObject *parent = nullptr) : QObject(parent) {}
+
+    Q_INVOKABLE bool saveToFile(const QString &filePath, const QString &data) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            return false; // If opening the file failed, return false.
+        }
+
+        QTextStream out(&file);
+        out << data; // Write data to the file.
+        file.close();
+        return true; // Return true if the file was saved successfully.
+    }
+};
+
 
 int main(int argc, char *argv[])
 {
+    // Set environment variable to allow file reading with XMLHttpRequest
+    qputenv("QML_XHR_ALLOW_FILE_READ", QByteArray("1"));
+
     MacOSController macOSController;
     macOSController.disableAppNap();
 
@@ -46,6 +69,11 @@ int main(int argc, char *argv[])
                      &appStateHandler, &AppStateHandler::applicationStateChanged);
 
     engine.rootContext()->setContextProperty("appStateHandler", &appStateHandler);
+
+
+    FileSaver fileSaver;
+    engine.rootContext()->setContextProperty("fileSaver", &fileSaver);
+
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl)

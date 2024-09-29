@@ -1,11 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>assets/app_icons/icon.ico</file>
-        <file>assets/app_icons/icon.icns</file>
-        <file>assets/app_icons/trayicon.icns</file>
-
         <file>Components/MouseTracker.qml</file>
-        <file>Components/FileDialogue.qml</file>
         <file>Components/ModelBurner.qml</file>
         <file>Components/ResetButton.qml</file>
         <file>Components/StartScreen.qml</file>
@@ -16,6 +11,10 @@
 
 
         <!-- Refactored -->
+        <file>assets/app_icons/icon.ico</file>
+        <file>assets/app_icons/icon.icns</file>
+        <file>assets/app_icons/trayicon.icns</file>
+
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
 
@@ -27,16 +26,19 @@
         <file>Components/TrayIcon.qml</file>
         <file>assets/tray/static.svg</file>
 
+        <file>Components/PiloramaTimer.qml</file>
+
+        <file>Components/TimerModel.qml</file>
+
         <file>Components/Notification.qml</file>
         <file>assets/sound/drum_roll.wav</file>
 
         <file>Screens/Timer/Timer.qml</file>
-        <file>Screens/Timer/Components/PiloramaTimer.qml</file>
-        <file>Screens/Timer/Components/TimerModel.qml</file>
         <file>Screens/Timer/Components/Sequence.qml</file>
+        <file>Screens/Timer/Components/Sequence/FileDialogue.qml</file>
 
         <file>Screens/Timer/Components/Sequence/SequenceItem.qml</file>
-        <file>Screens/Timer/Components/Sequence/Footer.qml</file>
+        <file>Screens/Timer/Components/Sequence/Toolbar.qml</file>
         <file>Screens/Timer/Components/Sequence/ColorSelector.qml</file>
 
         <file>Screens/Preferences/Preferences.qml</file>
