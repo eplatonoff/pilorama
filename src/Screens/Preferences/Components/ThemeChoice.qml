@@ -6,94 +6,78 @@ import "../../../Components"
 Item {
     id: theme
 
-    height: 32
-    anchors.right: parent.right
     anchors.left: parent.left
+    anchors.right: parent.right
+    height: 32
 
     Text {
         id: colorThemeLabel
 
-        text: qsTr("Theme")
-
         anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
         anchors.right: colorThemeDropdown.left
         anchors.rightMargin: 8
+        anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor("dark")
-
         font.family: localFont.name
         font.pixelSize: 16
-
         renderType: Text.NativeRendering
+        text: qsTr("Theme")
     }
-
     ComboBox {
         id: colorThemeDropdown
 
+        anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        currentIndex: {
+            const index = colorThemeDropdown.model.indexOf(appSettings.colorTheme);
+            return index !== -1 ? index : 0;
+        }
+        model: ["Light", "Dark", "System"]
+        palette.buttonText: colors.getColor("dark")
         width: 90
 
-        palette.buttonText: colors.getColor("dark")
-
-        indicator: Rectangle {
+        background: Rectangle {
             color: "transparent"
 
+            border {
+                color: "#00FFFFFF"
+                width: 1
+            }
+        }
+        contentItem: Text {
+            color: colors.getColor("dark")
+            font.family: localFont.name
+            font.pixelSize: 16
+            horizontalAlignment: Text.AlignLeft
+            leftPadding: 0
+            renderType: Text.NativeRendering
+            rightPadding: colorThemeDropdown.indicator.width
+            text: colorThemeDropdown.displayText
+            verticalAlignment: Text.AlignVCenter
+        }
+        indicator: Rectangle {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-
+            color: "transparent"
             height: 24
             width: 24
 
             FaIcon {
                 id: dropDownButton
 
-                anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-
+                anchors.verticalCenter: parent.verticalCenter
                 glyph: "\uf150"
 
                 onReleased: {
-                    colorThemeDropdown.popup.open()
+                    colorThemeDropdown.popup.open();
                 }
             }
         }
 
-        background: Rectangle {
-            border {
-                color: "#00FFFFFF"
-                width: 1
-            }
-            color: "transparent"
-        }
-
-        contentItem: Text {
-            leftPadding: 0
-            rightPadding: colorThemeDropdown.indicator.width
-
-            text: colorThemeDropdown.displayText
-            font.pixelSize: 16
-            font.family: localFont.name
-
-            color: colors.getColor("dark")
-
-            renderType: Text.NativeRendering
-
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignLeft
-        }
-
-
-        model: ["Light", "Dark", "System"]
-        currentIndex: {
-            const index = colorThemeDropdown.model.indexOf(appSettings.colorTheme);
-            return index !== -1 ? index : 0;
-        }
-
         onActivated: {
-            appSettings.colorTheme = colorThemeDropdown.currentText
+            appSettings.colorTheme = colorThemeDropdown.currentText;
         }
     }
-
 }

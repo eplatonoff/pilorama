@@ -15,41 +15,37 @@ Item {
         FaIcon {
             id: preferencesButton
 
-            anchors.top: parent.top
             anchors.left: parent.left
-
+            anchors.top: parent.top
             glyph: "\uf0c9"
 
             onReleased: {
                 stack.push(preferences);
             }
         }
-
         TimerModel {
             id: timerModel
+
             data: data
             title: title
         }
-
         Rectangle {
             id: clockFace
 
-            radius: 5000
-            color: '#FF00FF'
-
             anchors.top: parent.top
-            width: parent.width
+            color: '#FF0000'
             height: parent.width
+            radius: 5000
+            width: parent.width
         }
-
         Sequence {
             id: sequence
 
-            anchors.top: clockFace.bottom
-            anchors.topMargin: 16
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: parent.bottom
+            anchors.top: clockFace.bottom
+            anchors.topMargin: 16
         }
     }
 }

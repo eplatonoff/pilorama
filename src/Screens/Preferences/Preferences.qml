@@ -1,10 +1,10 @@
 import QtQuick
 
 import "Components"
-import "../../Components"
 
 Item {
     id: container
+
     visible: false
 
     Item {
@@ -15,57 +15,57 @@ Item {
 
         Title {
             id: header
-        }
 
+        }
         Column {
             id: settings
 
-            spacing: 8
-
-            anchors.top: header.bottom
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.top: header.bottom
             anchors.topMargin: 28
+            spacing: 8
 
             ThemeChoice {
                 id: themeChoice
-            }
 
+            }
             Setting {
-                label: qsTr("Keep on top")
                 checked: appSettings.alwaysOnTop
+                label: qsTr("Keep on top")
+
                 onReleased: {
-                    appSettings.alwaysOnTop = !appSettings.alwaysOnTop
+                    appSettings.alwaysOnTop = !appSettings.alwaysOnTop;
                 }
             }
-
             Setting {
-                label: qsTr("Close to system tray")
                 checked: !appSettings.quitOnClose
+                label: qsTr("Close to system tray")
+
                 onReleased: {
-                    appSettings.quitOnClose = !appSettings.quitOnClose
+                    appSettings.quitOnClose = !appSettings.quitOnClose;
                 }
             }
-
             Setting {
-                label: qsTr("Keep in Dock")
                 checked: appSettings.showInDock
+                label: qsTr("Keep in Dock")
+
                 onReleased: {
-                    appSettings.showInDock = !appSettings.showInDock
+                    appSettings.showInDock = !appSettings.showInDock;
                 }
             }
-
             Setting {
-                label: qsTr("Enable sounds")
                 checked: appSettings.audioNotificationsEnabled
+                label: qsTr("Enable sounds")
+
                 onReleased: {
-                    appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled
+                    appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled;
                 }
             }
         }
-
         Credits {
             id: credits
+
         }
     }
 }

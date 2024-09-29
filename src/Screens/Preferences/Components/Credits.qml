@@ -10,29 +10,27 @@ Item {
     Row {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 4
         height: 24
+        spacing: 4
 
         Icon {
             id: github
-            color: colors.getColor('mid')
+
             anchors.verticalCenter: parent.verticalCenter
+            color: colors.getColor('mid')
             glyph: "\uea03"
             size: 16
 
             onReleased: {
-                Qt.openUrlExternally("https://github.com/eplatonoff/pilorama/releases")
+                Qt.openUrlExternally("https://github.com/eplatonoff/pilorama/releases");
             }
         }
-
         Text {
             id: version
 
             anchors.verticalCenter: parent.verticalCenter
-
-            font.family: localFont.name
             color: colors.getColor('mid')
-
+            font.family: localFont.name
             text: Qt.application.version
 
             onLinkActivated: Qt.openUrlExternally(link)

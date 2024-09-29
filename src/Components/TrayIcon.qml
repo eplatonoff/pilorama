@@ -1,31 +1,14 @@
 import QtQuick
 import Qt.labs.platform
 
-
 SystemTrayIcon {
     id: tray
-    visible: true
-    icon.mask: globalTimer.running ? false : true
-    icon.source: iconURL()
-    icon.name: qsTr("Pilorama")
-    tooltip: window.title
+
     property string appTitle: window.title
     // property string messageText: ""
     // property string messageTitle: ""
     // property string menuItemText: checkMenuItemText()
     property string soundItemText: appSettings.audioNotificationsEnabled ? "Mute" : "Unmute"
-    //
-    //
-    // property real dialTime: 0
-    // property real runningTime: 0
-
-    onMessageClicked: window.showNormal()
-    onActivated: (reason) => {
-        if (reason === SystemTrayIcon.DoubleClick) {
-            window.showNormal()
-            !menu.visible
-        }
-    }
 
     // function checkMenuItemText() {
     //     if (globalTimer.running && pomodoroQueue.infiniteMode) {
@@ -52,8 +35,14 @@ SystemTrayIcon {
     //
     function iconURL() {
         // if (!globalTimer.running)
-        return 'qrc:/assets/tray/static.svg'
+        return 'qrc:/assets/tray/static.svg';
     }
+
+    icon.mask: globalTimer.running ? false : true
+    icon.name: qsTr("Pilorama")
+    icon.source: iconURL()
+    tooltip: window.title
+    visible: true
 
     //     const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");
     //     const placeholderColor = colors.getThemeColor("light")
@@ -156,37 +145,50 @@ SystemTrayIcon {
         // }
         MenuItem {
             text: tray.soundItemText
+
             onTriggered: {
-                appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled
+                appSettings.audioNotificationsEnabled = !appSettings.audioNotificationsEnabled;
             }
         }
         MenuItem {
             text: qsTr("Preferences")
+
             onTriggered: {
-                window.showNormal()
+                window.showNormal();
                 if (stack.currentItem === timer) {
-                    stack.push(preferences)
+                    stack.push(preferences);
                 }
             }
         }
-
         MenuSeparator {
         }
-
         MenuItem {
             text: "Show " + window.title
+
             onTriggered: {
-                window.showNormal()
+                window.showNormal();
             }
         }
-
         MenuItem {
             text: qsTr("Quit")
+
             onTriggered: {
-                window.close()
-                Qt.quit()
+                window.close();
+                Qt.quit();
             }
         }
     }
 
+    onActivated: reason => {
+        if (reason === SystemTrayIcon.DoubleClick) {
+            window.showNormal();
+            !menu.visible;
+        }
+    }
+    //
+    //
+    // property real dialTime: 0
+    // property real runningTime: 0
+
+    onMessageClicked: window.showNormal()
 }

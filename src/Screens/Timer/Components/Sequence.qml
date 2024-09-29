@@ -7,84 +7,95 @@ import "Sequence"
 Item {
     id: sequence
 
+    property bool editable: false
+    property int switchModeDuration: 150
+
     function setCurrentItem(id) {
         if (id === undefined) {
-            id = -1
+            id = -1;
         }
-        sequenceView.currentIndex = id
+        sequenceView.currentIndex = id;
     }
 
+    Header {
+        id: sequenceHeader
+
+        anchors.top: parent.top
+        width: parent.width
+    }
     ListView {
         id: sequenceView
 
-        anchors.top: parent.top
         anchors.bottom: sequenceToolbar.top
         anchors.left: parent.left
         anchors.right: parent.right
-
-        width: parent.width
-        spacing: 0
+        anchors.top: sequenceHeader.bottom
         clip: true
+        currentIndex: -1
+        model: timerModel
         orientation: ListView.Vertical
         snapMode: ListView.SnapToItem
-        currentIndex: -1
-
-        model: timerModel
-
-        delegate: Item {
-            id: delegateItem
-
-            width: parent ? parent.width : 0
-            height: 32
-
-            SequenceItem {
-                id: sequenceItem
-            }
-
-            DropArea {
-                anchors.fill: parent
-                keys: ["sequenceItems"]
-                onEntered: (drag) => {
-                    let draggedId = drag.source.dragItemIndex
-                    timerModel.move(draggedId, index, 1)
-                }
-            }
-        }
+        spacing: 0
+        width: parent.width
 
         addDisplaced: Transition {
             NumberAnimation {
-                properties: "x, y"; duration: 100
+                duration: 100
+                properties: "x, y"
+            }
+        }
+        delegate: Item {
+            id: delegateItem
+
+            height: 32
+            width: parent ? parent.width : 0
+
+            SequenceItem {
+                id: sequenceItem
+
+            }
+            DropArea {
+                anchors.fill: parent
+                keys: ["sequenceItems"]
+
+                onEntered: drag => {
+                    let draggedId = drag.source.dragItemIndex;
+                    timerModel.move(draggedId, index, 1);
+                }
+            }
+        }
+        displaced: Transition {
+            NumberAnimation {
+                duration: 100
+                properties: "x, y"
             }
         }
         moveDisplaced: Transition {
             NumberAnimation {
-                properties: "x, y"; duration: 100
+                duration: 100
+                properties: "x, y"
             }
         }
         remove: Transition {
             NumberAnimation {
-                properties: "x, y"; duration: 100
+                duration: 100
+                properties: "x, y"
             }
             NumberAnimation {
-                properties: "opacity"; duration: 100
+                duration: 100
+                properties: "opacity"
             }
         }
-
         removeDisplaced: Transition {
             NumberAnimation {
-                properties: "x, y"; duration: 100
-            }
-        }
-
-        displaced: Transition {
-            NumberAnimation {
-                properties: "x, y"; duration: 100
+                duration: 100
+                properties: "x, y"
             }
         }
     }
-
     Toolbar {
         id: sequenceToolbar
+
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         z: 3

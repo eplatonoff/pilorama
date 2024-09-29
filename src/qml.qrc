@@ -38,6 +38,7 @@
         <file>Screens/Timer/Components/Sequence/FileDialogue.qml</file>
 
         <file>Screens/Timer/Components/Sequence/SequenceItem.qml</file>
+        <file>Screens/Timer/Components/Sequence/Header.qml</file>
         <file>Screens/Timer/Components/Sequence/Toolbar.qml</file>
         <file>Screens/Timer/Components/Sequence/ColorSelector.qml</file>
 

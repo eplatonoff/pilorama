@@ -7,9 +7,7 @@
 #include <QProcessEnvironment>
 #include <QFile>
 #include <QTimer>
-#include <QDebug>
 #include <QSystemTrayIcon>
-#include <QPixmap>
 #include <QApplication>
 #include <QQmlContext>
 

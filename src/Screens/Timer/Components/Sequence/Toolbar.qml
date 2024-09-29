@@ -3,58 +3,61 @@ import QtQuick
 import "../../../../Components"
 
 Item {
+    anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-
-    height: 24
-
-    FileDialogue {
-        id: fileDialogue
-    }
+    clip: true
+    height: sequence.editable ? 28 : 0
 
     Behavior on height {
         NumberAnimation {
-            duration: 150
+            duration: sequence.switchModeDuration
         }
     }
 
+    FileDialogue {
+        id: fileDialogue
+
+    }
     Rectangle {
         id: layoutDivider
-        height: 1
-        width: parent.width
-        color: colors.getColor("lighter")
+
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-    }
-
-    Item {
+        color: colors.getColor("lighter")
+        height: 1
         width: parent.width
-        height: 14
+    }
+    Item {
         anchors.bottom: parent.bottom
+        height: 14
+        width: parent.width
 
         FaIcon {
             id: loadButton
-            glyph: "\uf07c"
-            size: 14
+
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
+            glyph: "\uf07c"
+            size: 14
 
-            onReleased: { fileDialogue.openDialogue() }
-
+            onReleased: {
+                fileDialogue.openDialogue();
+            }
         }
-
         FaIcon {
             id: saveButton
-            glyph: "\uf0c7"
-            size: 14
+
             anchors.left: loadButton.right
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
+            glyph: "\uf0c7"
+            size: 14
 
-            onReleased: { fileDialogue.saveDialogue() }
+            onReleased: {
+                fileDialogue.saveDialogue();
+            }
         }
-
         Item {
             id: addButton
 
@@ -65,16 +68,16 @@ Item {
 
             MouseArea {
                 id: addButtonTrigger
+
                 anchors.fill: parent
-                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
 
                 onReleased: {
-                    timerModel.add()
-                    focus = true
+                    timerModel.add();
+                    focus = true;
                 }
             }
-
             Item {
                 anchors.fill: parent
 
@@ -84,22 +87,19 @@ Item {
 
                     FaIcon {
                         id: addIcon
+
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: colors.getColor("mid")
                         glyph: "\u002b"
                         size: 12
-                        color: colors.getColor("mid")
-                        anchors.verticalCenter: parent.verticalCenter
                     }
-
                     Text {
-                        text: qsTr('Add split')
                         anchors.verticalCenter: parent.verticalCenter
-
+                        color: colors.getColor("dark")
                         font.family: localFont.name
                         font.pixelSize: 12
-
                         renderType: Text.NativeRendering
-
-                        color: colors.getColor("dark")
+                        text: qsTr('Add split')
                     }
                 }
             }

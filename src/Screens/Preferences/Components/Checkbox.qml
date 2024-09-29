@@ -11,16 +11,15 @@ Item {
     width: 24
 
     FaIcon {
-        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor('lighter')
         glyph: "\uf0c8"
         size: 16
     }
-
     FaIcon {
-        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
         color: colors.getColor('dark')
         glyph: "\uf00c"
         visible: checkbox.checked
