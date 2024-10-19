@@ -3,19 +3,17 @@ import QtQuick
 Item {
     id: externalDrop
 
-    property bool validFile: false
-
     anchors.fill: parent
 
     Rectangle {
-        id: rectangle
+        id: externalDropPlaceholder
 
         anchors.fill: parent
         border.color: colors.getColor('light')
         border.width: 2
         color: colors.getColor('bg')
         radius: 3
-        visible: validFile
+        visible: dropArea.containsDrag
 
         Text {
             id: externalDropText
@@ -30,33 +28,25 @@ Item {
             font.family: localFont.name
             font.pixelSize: 26
             fontSizeMode: Text.Fit
-            height: 150
             horizontalAlignment: Text.AlignHCenter
-            text: "Not valid file type"
+            text: "Drop sequence preset here"
             verticalAlignment: Text.AlignVCenter
         }
     }
     DropArea {
-        id: dropData
+        id: dropArea
 
         anchors.fill: parent
 
-        onDropped: if (drop.hasText) {
-            if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
-                timerModel.data = fileDialogue.openFile(drop.text).data;
-                timerModel.title = fileDialogue.openFile(drop.text).title;
-                timerModel.load();
-                drop.acceptProposedAction();
-                externalDrop.validFile = false;
+        onDropped: function (drop) {
+            if (drop.hasText) {
+                if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
+                    timerModel.data = fileDialogue.openFile(drop.text).data;
+                    timerModel.title = fileDialogue.openFile(drop.text).title;
+                    timerModel.load();
+                    drop.acceptProposedAction();
+                }
             }
-        }
-        onEntered: {
-            externalDrop.validFile = true;
-            drag.accept();
-            externalDropText.text = "Drop sequence preset here";
-        }
-        onExited: {
-            externalDrop.validFile = false;
         }
     }
 }

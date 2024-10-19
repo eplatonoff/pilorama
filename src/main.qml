@@ -18,9 +18,9 @@ ApplicationWindow {
 
     color: "transparent"
     flags: windowType
-    height: 708
+    height: 700
     maximumWidth: width
-    minimumHeight: 420
+    minimumHeight: 550
     minimumWidth: width
     title: qsTr("Pilorama")
     visible: true

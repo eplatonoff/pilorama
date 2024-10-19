@@ -54,7 +54,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         glyph: sequence.editable ? "\uf00c" : "\uf303"
         size: 14
-        tooltip: sequence.editable ? "Save" : "Edit"
+        tooltip: sequence.editable ? "Save sequence" : "Edit sequence"
 
         onReleased: {
             sequence.editable = !sequence.editable;
