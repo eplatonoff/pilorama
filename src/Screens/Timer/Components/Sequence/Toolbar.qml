@@ -15,10 +15,6 @@ Item {
         }
     }
 
-    FileDialogue {
-        id: fileDialogue
-
-    }
     Rectangle {
         id: layoutDivider
 

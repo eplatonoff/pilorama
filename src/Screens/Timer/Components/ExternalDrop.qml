@@ -43,9 +43,9 @@ Item {
 
         onDropped: if (drop.hasText) {
             if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
-                masterModel.data = fileDialogue.openFile(drop.text).data;
-                masterModel.title = fileDialogue.openFile(drop.text).title;
-                masterModel.load();
+                timerModel.data = fileDialogue.openFile(drop.text).data;
+                timerModel.title = fileDialogue.openFile(drop.text).title;
+                timerModel.load();
                 drop.acceptProposedAction();
                 externalDrop.validFile = false;
             }
@@ -53,7 +53,7 @@ Item {
         onEntered: {
             externalDrop.validFile = true;
             drag.accept();
-            externalDropText.text = "Drop " + window.title + " preset here";
+            externalDropText.text = "Drop sequence preset here";
         }
         onExited: {
             externalDrop.validFile = false;

@@ -1,13 +1,12 @@
 <RCC>
     <qresource prefix="/">
-        <file>Components/MouseTracker.qml</file>
-        <file>Components/ModelBurner.qml</file>
-        <file>Components/ResetButton.qml</file>
-        <file>Components/StartScreen.qml</file>
-        <file>Components/Dials.qml</file>
-        <file>Components/TimerScreen.qml</file>
-        <file>Components/ExternalDrop.qml</file>
-        <file>Components/Clock.qml</file>
+        <file>Components/_MouseTracker.qml</file>
+        <file>Components/_ModelBurner.qml</file>
+        <file>Components/_ResetButton.qml</file>
+        <file>Components/_StartScreen.qml</file>
+        <file>Components/_Dials.qml</file>
+        <file>Components/_TimerScreen.qml</file>
+        <file>Components/_Clock.qml</file>
 
 
         <!-- Refactored -->
@@ -35,7 +34,8 @@
 
         <file>Screens/Timer/Timer.qml</file>
         <file>Screens/Timer/Components/Sequence.qml</file>
-        <file>Screens/Timer/Components/Sequence/FileDialogue.qml</file>
+        <file>Screens/Timer/Components/FileDialogue.qml</file>
+        <file>Screens/Timer/Components/ExternalDrop.qml</file>
 
         <file>Screens/Timer/Components/Sequence/SequenceItem.qml</file>
         <file>Screens/Timer/Components/Sequence/Header.qml</file>

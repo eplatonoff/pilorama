@@ -29,6 +29,10 @@ Item {
             data: data
             title: title
         }
+        FileDialogue {
+            id: fileDialogue
+
+        }
         Rectangle {
             id: clockFace
 
@@ -37,6 +41,11 @@ Item {
             height: parent.width
             radius: 5000
             width: parent.width
+
+            ExternalDrop {
+                id: externalDrop
+
+            }
         }
         Sequence {
             id: sequence
