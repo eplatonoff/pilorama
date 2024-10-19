@@ -3,150 +3,118 @@ import QtQuick
 Item {
     id: macWindowControls
 
-    width: 52
-    height: 12
-
     property int buttonSize: 12
+
+    height: 12
+    width: 52
 
     Rectangle {
         id: closeButton
 
-        anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-
-        height: buttonSize
-        width: buttonSize
-
+        anchors.verticalCenter: parent.verticalCenter
         border.color: window.active ? '#E14945' : '#AAAAAAA7'
         border.width: 0.5
-
-        radius: 50
-
         color: window.active ? colors.getColor('osxClose') : colors.getColor('osxInactive')
+        height: buttonSize
+        radius: 50
+        width: buttonSize
 
         FaIcon {
             id: closeButtonIcon
 
-            color: '#6F000000'
-
-            size: 10
-
-            visible: area.containsMouse
-
-            anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-
+            anchors.verticalCenter: parent.verticalCenter
+            color: '#6F000000'
             glyph: "\uf00d"
+            size: 10
+            visible: area.containsMouse
         }
-
         MouseArea {
             anchors.fill: parent
+
             onClicked: {
-                window.close()
+                window.close();
             }
         }
     }
-
     Rectangle {
         id: minimizeButton
 
-        anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeButton.right
         anchors.leftMargin: 8
-
-        height: buttonSize
-        width: buttonSize
-
+        anchors.verticalCenter: parent.verticalCenter
         border.color: window.active ? '#DEA236' : '#AAAAAAA7'
         border.width: 0.5
-
+        color: window.active ? colors.getColor('osxMinimize') : colors.getColor('osxInactive')
+        height: buttonSize
         radius: 50
+        width: buttonSize
 
         FaIcon {
             id: minimizeButtonIcon
 
-            color: '#6F000000'
-
-            size: 10
-
-            visible: area.containsMouse
-
-            anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-
+            anchors.verticalCenter: parent.verticalCenter
+            color: '#6F000000'
             glyph: "\uf068"
+            size: 10
+            visible: area.containsMouse
         }
-
-        color: window.active ? colors.getColor('osxMinimize') : colors.getColor('osxInactive')
-
         MouseArea {
             anchors.fill: parent
+
             onClicked: {
-                window.showMinimized()
+                window.showMinimized();
             }
         }
     }
-
     Rectangle {
         id: maximizeButton
 
-        anchors.verticalCenter: parent.verticalCenter
         anchors.left: minimizeButton.right
         anchors.leftMargin: 8
-
-        height: buttonSize
-        width: buttonSize
-
+        anchors.verticalCenter: parent.verticalCenter
         border.color: window.active ? '#26AB36' : '#AAAAAAA7'
         border.width: 0.5
-
+        color: window.active ? colors.getColor('osxMaximize') : colors.getColor('osxInactive')
+        height: buttonSize
         radius: 50
+        width: buttonSize
 
         FaIcon {
             id: maximizeButtonUpIcon
 
-            color: '#6F000000'
-
-            size: 8
-
-            visible: area.containsMouse
-
-            anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-
+            anchors.verticalCenter: parent.verticalCenter
+            color: '#6F000000'
             glyph: "\uf0de"
+            size: 8
+            visible: area.containsMouse
         }
-
         FaIcon {
             id: maximizeButtonDownIcon
 
-            color: '#6F000000'
-
-            size: 8
-
-            visible: area.containsMouse
-
-            anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-
+            anchors.verticalCenter: parent.verticalCenter
+            color: '#6F000000'
             glyph: "\uf0dd"
+            size: 8
+            visible: area.containsMouse
         }
-
-        color: window.active ? colors.getColor('osxMaximize') : colors.getColor('osxInactive')
-
         MouseArea {
             anchors.fill: parent
+
             onClicked: {
-                window.showMaximized()
+                window.showMaximized();
             }
         }
     }
-
     MouseArea {
         id: area
 
+        anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
-        anchors.fill: parent
     }
 }

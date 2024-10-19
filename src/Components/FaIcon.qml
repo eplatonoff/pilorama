@@ -6,39 +6,36 @@ Text {
     property string glyph
     property int size: 18
 
-    horizontalAlignment: Text.AlignHCenter
-    width: size
-    height: size
+    signal entered
+    signal exited
+    signal pressed
+    signal released
 
-    text: glyph
+    color: area.containsMouse ? colors.getColor('mid') : colors.getColor('light')
     font.family: awesomeFont.name
     font.pixelSize: size
+    height: size
+    horizontalAlignment: Text.AlignHCenter
     renderType: Text.NativeRendering
-    color: area.containsMouse ? colors.getColor('mid') : colors.getColor('light')
-
-    signal pressed()
-
-    signal released()
-
-    signal entered()
-
-    signal exited()
-
-    MouseArea {
-        id: area
-
-        hoverEnabled: true
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onReleased: parent.released()
-        onPressed: parent.pressed()
-        onEntered: parent.entered()
-        onExited: parent.exited()
-    }
+    text: glyph
+    width: size
 
     Behavior on color {
         ColorAnimation {
             duration: 50
         }
+    }
+
+    MouseArea {
+        id: area
+
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+
+        onEntered: parent.entered()
+        onExited: parent.exited()
+        onPressed: parent.pressed()
+        onReleased: parent.released()
     }
 }

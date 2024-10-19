@@ -4,101 +4,99 @@ import "Sequence"
 
 Item {
     id: startScreen
-    visible: window.clockMode === "start"
-    width: 150
-    height: 150
+
+    property real fontSize: 14
+    property real headingFontSize: 23
+
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-
-    property real headingFontSize: 23
-    property real fontSize: 14
+    height: 150
+    visible: window.clockMode === "start"
+    width: 150
 
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
-        onPressed: { focus = true }
+
+        onPressed: {
+            focus = true;
+        }
     }
-
-
     TextInput {
         id: presetName
-        text: masterModel.title
-        anchors.top: parent.top
-        anchors.topMargin: 40
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
 
-        layer.enabled: true
-        wrapMode: TextEdit.NoWrap
-
-        readOnly: sequence.blockEdits
-        selectByMouse : !sequence.blockEdits
-
-        font.family: localFont.name
-        font.pixelSize: startScreen.headingFontSize
-
-        renderType: Text.NativeRendering
-        antialiasing: true
-
-        selectedTextColor : colors.getColor('dark')
-        selectionColor : colors.getColor('lighter')
-
-        color: colors.getColor("dark")
-
-        function acceptInput(){
-            masterModel.title = presetName.text
+        function acceptInput() {
+            masterModel.title = presetName.text;
         }
 
-        onTextChanged: { acceptInput() }
-        onAccepted: { acceptInput() }
-
-     }
-
-    Text {
-        id: totalTime
-        color: colors.getColor('mid')
-        text: "Total: " + masterModel.totalDuration() / 60 + " min"
-        anchors.top: presetName.bottom
-        anchors.topMargin: 6
-        verticalAlignment: Text.AlignVCenter
         anchors.left: parent.left
         anchors.leftMargin: 0
-        horizontalAlignment: Text.AlignHCenter
         anchors.right: parent.right
         anchors.rightMargin: 0
+        anchors.top: parent.top
+        anchors.topMargin: 40
+        antialiasing: true
+        color: colors.getColor("dark")
+        font.family: localFont.name
+        font.pixelSize: startScreen.headingFontSize
+        horizontalAlignment: Text.AlignHCenter
+        layer.enabled: true
+        readOnly: sequence.blockEdits
+        renderType: Text.NativeRendering
+        selectByMouse: !sequence.blockEdits
+        selectedTextColor: colors.getColor('dark')
+        selectionColor: colors.getColor('lighter')
+        text: masterModel.title
+        verticalAlignment: Text.AlignVCenter
+        wrapMode: TextEdit.NoWrap
 
+        onAccepted: {
+            acceptInput();
+        }
+        onTextChanged: {
+            acceptInput();
+        }
+    }
+    Text {
+        id: totalTime
+
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.top: presetName.bottom
+        anchors.topMargin: 6
+        color: colors.getColor('mid')
         font.family: localFont.name
         font.pixelSize: startScreen.fontSize
+        horizontalAlignment: Text.AlignHCenter
+        text: "Total: " + masterModel.totalDuration() / 60 + " min"
+        verticalAlignment: Text.AlignVCenter
     }
-
-
-    ResetButton{
+    ResetButton {
         id: play
-        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
+
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
         label: 'Start'
+        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
 
         MouseArea {
             id: playtrigger
+
             anchors.bottomMargin: 0
             anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
             propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
 
             onReleased: {
-                window.clockMode = "pomodoro"
-                pomodoroQueue.infiniteMode = true
-                globalTimer.start()
-                focus = true
-
+                window.clockMode = "pomodoro";
+                pomodoroQueue.infiniteMode = true;
+                globalTimer.start();
+                focus = true;
             }
         }
     }

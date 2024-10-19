@@ -4,30 +4,34 @@ Text {
     id: icon
 
     property string glyph
-    property int size: 24
     property bool propagateComposedEvents: true
+    property int size: 24
 
-    signal pressed()
-    signal released()
-    signal entered()
-    signal exited()
+    signal entered
+    signal exited
+    signal pressed
+    signal released
 
-    text: glyph
+    color: colors.getColor('light')
     font.family: iconFont.name
     font.pixelSize: size
     renderType: Text.NativeRendering
-    color: colors.getColor('light')
+    text: glyph
 
-    Behavior on color { ColorAnimation { duration: 80 } }
-
-    MouseArea {
-       anchors.fill: parent
-       cursorShape: Qt.PointingHandCursor
-       propagateComposedEvents: parent.propagateComposedEvents
-       onReleased: parent.released()
-       onPressed: parent.pressed()
-       onEntered: parent.entered()
-       onExited: parent.exited()
+    Behavior on color {
+        ColorAnimation {
+            duration: 80
+        }
     }
 
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        propagateComposedEvents: parent.propagateComposedEvents
+
+        onEntered: parent.entered()
+        onExited: parent.exited()
+        onPressed: parent.pressed()
+        onReleased: parent.released()
+    }
 }

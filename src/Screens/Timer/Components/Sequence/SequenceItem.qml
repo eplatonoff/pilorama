@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 
 import "../../../../Components"
 
@@ -41,6 +42,11 @@ Item {
         glyph: "\uf0dc"
         size: 12
         width: sequence.editable ? 12 : 0
+
+        ToolTip.text: "This is a tooltip for Text element"
+        ToolTip.visible: Qt.binding(function () {
+            return hovered;
+        })
 
         Behavior on width {
             NumberAnimation {

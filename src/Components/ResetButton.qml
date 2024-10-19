@@ -1,38 +1,34 @@
 import QtQuick
 
-Item{
+Item {
     id: button
-
-    width: 80
-    height: 34
 
     property string label: 'Button'
 
+    height: 34
+    width: 80
+
     Rectangle {
-        color: colors.getColor("lighter")
-//        color: "transparent"
-//        border.color: colors.getColor("light")
-//        border.width: 3
-        radius: 22
         anchors.fill: parent
+        color: colors.getColor("lighter")
+        //        color: "transparent"
+        //        border.color: colors.getColor("light")
+        //        border.width: 3
+        radius: 22
 
         Text {
             id: buttonText
-            text: button.label
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            anchors.fill: parent
 
+            anchors.fill: parent
+            color: colors.getColor("dark")
             font.family: localFont.name
             font.pixelSize: 15
-
-            color: colors.getColor("dark")
-
+            horizontalAlignment: Text.AlignHCenter
+            text: button.label
+            verticalAlignment: Text.AlignVCenter
         }
     }
 }
-
-
 
 /*##^##
 Designer {
