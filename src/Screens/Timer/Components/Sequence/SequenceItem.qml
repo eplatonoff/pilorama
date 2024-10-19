@@ -43,11 +43,6 @@ Item {
         size: 12
         width: sequence.editable ? 12 : 0
 
-        ToolTip.text: "This is a tooltip for Text element"
-        ToolTip.visible: Qt.binding(function () {
-            return hovered;
-        })
-
         Behavior on width {
             NumberAnimation {
                 duration: sequence.switchModeDuration
@@ -57,7 +52,12 @@ Item {
     MouseArea {
         id: itemDragTrigger
 
+        ToolTip.delay: 500
+        ToolTip.text: "Drag to reorder"
+        ToolTip.visible: containsMouse
         anchors.fill: dragHandler
+        anchors.margins: -2
+        cursorShape: containsPress ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         drag.target: sequenceItem
         hoverEnabled: true
         propagateComposedEvents: true
@@ -147,13 +147,14 @@ Item {
         }
 
         FaIcon {
-            id: closeButton
+            id: removeButton
 
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             color: colors.getColor('light')
             glyph: "\uf00d"
             size: 14
+            tooltip: "Remove"
 
             onReleased: {
                 timerModel.remove(index);
@@ -162,12 +163,13 @@ Item {
         FaIcon {
             id: copyButton
 
-            anchors.right: closeButton.left
+            anchors.right: removeButton.left
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
             color: colors.getColor('light')
             glyph: "\uf0c5"
             size: 14
+            tooltip: "Duplicate"
 
             onReleased: {
                 timerModel.add(model.name, model.color, model.duration);

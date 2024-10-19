@@ -40,6 +40,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             glyph: "\uf07c"
             size: 14
+            tooltip: "Load sequence from file"
 
             onReleased: {
                 fileDialogue.openDialogue();
@@ -53,6 +54,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             glyph: "\uf0c7"
             size: 14
+            tooltip: "Save sequence to file"
 
             onReleased: {
                 fileDialogue.saveDialogue();

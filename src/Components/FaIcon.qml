@@ -1,16 +1,21 @@
 import QtQuick
+import QtQuick.Controls
 
 Text {
     id: icon
 
     property string glyph
     property int size: 18
+    property string tooltip
 
     signal entered
     signal exited
     signal pressed
     signal released
 
+    ToolTip.delay: 500
+    ToolTip.text: tooltip
+    ToolTip.visible: (tooltip !== "" && area.containsMouse)
     color: area.containsMouse ? colors.getColor('mid') : colors.getColor('light')
     font.family: awesomeFont.name
     font.pixelSize: size
