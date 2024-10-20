@@ -11,9 +11,6 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: colors.getColor("lighter")
-        //        color: "transparent"
-        //        border.color: colors.getColor("light")
-        //        border.width: 3
         radius: 22
 
         Text {
@@ -29,9 +26,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

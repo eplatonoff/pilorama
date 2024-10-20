@@ -1,15 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>Components/_MouseTracker.qml</file>
-        <file>Components/_ModelBurner.qml</file>
-        <file>Components/_ResetButton.qml</file>
-        <file>Components/_StartScreen.qml</file>
-        <file>Components/_Dials.qml</file>
-        <file>Components/_TimerScreen.qml</file>
-        <file>Components/_Clock.qml</file>
-
-
-        <!-- Refactored -->
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
@@ -36,6 +26,13 @@
         <file>Screens/Timer/Components/Sequence.qml</file>
         <file>Screens/Timer/Components/FileDialogue.qml</file>
         <file>Screens/Timer/Components/ExternalDrop.qml</file>
+        <file>Screens/Timer/Components/Timer/Clock.qml</file>
+        <file>Screens/Timer/Components/Timer/Dials.qml</file>
+        <file>Screens/Timer/Components/Timer/BurnerModel.qml</file>
+        <file>Screens/Timer/Components/Timer/MouseTracker.qml</file>
+        <file>Screens/Timer/Components/Timer/ResetButton.qml</file>
+        <file>Screens/Timer/Components/Timer/StartScreen.qml</file>
+        <file>Screens/Timer/Components/Timer/TimerScreen.qml</file>
 
         <file>Screens/Timer/Components/Sequence/SequenceItem.qml</file>
         <file>Screens/Timer/Components/Sequence/Header.qml</file>

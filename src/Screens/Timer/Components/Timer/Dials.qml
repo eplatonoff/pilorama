@@ -1,17 +1,19 @@
 import QtQuick
 
 Canvas {
+    id: canvas
+
+    required property var burnerModel
     property real calibrationDash: 2
     property real calibrationGrades: 12
     property real calibrationPadding: 7
     property real calibrationWidth: 4
     property real centreX: width / 2
     property real centreY: height / 2
-    required property var colors
     required property real duration
-    property real fakeDash: 2
+    property real fakeDash: 1
     property real fakeDialDiameter: mainDialDiameter - mainWidth * 2 - fakePadding
-    property real fakeGrades: 180
+    property real fakeGrades: 240
     property real fakePadding: 10
     property real fakeWidth: 12
     required property bool isRunning
@@ -21,10 +23,9 @@ Canvas {
     property real mainTurnsPadding: 6
     property real mainTurnsWidth: 2
     property real mainWidth: 4
-    required property var masterModel
-    required property var pomodoroQueue
     required property real splitDuration
     required property var splitToSequence
+    required property var timerModel
 
     function drawCalibration(ctx, diameter, stroke, divisions) {
         var clength = Math.PI * (diameter - stroke) / stroke;
@@ -48,9 +49,7 @@ Canvas {
         ctx.stroke();
     }
     function drawCalibrationMarks(ctx) {
-        if (pomodoroQueue.infiniteMode) {
-            drawCalibration(ctx, width, fakeWidth, masterModel.get(pomodoroQueue.first().id).duration / 60);
-        } else if (!pomodoroQueue.infiniteMode && !isRunning && duration) {
+        if (!isRunning && duration) {
             drawCalibration(ctx, duration > 0 ? fakeDialDiameter : width, fakeWidth, 12);
         } else {
             drawCalibration(ctx, duration > 0 ? fakeDialDiameter : width, fakeWidth, 60);
@@ -70,24 +69,18 @@ Canvas {
         }
         drawDial(ctx, mainDialDiameter, mainWidth, colors.getColor('mid'), 0, duration - (mainDialTurns * 3600));
     }
-    function drawPomodoroDial(ctx) {
-        if (pomodoroQueue.infiniteMode) {
-            drawDial(ctx, width, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0, splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration);
-        } else if (!pomodoroQueue.infiniteMode && splitToSequence) {
-            var splitVisibleEnd = 0;
-            var splitVisibleStart = 0;
-            var splitColor;
-            var prevSplit = 0;
-            var splitIncrement = 3600 / duration;
-            for (var i = 0; i <= pomodoroQueue.count - 1; i++) {
-                prevSplit = i <= 0 ? 0 : pomodoroQueue.get(i - 1).duration;
-                splitVisibleStart = prevSplit + splitVisibleStart;
-                splitVisibleEnd = pomodoroQueue.get(i).duration + splitVisibleEnd;
-                splitColor = masterModel.get(pomodoroQueue.get(i).id).color;
-                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(splitColor), splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart, splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd);
-            }
-        } else {
-            drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor('light'), 0, duration - (mainDialTurns * 3600));
+    function drawTimerDial(ctx) {
+        var splitVisibleEnd = 0;
+        var splitVisibleStart = 0;
+        var splitColor;
+        var prevSplit = 0;
+        var splitIncrement = 3600 / duration;
+        for (var i = 0; i <= burnerModel.count - 1; i++) {
+            prevSplit = i <= 0 ? 0 : burnerModel.get(i - 1).duration;
+            splitVisibleStart = prevSplit + splitVisibleStart;
+            splitVisibleEnd = burnerModel.get(i).duration + splitVisibleEnd;
+            splitColor = timerModel.get(burnerModel.get(i).id).color;
+            drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(splitColor), splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart, splitVisibleEnd <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd);
         }
     }
 
@@ -99,7 +92,7 @@ Canvas {
         ctx.clearRect(0, 0, width, height);
         drawMainDialTurns(ctx);
         drawCalibrationMarks(ctx);
-        drawPomodoroDial(ctx);
+        drawTimerDial(ctx);
         ctx.restore();
     }
 }

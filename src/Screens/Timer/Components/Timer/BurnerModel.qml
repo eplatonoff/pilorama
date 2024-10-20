@@ -8,10 +8,10 @@ ListModel {
     property int totalPomodoros: 0
 
     function _createBatch() {
-        changeQueue(masterModel.totalDuration());
+        changeQueue(timerModel.totalDuration());
     }
     function _createNext() {
-        const masterCount = masterModel.count;
+        const masterCount = timerModel.count;
         if (masterCount === 0)
             throw "master model is empty";
         const masterId = count >= masterCount ? count % masterCount : count;
@@ -27,7 +27,7 @@ ListModel {
         return itemDurationBound(last());
     }
     function _tryToCreateBatch() {
-        if (infiniteMode && count === 0) {
+        if (count === 0) {
             _createBatch();
         }
     }
@@ -87,7 +87,7 @@ ListModel {
         return get(0);
     }
     function itemDurationBound(item) {
-        return masterModel.get(item.id).duration;
+        return timerModel.get(item.id).duration;
     }
     function last() {
         return get(count - 1);
@@ -123,10 +123,6 @@ ListModel {
     onCountChanged: {
         if (count === 0)
             totalPomodoros = 0;
-        _tryToCreateBatch();
-    }
-    onInfiniteModeChanged: {
-        clear();
         _tryToCreateBatch();
     }
 }

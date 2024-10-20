@@ -4,20 +4,13 @@ Item {
     id: clock
 
     property string currentTime: ''
-    property real duration: globalTimer.duration
+    property real duration: piloramaTimer.duration
     property string notificationTime: ''
-    property real splitDuration: globalTimer.splitDuration
+    property real splitDuration: piloramaTimer.splitDuration
 
-    function getDuration() {
-        if (!pomodoroQueue.infiniteMode) {
-            return duration;
-        } else {
-            return splitDuration ? splitDuration : masterModel.get(0).duration;
-        }
-    }
     function getNotificationTime() {
         let _t = getTime().h * 3600 + getTime().min * 60 + getTime().sec;
-        let t = _t + getDuration();
+        let t = _t + duration;
         t = t >= 86400 ? t % 86400 : t;
         let h = Math.floor(t / 3600);
         let m = Math.floor(t / 60) - h * 60;

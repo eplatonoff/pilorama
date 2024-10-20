@@ -1,12 +1,12 @@
 import QtQuick
 
-import "utils/geometry.mjs" as GeometryScripts
+import "../../../../utils/geometry.mjs" as GeometryScripts
 
 MouseArea {
     property real _prevAngle: 0
     property real _totalRotated: 0
     property real _totalRotatedSecs: 0
-    property real _totalRotatedSecsLimit: globalTimer.timerLimit
+    property real _totalRotatedSecsLimit: piloramaTimer.timerLimit
     property point circleStart: Qt.point(0, 0)
     property point mousePoint: Qt.point(0, 0)
     property real scroll: 0
@@ -17,10 +17,10 @@ MouseArea {
     anchors.fill: parent
     cursorShape: Qt.OpenHandCursor
     propagateComposedEvents: true
-    visible: masterModel.count > 0
+    visible: timerModel.count > 0
 
     onPositionChanged: mouse => {
-        globalTimer.stop();
+        piloramaTimer.stop();
         const angle = GeometryScripts.mouseAngle(Qt.point(mouse.x, mouse.y), Qt.point(canvas.centreX, canvas.centreY));
         const delta = GeometryScripts.lessDelta(angle, this._prevAngle);
         this._prevAngle = angle;
@@ -36,17 +36,16 @@ MouseArea {
             this.rotated(angle < 0 ? (180 - angle) : angle);
         }
         this._prevAngle = angle;
-        globalTimer.stop();
-        pomodoroQueue.count > 1 ? pomodoroQueue.restoreDuration(0) : undefined;
-        pomodoroQueue.infiniteMode = false;
+        piloramaTimer.stop();
+        burnerModel.count > 1 ? burnerModel.restoreDuration(0) : undefined;
         sequence.setCurrentItem(-1);
     }
     onReleased: {
         cursorShape = Qt.OpenHandCursor;
-        if (globalTimer.duration > 0) {
-            globalTimer.start();
+        if (piloramaTimer.duration > 0) {
+            piloramaTimer.start();
         } else {
-            globalTimer.stop();
+            piloramaTimer.stop();
             window.clockMode = "start";
             notifications.stopSound();
         }
@@ -56,9 +55,9 @@ MouseArea {
         this._totalRotated += delta;
         this._totalRotatedSecs += deltaSecs;
         if (_totalRotatedSecs >= 0 && _totalRotatedSecs <= _totalRotatedSecsLimit) {
-            globalTimer.duration = _totalRotatedSecs;
+            piloramaTimer.duration = _totalRotatedSecs;
             durationSettings.timer = _totalRotatedSecs;
-            pomodoroQueue.changeQueue(deltaSecs);
+            burnerModel.changeQueue(deltaSecs);
         } else if (_totalRotatedSecs > _totalRotatedSecsLimit) {
             _totalRotatedSecs = _totalRotatedSecsLimit;
         } else {

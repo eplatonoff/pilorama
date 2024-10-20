@@ -1,5 +1,7 @@
 import QtQuick
 
+import "../../../../Components"
+
 Item {
     id: timer
 
@@ -12,10 +14,10 @@ Item {
         return t;
     }
     function getDuration() {
-        if (!pomodoroQueue.infiniteMode) {
-            return globalTimer.duration;
+        if (!burnerModel.infiniteMode) {
+            return piloramaTimer.duration;
         } else {
-            return globalTimer.splitDuration;
+            return piloramaTimer.splitDuration;
         }
     }
     function pad(value) {
@@ -55,27 +57,6 @@ Item {
             glyph: "\uea02"
             size: 18
         }
-
-        // Image {
-        //     id: bellIcon
-        //     anchors.left: parent.left
-        //     anchors.leftMargin: 0
-        //     anchors.verticalCenter: digitalTime.verticalCenter
-        //     sourceSize.height: 16
-        //     sourceSize.width: 16
-        //     source: "../assets/img/bell.svg"
-        //     antialiasing: true
-        //     fillMode: Image.PreserveAspectFit
-
-        //     ColorOverlay{
-        //         id: bellIconOverlay
-        //         anchors.fill: parent
-        //         source: parent
-        //         color: appSettings.darkMode ? colors.accentDark : colors.accentLight
-        //         antialiasing: true
-        //     }
-        // }
-
         Text {
             id: digitalTime
 
@@ -114,7 +95,7 @@ Item {
             font.pixelSize: 22
             horizontalAlignment: Text.AlignLeft
             renderType: Text.NativeRendering
-            text: !globalTimer.running ? "min" : pad(count(getDuration())[2])
+            text: !piloramaTimer.running ? "min" : pad(count(getDuration())[2])
             verticalAlignment: Text.AlignTop
             width: 36
         }
@@ -180,14 +161,13 @@ Item {
             propagateComposedEvents: true
 
             onReleased: {
-                pomodoroQueue.infiniteMode = false;
-                pomodoroQueue.clear();
-                mouseArea._prevAngle = 0;
-                mouseArea._totalRotatedSecs = 0;
-                globalTimer.duration = 0;
-                globalTimer.stop();
+                burnerModel.infiniteMode = false;
+                burnerModel.clear();
+                mouseTrackerArea._prevAngle = 0;
+                mouseTrackerArea._totalRotatedSecs = 0;
+                piloramaTimer.duration = 0;
+                piloramaTimer.stop();
                 window.clockMode = "start";
-                notifications.stopSound();
                 sequence.setCurrentItem(-1);
                 focus = true;
             }

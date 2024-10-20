@@ -12,12 +12,12 @@ QtObject {
     }
 
     function send(name) {
-    // if (appSettings.audioNotificationsEnabled) {
-    //     soundNotification.play();
-    // }
-    // tray.notify(name)
+        if (appSettings.audioNotificationsEnabled) {
+            soundNotification.play();
+        }
+        tray.notify(name);
     }
     function sendFromItem(item) {
-    //     send(masterModel.get(item.id).name)
+        send(timerModel.get(item.id).name);
     }
 }

@@ -16,6 +16,14 @@ ApplicationWindow {
     property bool quitOnClose: false
     property int windowType: Qt.FramelessWindowHint
 
+    function checkClockMode() {
+        if (piloramaTimer.running) {
+            clockMode = "pomodoro";
+        } else {
+            clockMode = "timer";
+        }
+    }
+
     color: "transparent"
     flags: windowType
     height: 700
@@ -101,9 +109,9 @@ ApplicationWindow {
         property alias quitOnClose: window.quitOnClose
         property bool showInDock: false
 
-        onColorThemeChanged:
-        // canvas.requestPaint();
-        {}
+        onColorThemeChanged: {
+            canvas.requestPaint();
+        }
     }
 
     // System theme provider
@@ -146,10 +154,30 @@ ApplicationWindow {
     TrayIcon {
         id: tray
 
+        burnerModel: timer.getBurnerModel()
+        timerModel: timer.getTimerModel()
     }
     PiloramaTimer {
-        id: globalTimer
+        id: piloramaTimer
 
+        burnerModel: timer.getBurnerModel()
+        canvas: timer.getCanvas()
+        mouseTrackerArea: timer.getMouseTrackerArea()
+        sequence: timer.getSequence()
+    }
+    QtObject {
+        id: time
+
+        property real hours: 0
+        property real minutes: 0
+        property real seconds: 0
+
+        function updateTime() {
+            const currentDate = new Date();
+            hours = currentDate.getHours();
+            minutes = currentDate.getMinutes();
+            seconds = currentDate.getSeconds();
+        }
     }
 
     // Main application "window"

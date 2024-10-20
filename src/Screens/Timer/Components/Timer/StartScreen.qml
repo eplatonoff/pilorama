@@ -1,7 +1,5 @@
 import QtQuick
 
-import "Sequence"
-
 Item {
     id: startScreen
 
@@ -27,7 +25,7 @@ Item {
         id: presetName
 
         function acceptInput() {
-            masterModel.title = presetName.text;
+            timerModel.title = presetName.text;
         }
 
         anchors.left: parent.left
@@ -42,12 +40,11 @@ Item {
         font.pixelSize: startScreen.headingFontSize
         horizontalAlignment: Text.AlignHCenter
         layer.enabled: true
-        readOnly: sequence.blockEdits
         renderType: Text.NativeRendering
         selectByMouse: !sequence.blockEdits
         selectedTextColor: colors.getColor('dark')
         selectionColor: colors.getColor('lighter')
-        text: masterModel.title
+        text: timerModel.title
         verticalAlignment: Text.AlignVCenter
         wrapMode: TextEdit.NoWrap
 
@@ -71,7 +68,7 @@ Item {
         font.family: localFont.name
         font.pixelSize: startScreen.fontSize
         horizontalAlignment: Text.AlignHCenter
-        text: "Total: " + masterModel.totalDuration() / 60 + " min"
+        text: "Total: " + timerModel.totalDuration() / 60 + " min"
         verticalAlignment: Text.AlignVCenter
     }
     ResetButton {
@@ -81,7 +78,7 @@ Item {
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
         label: 'Start'
-        visible: masterModel.count > 0 && masterModel.totalDuration() > 0
+        visible: timerModel.count > 0 && timerModel.totalDuration() > 0
 
         MouseArea {
             id: playtrigger
@@ -94,8 +91,7 @@ Item {
 
             onReleased: {
                 window.clockMode = "pomodoro";
-                pomodoroQueue.infiniteMode = true;
-                globalTimer.start();
+                piloramaTimer.start();
                 focus = true;
             }
         }

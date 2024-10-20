@@ -109,7 +109,7 @@ Item {
 
         validator: IntValidator {
             bottom: 1
-            top: globalTimer.timerLimit / 60
+            top: piloramaTimer.timerLimit / 60
         }
 
         onActiveFocusChanged: {

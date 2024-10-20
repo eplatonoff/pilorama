@@ -1,0 +1,9 @@
+[
+  {"id": 0, "name": "Red", "color": "red", "duration": 600},
+  {"id": 1, "name": "Orange", "color": "orange", "duration": 600},
+  {"id": 2, "name": "Yellow", "color": "yellow", "duration": 600},
+  {"id": 3, "name": "Green", "color": "green", "duration": 600},
+  {"id": 4, "name": "Cyan", "color": "cyan", "duration": 600},
+  {"id": 5, "name": "Blue", "color": "blue", "duration": 600},
+  {"id": 6, "name": "Violet", "color": "violet", "duration": 600}
+]
