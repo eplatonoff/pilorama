@@ -42,6 +42,9 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("MacOSController", &macOSController);
 
+	qputenv("QML_XHR_ALLOW_FILE_WRITE", QByteArray("1"));
+	qputenv("QML_XHR_ALLOW_FILE_READ", QByteArray("1"));
+
     engine.load(url);
 
     return app.exec();

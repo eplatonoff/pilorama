@@ -43,21 +43,22 @@ Item{
         currentFolder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
 
         onAccepted: {
-            masterModel.data = openFile(fileUrl).data
-            masterModel.title = openFile(fileUrl).title
+            masterModel.data = openFile(selectedFile).data
+            masterModel.title = openFile(selectedFile).title
             masterModel.load()
         }
     }
 
     FileDialog {
         id: saveFileDialog
+        fileMode: FileDialog.SaveFile
         nameFilters: ["JSON files (*.json)"]
         defaultSuffix : 'json'
         currentFolder: StandardPaths.writableLocation(StandardPaths.DesktopLocation) + "/" + masterModel.title + '.json'
 
         onAccepted: {
             masterModel.save()
-            masterModel.title = saveFile(fileUrl)
+            masterModel.title = saveFile(selectedFile)
         }
     }
 }
