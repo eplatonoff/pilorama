@@ -17,7 +17,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: "6.7.2"
+        version: "6.8.2"
         modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
@@ -88,7 +88,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.7.2'
+        version: '6.8.2'
         modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
