@@ -32,7 +32,7 @@ Item{
 
     function saveFile(url) {
         var request = new XMLHttpRequest();
-        request.open("PUT", url, false);
+        request.open("PUT", url, true); // async false created empty files on macos
         request.send(masterModel.data);
         return getTitle(url)
     }
