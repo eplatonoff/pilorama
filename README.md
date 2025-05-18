@@ -28,12 +28,14 @@ Precompiled builds are available [here](https://github.com/eplatonoff/pilorama/r
 
 Building from source:
 
-    $ sudo apt install build-essential qt6-declarative-dev libqt6svg6-dev qt6-base-dev qt6-multimedia-dev qml6-module-qt-labs-platform qml6-module-qt-labs-settings qml6-module-qtmultimedia qml6-module-qtquick-controls qml6-module-qtquick-controls qml6-module-qtquick-dialogs  # Ubuntu 24.04
+    $ sudo apt install build-essential cmake qt6-declarative-dev libqt6svg6-dev qt6-base-dev qt6-multimedia-dev qml6-module-qt-labs-platform qml6-module-qt-labs-settings qml6-module-qtmultimedia qml6-module-qtquick-controls qml6-module-qtquick-controls qml6-module-qtquick-dialogs  # Ubuntu 24.04
 
     $ git clone https://github.com/eplatonoff/pilorama
     $ cd pilorama
-    $ qmake src/pilorama.pro 
-    $ make
+    $ mkdir build
+    $ cd build
+    $ cmake ../src
+    $ make -j
     $ ./Pilorama
 
 
