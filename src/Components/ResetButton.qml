@@ -146,8 +146,6 @@ Item{
 
         }
 
-
-
         Icon {
             id: rightButton
             propagateComposedEvents: false
