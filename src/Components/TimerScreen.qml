@@ -205,4 +205,23 @@ Item {
         }
     }
 
+    Icon {
+        id: pauseButton
+        visible: appSettings.showPauseUI && (window.clockMode === "timer" || window.clockMode === "pomodoro")
+        glyph: globalTimer.running ? "\u23F8" : "\u25B6" // Pause/Play unicode glyphs
+        anchors.top: resetButton.bottom
+        anchors.topMargin: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        onReleased: {
+            if (globalTimer.running) {
+                globalTimer.stop()
+            } else {
+                globalTimer.triggeredOnStart = false
+                globalTimer.start()
+                globalTimer.triggeredOnStart = true
+            }
+        }
+    }
+
 }

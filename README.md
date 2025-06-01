@@ -12,6 +12,7 @@
 - Dynamic tray icon and menu
 - JSON Presets
 - Night mode
+- Optional pause button
 
 
 ## Installation
