@@ -178,7 +178,7 @@ ApplicationWindow {
     }
 
     ModelBurner {
-        id: pomodoroQueue
+        id: pomodoroQueue // TODO rename the ID
         durationSettings: durationSettings
     }
 

@@ -9,7 +9,7 @@ import ".."
 Item {
     id: sequence
 
-    property bool blockEdits: globalTimer.duration || globalTimer.running
+    property bool blockEdits: globalTimer.duration || globalTimer.running || pomodoroQueue.count > 0
     property bool showQueue: true
 
     function setCurrentItem(id){
