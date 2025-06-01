@@ -185,7 +185,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         splitMode: appSettings.showPauseUI
         iconSize: 22
-        toggleIcon: globalTimer.running ? "\uea14" : "\uea13"
+        running: globalTimer.running
         togglePulsing: !globalTimer.running
 
         onStartResetClicked: {

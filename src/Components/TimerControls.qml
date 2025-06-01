@@ -1,16 +1,25 @@
 import QtQuick
 
-Item{
+Item {
     id: button
 
     width: 130
     height: 34
 
     property string label: "Button"
+
+    // All next properties are used only in split mode
+
     // When true shows reset and pause/resume buttons side by side
     property bool splitMode: false
+
+    // Icons from the custom font
     property string resetIcon: "\uea12"
-    property string toggleIcon: "\uea14"
+    property string runningIcon: "\uea14"
+    property string stoppedIcon: "\uea13"
+
+    property bool running: false
+
     property real iconSize: 22
     property bool togglePulsing: false
 
@@ -152,7 +161,7 @@ Item{
             id: toggleButton
             propagateComposedEvents: false
 
-            glyph: button.toggleIcon
+            glyph: button.running ? button.runningIcon : button.stoppedIcon
 
             width: parent.width / 2
             anchors.top: parent.top
