@@ -22,10 +22,15 @@ Rectangle {
 
     onCurrentItemChanged: { activateBlink(currentItem) }
 
+    Connections {
+        target: globalTimer
+        function onRunningChanged() { activateBlink(currentItem) }
+    }
+
     onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
     function activateBlink(bool){
-        if(bool && masterModel.get(lineId).duration !== 0){
+        if(bool && masterModel.get(lineId).duration !== 0 && globalTimer.running){
             blinkTimer.start()
         } else {
             blinkTimer.stop()
