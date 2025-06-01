@@ -77,19 +77,6 @@ Item {
         }
     ]
 
-    // transitions: [
-    //     Transition {
-    //         from: "*"
-    //         to: "*"
-    //         NumberAnimation {
-    //             properties: "height, opacity";
-    //             duration: 1000
-    //             easing.type: Easing.OutQuad
-    //         }
-    //     }
-    // ]
-
-
     Rectangle {
         color: colors.getColor("lighter")
         radius: 22
@@ -120,8 +107,6 @@ Item {
             }
         }
 
-
-
         Icon {
             id: resetButton
             propagateComposedEvents: false
@@ -141,8 +126,6 @@ Item {
 
             onReleased: button.startResetClicked()
         }
-
-
 
         Rectangle {
             id: divider
@@ -186,17 +169,5 @@ Item {
                 onTriggered: toggleButton.opacity = toggleButton.opacity === 1 ? 0.4 : 1
             }
         }
-
-
     }
-
-
 }
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
