@@ -107,7 +107,9 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: !globalTimer.running ? "min" : pad(count(getDuration())[2]);
+            text: globalTimer.running || getDuration() > 0
+                  ? pad(count(getDuration())[2])
+                  : "min";
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
             anchors.top: digitalMin.top
