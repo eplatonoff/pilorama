@@ -8,9 +8,15 @@ Item{
 
     property string label: 'Button'
     property bool splitMode: false
-    property string leftIcon: "O"
-    property string rightIcon: ">"
+    property string leftIcon: "\uea12"
+    property string rightIcon: "\uea14"
     property real iconSize: 22
+    property bool rightPulsing: false
+
+    onRightPulsingChanged: {
+        if (!rightPulsing)
+            rightButton.opacity = 1
+    }
 
     signal clicked()
     signal leftClicked()
@@ -159,6 +165,16 @@ Item{
             color: colors.getColor("dark")
 
             onReleased: button.rightClicked()
+
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+
+            Timer {
+                id: pulseTimer
+                interval: 700
+                running: button.rightPulsing
+                repeat: true
+                onTriggered: rightButton.opacity = rightButton.opacity === 1 ? 0.4 : 1
+            }
         }
 
 
