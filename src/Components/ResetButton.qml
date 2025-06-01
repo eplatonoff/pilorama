@@ -87,6 +87,7 @@ Item{
         // Single button mode
         MouseArea {
             id: startButton
+            cursorShape: Qt.PointingHandCursor
             propagateComposedEvents: false
             visible: !button.splitMode
             anchors.fill: parent
