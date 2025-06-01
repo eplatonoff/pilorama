@@ -90,23 +90,6 @@ Item {
             pomodoroQueue.infiniteMode = true
             globalTimer.start()
         }
-
-        // MouseArea {
-        //     id: playtrigger
-        //     anchors.bottomMargin: 0
-        //     anchors.fill: parent
-        //     hoverEnabled: true
-        //     propagateComposedEvents: true
-        //     cursorShape: Qt.PointingHandCursor
-        //
-        //     onReleased: {
-        //         window.clockMode = "pomodoro"
-        //         pomodoroQueue.infiniteMode = true
-        //         globalTimer.start()
-        //         // focus = true
-        //
-        //     }
-        // }
     }
 
 
