@@ -23,11 +23,6 @@ Item {
     property real iconSize: 22
     property bool togglePulsing: false
 
-    onTogglePulsingChanged: {
-        if (!togglePulsing)
-            toggleButton.opacity = 1
-    }
-
     // Emitted when either the reset button or the single start/reset button is clicked
     signal startResetClicked()
     // Emitted when the pause/resume button is clicked
@@ -93,7 +88,6 @@ Item {
 
             Text {
                 id: buttonText
-                visible: !button.splitMode
                 text: button.label
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
@@ -167,6 +161,7 @@ Item {
                 running: button.togglePulsing
                 repeat: true
                 onTriggered: toggleButton.opacity = toggleButton.opacity === 1 ? 0.4 : 1
+                onRunningChanged: if (!running) toggleButton.opacity = 1
             }
         }
     }
