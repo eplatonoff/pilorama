@@ -24,13 +24,13 @@ Rectangle {
 
     Connections {
         target: globalTimer
-        function onRunningChanged() { activateBlink(currentItem) }
+        function onRunningChanged(running) { activateBlink(running && colorSelector.currentItem) }
     }
 
     onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
     function activateBlink(bool){
-        if(bool && masterModel.get(lineId).duration !== 0 && globalTimer.running){
+        if(bool && masterModel.get(lineId).duration !== 0){
             blinkTimer.start()
         } else {
             blinkTimer.stop()
