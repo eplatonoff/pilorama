@@ -177,26 +177,22 @@ Item {
         }
     }
 
-    ResetButton {
-        id: resetButton
+    TimerControls {
+        id: controls
         label: 'Reset'
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
         splitMode: appSettings.showPauseUI
         iconSize: 22
-        rightIcon: globalTimer.running ? "\uea14" : "\uea13"
-        rightPulsing: !globalTimer.running
+        toggleIcon: globalTimer.running ? "\uea14" : "\uea13"
+        togglePulsing: !globalTimer.running
 
-        onClicked: {
+        onStartResetClicked: {
            reset();
         }
 
-        onLeftClicked: {
-           reset();
-        }
-
-        onRightClicked: {
+        onToggleClicked: {
             if (globalTimer.running) {
                 globalTimer.stop()
             } else {

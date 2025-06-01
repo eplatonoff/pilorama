@@ -6,21 +6,23 @@ Item{
     width: 130
     height: 34
 
-    property string label: 'Button'
+    property string label: "Button"
+    // When true shows reset and pause/resume buttons side by side
     property bool splitMode: false
-    property string leftIcon: "\uea12"
-    property string rightIcon: "\uea14"
+    property string resetIcon: "\uea12"
+    property string toggleIcon: "\uea14"
     property real iconSize: 22
-    property bool rightPulsing: false
+    property bool togglePulsing: false
 
-    onRightPulsingChanged: {
-        if (!rightPulsing)
-            rightButton.opacity = 1
+    onTogglePulsingChanged: {
+        if (!togglePulsing)
+            toggleButton.opacity = 1
     }
 
-    signal clicked()
-    signal leftClicked()
-    signal rightClicked()
+    // Emitted when either the reset button or the single start/reset button is clicked
+    signal startResetClicked()
+    // Emitted when the pause/resume button is clicked
+    signal toggleClicked()
 
     state: splitMode ? "split" : "default"
 
@@ -34,12 +36,12 @@ Item{
                 width: 0
             }
             PropertyChanges {
-                target: leftButton
+                target: resetButton
                 visible: false
                 opacity: 0
             }
             PropertyChanges {
-                target: rightButton
+                target: toggleButton
                 visible: false
                 opacity: 0
             }
@@ -54,13 +56,13 @@ Item{
             }
             PropertyChanges {
                 visible: true
-                target: leftButton
+                target: resetButton
                 opacity: 1
 
             }
             PropertyChanges {
                 visible: true
-                target: rightButton
+                target: toggleButton
                 opacity: 1
             }
         }
@@ -86,12 +88,12 @@ Item{
 
         // Single button mode
         MouseArea {
-            id: startButton
+            id: startResetArea
             cursorShape: Qt.PointingHandCursor
             propagateComposedEvents: false
             visible: !button.splitMode
             anchors.fill: parent
-            onClicked: button.clicked()
+            onClicked: button.startResetClicked()
 
             Text {
                 id: buttonText
@@ -112,10 +114,10 @@ Item{
 
 
         Icon {
-            id: leftButton
+            id: resetButton
             propagateComposedEvents: false
 
-            glyph: button.leftIcon
+            glyph: button.resetIcon
 
             width: parent.width / 2
             anchors.top: parent.top
@@ -128,7 +130,7 @@ Item{
             color: colors.getColor("dark")
             size: button.iconSize
 
-            onReleased: button.leftClicked()
+            onReleased: button.startResetClicked()
         }
 
 
@@ -147,10 +149,10 @@ Item{
         }
 
         Icon {
-            id: rightButton
+            id: toggleButton
             propagateComposedEvents: false
 
-            glyph: button.rightIcon
+            glyph: button.toggleIcon
 
             width: parent.width / 2
             anchors.top: parent.top
@@ -163,16 +165,16 @@ Item{
 
             color: colors.getColor("dark")
 
-            onReleased: button.rightClicked()
+            onReleased: button.toggleClicked()
 
             Behavior on opacity { NumberAnimation { duration: 300 } }
 
             Timer {
                 id: pulseTimer
                 interval: 700
-                running: button.rightPulsing
+                running: button.togglePulsing
                 repeat: true
-                onTriggered: rightButton.opacity = rightButton.opacity === 1 ? 0.4 : 1
+                onTriggered: toggleButton.opacity = toggleButton.opacity === 1 ? 0.4 : 1
             }
         }
 

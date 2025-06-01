@@ -77,7 +77,7 @@ Item {
     }
 
 
-    ResetButton {
+    TimerControls {
         id: play
         visible: masterModel.count > 0 && masterModel.totalDuration() > 0
         anchors.bottom: parent.bottom
@@ -85,7 +85,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         label: 'Start'
 
-        onClicked: {
+        onStartResetClicked: {
             window.clockMode = "pomodoro"
             pomodoroQueue.infiniteMode = true
             globalTimer.start()
