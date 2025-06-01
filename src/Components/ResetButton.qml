@@ -81,6 +81,7 @@ Item{
         // Single button mode
         MouseArea {
             id: startButton
+            propagateComposedEvents: false
             visible: !button.splitMode
             anchors.fill: parent
             onClicked: button.clicked()
@@ -105,6 +106,7 @@ Item{
 
         Icon {
             id: leftButton
+            propagateComposedEvents: false
 
             glyph: button.leftIcon
 
@@ -141,6 +143,7 @@ Item{
 
         Icon {
             id: rightButton
+            propagateComposedEvents: false
 
             glyph: button.rightIcon
 

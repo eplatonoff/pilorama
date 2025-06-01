@@ -77,7 +77,7 @@ Item {
     }
 
 
-    ResetButton{
+    ResetButton {
         id: play
         visible: masterModel.count > 0 && masterModel.totalDuration() > 0
         anchors.bottom: parent.bottom
@@ -85,22 +85,28 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         label: 'Start'
 
-        MouseArea {
-            id: playtrigger
-            anchors.bottomMargin: 0
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
-
-            onReleased: {
-                window.clockMode = "pomodoro"
-                pomodoroQueue.infiniteMode = true
-                globalTimer.start()
-                focus = true
-
-            }
+        onClicked: {
+            window.clockMode = "pomodoro"
+            pomodoroQueue.infiniteMode = true
+            globalTimer.start()
         }
+
+        // MouseArea {
+        //     id: playtrigger
+        //     anchors.bottomMargin: 0
+        //     anchors.fill: parent
+        //     hoverEnabled: true
+        //     propagateComposedEvents: true
+        //     cursorShape: Qt.PointingHandCursor
+        //
+        //     onReleased: {
+        //         window.clockMode = "pomodoro"
+        //         pomodoroQueue.infiniteMode = true
+        //         globalTimer.start()
+        //         // focus = true
+        //
+        //     }
+        // }
     }
 
 

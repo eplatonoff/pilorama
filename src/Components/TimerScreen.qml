@@ -181,6 +181,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
+        splitMode: appSettings.showPauseUI === true
         iconSize: 22
         leftIcon: "\uea12"
         rightIcon: "\uea14"
@@ -188,7 +189,7 @@ Item {
 
         onClicked: {
 
-            splitMode = true
+            // splitMode = true
 
             pomodoroQueue.infiniteMode = false;
             pomodoroQueue.clear();
@@ -200,13 +201,13 @@ Item {
             notifications.stopSound();
             sequence.setCurrentItem(-1)
 
-            focus = true
+            // focus = true
 
         }
 
         onLeftClicked: {
 
-            splitMode = false
+            // splitMode = false
 
             pomodoroQueue.infiniteMode = false;
             pomodoroQueue.clear();
@@ -218,7 +219,7 @@ Item {
             notifications.stopSound();
             sequence.setCurrentItem(-1)
 
-            focus = true
+            // focus = true
 
         }
 
