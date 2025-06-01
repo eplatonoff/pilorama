@@ -181,47 +181,79 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
+        iconSize: 22
+        leftIcon: "\uea12"
+        rightIcon: "\uea14"
 
-        MouseArea {
-            id: digitalClockResetTrigger
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
 
-            onReleased: {
-                pomodoroQueue.infiniteMode = false;
-                pomodoroQueue.clear();
-                mouseArea._prevAngle = 0
-                mouseArea._totalRotatedSecs = 0
-                globalTimer.duration = 0
-                globalTimer.stop()
-                window.clockMode = "start"
-                notifications.stopSound();
-                sequence.setCurrentItem(-1)
+        onClicked: {
 
-                focus = true
-            }
+            splitMode = true
+
+            pomodoroQueue.infiniteMode = false;
+            pomodoroQueue.clear();
+            mouseArea._prevAngle = 0
+            mouseArea._totalRotatedSecs = 0
+            globalTimer.duration = 0
+            globalTimer.stop()
+            window.clockMode = "start"
+            notifications.stopSound();
+            sequence.setCurrentItem(-1)
+
+            focus = true
+
         }
-    }
 
-    Icon {
-        id: pauseButton
-        visible: appSettings.showPauseUI && (window.clockMode === "timer" || window.clockMode === "pomodoro")
-        glyph: globalTimer.running ? "\u23F8" : "\u25B6" // Pause/Play unicode glyphs
-        anchors.top: resetButton.bottom
-        anchors.topMargin: 8
-        anchors.horizontalCenter: parent.horizontalCenter
+        onLeftClicked: {
 
-        onReleased: {
+            splitMode = false
+
+            pomodoroQueue.infiniteMode = false;
+            pomodoroQueue.clear();
+            mouseArea._prevAngle = 0
+            mouseArea._totalRotatedSecs = 0
+            globalTimer.duration = 0
+            globalTimer.stop()
+            window.clockMode = "start"
+            notifications.stopSound();
+            sequence.setCurrentItem(-1)
+
+            focus = true
+
+        }
+
+        onRightClicked: {
+
             if (globalTimer.running) {
                 globalTimer.stop()
+                rightIcon = "\uea13"
             } else {
                 globalTimer.triggeredOnStart = false
                 globalTimer.start()
                 globalTimer.triggeredOnStart = true
+                rightIcon = "\uea14"
             }
         }
+
     }
+
+    // Icon {
+    //     id: pauseButton
+    //     visible: appSettings.showPauseUI && (window.clockMode === "timer" || window.clockMode === "pomodoro")
+    //     glyph: globalTimer.running ? "\u23F8" : "\u25B6" // Pause/Play unicode glyphs
+    //     anchors.top: resetButton.bottom
+    //     anchors.topMargin: 8
+    //     anchors.horizontalCenter: parent.horizontalCenter
+
+    //     onReleased: {
+    //         if (globalTimer.running) {
+    //             globalTimer.stop()
+    //         } else {
+    //             globalTimer.triggeredOnStart = false
+    //             globalTimer.start()
+    //             globalTimer.triggeredOnStart = true
+    //         }
+    //     }
+    // }
 
 }
