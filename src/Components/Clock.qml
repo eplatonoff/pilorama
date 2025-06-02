@@ -12,6 +12,15 @@ Item {
     onDurationChanged: resetClock()
     onSplitDurationChanged: resetClock()
 
+    Timer {
+        id: pauseClockUpdater
+        interval: 60000
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: resetClock()
+        running: !globalTimer.running && getDuration()
+    }
+
     function pad(value){
         if (value < 10) {return "0" + value
         } else {return value}

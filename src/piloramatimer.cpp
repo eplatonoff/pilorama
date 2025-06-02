@@ -17,7 +17,7 @@ void PiloramaTimer::start()
     QTimer::start();
 
     _running = true;
-    emit runningChanged();
+    emit runningChanged(true);
 
     if (_triggeredOnStart) {
         emit triggered(interval() / 1000);
@@ -29,7 +29,7 @@ void PiloramaTimer::stop()
     QTimer::stop();
 
     _running = false;
-    emit runningChanged();
+    emit runningChanged(false);
 }
 
 void PiloramaTimer::checkElapsedTime()

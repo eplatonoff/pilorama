@@ -121,6 +121,7 @@ ApplicationWindow {
         property bool darkMode: false
         property string colorTheme: "System"
         property bool showInDock: false
+        property bool showPauseUI: false
 
         property alias soundMuted: notifications.soundMuted
         property alias splitToSequence: preferences.splitToSequence
@@ -177,7 +178,7 @@ ApplicationWindow {
     }
 
     ModelBurner {
-        id: pomodoroQueue
+        id: pomodoroQueue // TODO rename the ID
         durationSettings: durationSettings
     }
 

@@ -17,7 +17,7 @@ public slots:
     void stop();
 
 signals:
-    void runningChanged();
+    void runningChanged(bool);
     void triggered(int elapsedSecs);
     void triggeredOnStartChanged();
 

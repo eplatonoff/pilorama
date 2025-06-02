@@ -206,6 +206,47 @@ Item {
                 }
             }
         }
+
+        Item {
+            id: pauseUISetting
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Checkbox {
+                id: pauseUICheck
+                checked: appSettings.showPauseUI
+            }
+
+            Text {
+                id: pauseUILabel
+                height: 19
+                text: qsTr("Enable pause button")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: pauseUICheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
+                anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+            }
+
+            MouseArea {
+                id: pauseUITrigger
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    appSettings.showPauseUI = !appSettings.showPauseUI
+                }
+            }
+        }
         
         Item {
             id: colorTheme

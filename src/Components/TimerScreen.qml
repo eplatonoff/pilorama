@@ -107,7 +107,9 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: !globalTimer.running ? "min" : pad(count(getDuration())[2]);
+            text: globalTimer.running || getDuration() > 0
+                  ? pad(count(getDuration())[2])
+                  : "min";
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
             anchors.top: digitalMin.top
@@ -175,34 +177,43 @@ Item {
         }
     }
 
-    ResetButton {
-        id: resetButton
+    TimerControls {
+        id: controls
         label: 'Reset'
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
+        splitMode: appSettings.showPauseUI
+        iconSize: 22
+        running: globalTimer.running
+        togglePulsing: !globalTimer.running
 
-        MouseArea {
-            id: digitalClockResetTrigger
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            cursorShape: Qt.PointingHandCursor
+        onStartResetClicked: {
+           reset();
+        }
 
-            onReleased: {
-                pomodoroQueue.infiniteMode = false;
-                pomodoroQueue.clear();
-                mouseArea._prevAngle = 0
-                mouseArea._totalRotatedSecs = 0
-                globalTimer.duration = 0
+        onToggleClicked: {
+            if (globalTimer.running) {
                 globalTimer.stop()
-                window.clockMode = "start"
-                notifications.stopSound();
-                sequence.setCurrentItem(-1)
-
-                focus = true
+            } else {
+                globalTimer.triggeredOnStart = false
+                globalTimer.start()
+                globalTimer.triggeredOnStart = true
             }
         }
+
+        function reset() {
+            pomodoroQueue.infiniteMode = false;
+            pomodoroQueue.clear();
+            mouseArea._prevAngle = 0
+            mouseArea._totalRotatedSecs = 0
+            globalTimer.duration = 0
+            globalTimer.stop()
+            window.clockMode = "start"
+            notifications.stopSound();
+            sequence.setCurrentItem(-1)
+        }
+
     }
 
 }

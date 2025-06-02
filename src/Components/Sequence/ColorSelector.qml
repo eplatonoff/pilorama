@@ -22,6 +22,11 @@ Rectangle {
 
     onCurrentItemChanged: { activateBlink(currentItem) }
 
+    Connections {
+        target: globalTimer
+        function onRunningChanged(running) { activateBlink(running && colorSelector.currentItem) }
+    }
+
     onExpandedChanged: { width = expanded ? expWidth : colWidth }
 
     function activateBlink(bool){
