@@ -49,6 +49,9 @@ jobs:
 
     - name: Build Application
       run: |
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ../src
+        make
         mkdir -p build && cd build
         cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
               -DCMAKE_C_COMPILER_LAUNCHER=ccache \
@@ -144,13 +147,19 @@ jobs:
       run: |
         $env:QT_QPA_PLATFORM="offscreen"
         $process = Start-Process -FilePath "build\Release\Pilorama.exe" -PassThru -WindowStyle Hidden
-        $process = Start-Process -FilePath "build\Pilorama.exe" -PassThru -WindowStyle Hidden
+        if (Test-Path "build\Pilorama.exe") {
+          $exePath = "build\Pilorama.exe"
+        } else {
+          $exePath = "build\Release\Pilorama.exe"
+        }
+        $process = Start-Process -FilePath $exePath -PassThru -WindowStyle Hidden
         Start-Sleep -Seconds 5
         if ($process.HasExited) {
             if ($process.ExitCode -ne 0) { exit $process.ExitCode }
         } else {
             Stop-Process -Id $process.Id
         }
+
   linux:
     name: Test Linux Buildability
     runs-on: ubuntu-24.04
@@ -183,6 +192,9 @@ jobs:
 
       - name: Build Application
         run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ../src
+          cmake --build . --config Release
           mkdir -p build && cd build
           cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
