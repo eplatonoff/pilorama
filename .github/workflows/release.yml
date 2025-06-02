@@ -1,7 +1,6 @@
 name: Release Builds
 
 on:
-  # Trigger manually or when a release or pre-release is created
   workflow_dispatch:
   release:
     types:
