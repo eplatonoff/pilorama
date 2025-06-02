@@ -1,11 +1,11 @@
 name: Release Builds
 
 on:
-  # TODO maybe rework a triggered by pre-release creation
   workflow_dispatch:
-  create:
-    tags:
-      - 'v*.*.*'
+  release:
+    types:
+      - released
+      - prereleased
 
 jobs:
   macos:
