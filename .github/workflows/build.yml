@@ -76,7 +76,6 @@ jobs:
           fi
         fi
 
-
   windows:
     name: Test Windows Buildability
     runs-on: windows-2022
@@ -112,8 +111,15 @@ jobs:
       uses: actions/cache@v4
       with:
         path: build
-        key: windows-build-${{ github.sha }}
-        restore-keys: windows-build-
+        key: windows-ninja-build-${{ github.sha }}
+        restore-keys: windows-ninja-build-
+
+    - name: Prepare Build Directory
+      shell: cmd
+      run: |
+        if exist build\CMakeCache.txt del /f /q build\CMakeCache.txt
+        if exist build\CMakeFiles rmdir /s /q build\CMakeFiles
+        if not exist build mkdir build
 
     - uses: ilammy/msvc-dev-cmd@v1
 
@@ -144,8 +150,6 @@ jobs:
         } else {
             Stop-Process -Id $process.Id
         }
-
-
   linux:
     name: Test Linux Buildability
     runs-on: ubuntu-24.04
