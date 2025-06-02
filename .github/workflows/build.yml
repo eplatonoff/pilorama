@@ -99,11 +99,19 @@ jobs:
 
       - name: Run Application Headlessly
         run: |
+          set -e
           export QT_QPA_PLATFORM=offscreen
           ./build/Pilorama &
           PID=$!
           sleep 5
-          kill $PID
-          wait $PID
-          EXIT=$?
-          if [ $EXIT -ne 0 ] && [ $EXIT -ne 143 ]; then exit $EXIT; fi
+          if kill -0 $PID 2>/dev/null; then
+            kill $PID
+            wait $PID || true
+          else
+            wait $PID
+            CODE=$?
+            if [ "$CODE" -ne 0 ]; then
+              echo "Application exited early with code $CODE"
+              exit $CODE
+            fi
+          fi
