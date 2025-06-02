@@ -17,10 +17,10 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: "6.8.2"
+        version: "6.9.0"
         modules: qtmultimedia
         cache: true
-        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
 
     - name: Setup Additional Dependencies
       run: |
@@ -88,10 +88,10 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.2'
+        version: '6.9.0'
         modules: qtmultimedia
         cache: true
-        cache-key-prefix: ${{ runner.os }}-QtCache-6_7_2
+        cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
     - name: Setup Additional Dependencies
 
       shell: cmd
