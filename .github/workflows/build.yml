@@ -76,7 +76,7 @@ jobs:
           fi
         fi
 
-    windows:
+  windows:
     name: Test Windows Buildability
     runs-on: windows-2022
     steps:
