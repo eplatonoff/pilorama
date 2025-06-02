@@ -26,7 +26,7 @@ jobs:
       run: |
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
-        make
+        make -j$(sysctl -n hw.ncpu)
 
     - name: Run Application Headlessly
       run: |
@@ -70,7 +70,7 @@ jobs:
       run: |
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
-        cmake --build . --config Release
+        cmake --build . --config Release --parallel %NUMBER_OF_PROCESSORS%
 
     - name: Run Application Headlessly
       shell: pwsh
@@ -103,7 +103,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake -DCMAKE_BUILD_TYPE=Release ../src
-          cmake --build . --config Release
+          cmake --build . --config Release --parallel $(nproc)
 
       - name: Run Application Headlessly
         run: |

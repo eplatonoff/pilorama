@@ -40,7 +40,7 @@ jobs:
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
-        make
+        make -j$(sysctl -n hw.ncpu)
 
     - name: Create a deployable application bundle
       run: |
@@ -104,7 +104,7 @@ jobs:
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
-        cmake --build . --config Release
+        cmake --build . --config Release --parallel %NUMBER_OF_PROCESSORS%
         windeployqt Release\Pilorama.exe -qmldir=../src
 
     - name: Make Installer
