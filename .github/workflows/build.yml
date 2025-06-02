@@ -76,7 +76,7 @@ jobs:
           fi
         fi
 
-  windows:
+    windows:
     name: Test Windows Buildability
     runs-on: windows-2022
     steps:
@@ -117,9 +117,8 @@ jobs:
     - name: Prepare Build Directory
       shell: cmd
       run: |
-        if exist build\CMakeCache.txt del /f /q build\CMakeCache.txt
-        if exist build\CMakeFiles rmdir /s /q build\CMakeFiles
-        if not exist build mkdir build
+        if exist build rmdir /s /q build
+        mkdir build
 
     - uses: ilammy/msvc-dev-cmd@v1
 
@@ -131,6 +130,7 @@ jobs:
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         cmake --build . --config Release
+        cd build
         cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ^
               -DCMAKE_C_COMPILER_LAUNCHER=sccache ^
               -DCMAKE_CXX_COMPILER_LAUNCHER=sccache ../src
@@ -144,6 +144,7 @@ jobs:
       run: |
         $env:QT_QPA_PLATFORM="offscreen"
         $process = Start-Process -FilePath "build\Release\Pilorama.exe" -PassThru -WindowStyle Hidden
+        $process = Start-Process -FilePath "build\Pilorama.exe" -PassThru -WindowStyle Hidden
         Start-Sleep -Seconds 5
         if ($process.HasExited) {
             if ($process.ExitCode -ne 0) { exit $process.ExitCode }
