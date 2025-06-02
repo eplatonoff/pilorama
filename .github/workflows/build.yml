@@ -76,6 +76,7 @@ jobs:
           fi
         fi
 
+
   windows:
     name: Test Windows Buildability
     runs-on: windows-2022
@@ -104,6 +105,7 @@ jobs:
     - name: Setup Additional Dependencies
       shell: cmd
       run: |
+        choco install cmake
         choco install cmake ninja
 
     - name: Cache build directory
@@ -113,12 +115,16 @@ jobs:
         key: windows-build-${{ github.sha }}
         restore-keys: windows-build-
 
+    - uses: ilammy/msvc-dev-cmd@v1
+
     - shell: cmd
       run: sccache --zero-stats
     - name: Build Application
       shell: cmd
       run: |
         mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ../src
+        cmake --build . --config Release
         cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ^
               -DCMAKE_C_COMPILER_LAUNCHER=sccache ^
               -DCMAKE_CXX_COMPILER_LAUNCHER=sccache ../src
@@ -138,6 +144,7 @@ jobs:
         } else {
             Stop-Process -Id $process.Id
         }
+
 
   linux:
     name: Test Linux Buildability
