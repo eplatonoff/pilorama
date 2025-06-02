@@ -1,5 +1,9 @@
 name: Test Buildability
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     types: [ready_for_review]
@@ -14,6 +18,25 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Set up ccache
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: macos-ccache-${{ github.sha }}
+        restore-keys: macos-ccache-
+
+    - name: Cache Homebrew
+      uses: actions/cache@v4
+      with:
+        path: /Users/runner/Library/Caches/Homebrew
+        key: brew-build-${{ hashFiles('.github/workflows/build.yml') }}
+
+    - name: Cache build directory
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: macos-build-${{ github.sha }}
+        restore-keys: macos-build-
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -22,11 +45,17 @@ jobs:
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
 
+    - run: ccache -z
+
     - name: Build Application
       run: |
-        mkdir build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ../src
-        make
+        mkdir -p build && cd build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ../src
+        ninja
+
+    - run: ccache -s
 
     - name: Run Application Headlessly
       run: |
@@ -54,6 +83,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Set up sccache
+      uses: mozilla-actions/sccache-action@v0.0.3
+      with:
+        save-cache: true
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -61,16 +95,37 @@ jobs:
         modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
+    - name: Cache Chocolatey packages
+      uses: actions/cache@v4
+      with:
+        path: C:\ProgramData\chocolatey\lib
+        key: choco-${{ hashFiles('.github/workflows/build.yml') }}
+
     - name: Setup Additional Dependencies
       shell: cmd
       run: |
-        choco install cmake
+        choco install cmake ninja
+
+    - name: Cache build directory
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: windows-build-${{ github.sha }}
+        restore-keys: windows-build-
+
+    - shell: cmd
+      run: sccache --zero-stats
     - name: Build Application
       shell: cmd
       run: |
         mkdir build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ../src
-        cmake --build . --config Release
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ^
+              -DCMAKE_C_COMPILER_LAUNCHER=sccache ^
+              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache ../src
+        ninja -j %NUMBER_OF_PROCESSORS%
+
+    - shell: cmd
+      run: sccache --show-stats
 
     - name: Run Application Headlessly
       shell: pwsh
@@ -91,6 +146,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: linux-ccache-${{ github.sha }}
+          restore-keys: linux-ccache-
+
+      - name: Cache build directory
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: linux-build-${{ github.sha }}
+          restore-keys: linux-build-
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
@@ -99,11 +167,17 @@ jobs:
           cache: true
           cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
 
+      - run: ccache -z
+
       - name: Build Application
         run: |
-          mkdir build && cd build
-          cmake -DCMAKE_BUILD_TYPE=Release ../src
-          cmake --build . --config Release
+          mkdir -p build && cd build
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+                -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ../src
+          ninja
+
+      - run: ccache -s
 
       - name: Run Application Headlessly
         run: |

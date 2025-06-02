@@ -1,5 +1,9 @@
 name: Release Builds
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   release:
@@ -14,6 +18,13 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+
+    - name: Set up ccache
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: macos-ccache-${{ github.sha }}
+        restore-keys: macos-ccache-
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -22,9 +33,24 @@ jobs:
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
 
+    - name: Cache Homebrew
+      uses: actions/cache@v4
+      with:
+        path: /Users/runner/Library/Caches/Homebrew
+        key: brew-${{ hashFiles('.github/workflows/release.yml') }}
+
     - name: Setup Additional Dependencies
       run: |
-        brew install create-dmg 
+        brew install create-dmg ninja
+
+    - name: Cache Cargo dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.cargo/bin
+        key: ${{ runner.os }}-cargo-rcodesign-0.27.0
 
     - name: Install rcodesign from git
       uses: baptiste0928/cargo-install@v3
@@ -35,12 +61,24 @@ jobs:
         args: --bin rcodesign
         locked: false # due to compile error
 
+    - name: Cache build directory
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: macos-build-${{ github.sha }}
+        restore-keys: macos-build-
+
+    - run: ccache -z
+
     - name: Build Application
       run: |
-        mkdir build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ../src
-        make
+        mkdir -p build && cd build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ../src
+        ninja
+
+    - run: ccache -s
 
     - name: Create a deployable application bundle
       run: |
@@ -85,6 +123,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Set up sccache
+      uses: mozilla-actions/sccache-action@v0.0.3
+      with:
+        save-cache: true
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -92,20 +135,41 @@ jobs:
         modules: qtmultimedia
         cache: true
         cache-key-prefix: ${{ runner.os }}-QtCache-6_9_0
-    - name: Setup Additional Dependencies
 
+    - name: Cache Chocolatey packages
+      uses: actions/cache@v4
+      with:
+        path: C:\ProgramData\chocolatey\lib
+        key: choco-${{ hashFiles('.github/workflows/release.yml') }}
+
+    - name: Setup Additional Dependencies
       shell: cmd
       run: |
-        choco install cmake
+        choco install cmake ninja
+
+    - name: Cache build directory
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: windows-build-${{ github.sha }}
+        restore-keys: windows-build-
+
+    - shell: cmd
+      run: sccache --zero-stats
 
     - name: Build Application
       shell: cmd
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ../src
-        cmake --build . --config Release
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ^
+              -DCMAKE_C_COMPILER_LAUNCHER=sccache ^
+              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache ../src
+        ninja -j %NUMBER_OF_PROCESSORS%
         windeployqt Release\Pilorama.exe -qmldir=../src
+
+    - shell: cmd
+      run: sccache --show-stats
 
     - name: Make Installer
       shell: cmd
