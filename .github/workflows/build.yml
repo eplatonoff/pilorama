@@ -28,6 +28,14 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
 
+    - name: Run Application Headlessly
+      run: |
+        export QT_QPA_PLATFORM=offscreen
+        ./build/Pilorama.app/Contents/MacOS/Pilorama &
+        PID=$!
+        sleep 5
+        kill $PID
+
   windows:
     name: Test Windows Buildability
     runs-on: windows-2022
@@ -53,6 +61,14 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         cmake --build . --config Release
 
+    - name: Run Application Headlessly
+      shell: cmd
+      run: |
+        set QT_QPA_PLATFORM=offscreen
+        start "" /B build\Release\Pilorama.exe
+        timeout /T 5 /NOBREAK
+        taskkill /IM Pilorama.exe /F
+
   linux:
     name: Test Linux Buildability
     runs-on: ubuntu-24.04
@@ -73,3 +89,11 @@ jobs:
           mkdir build && cd build
           cmake -DCMAKE_BUILD_TYPE=Release ../src
           cmake --build . --config Release
+
+      - name: Run Application Headlessly
+        run: |
+          export QT_QPA_PLATFORM=offscreen
+          ./build/Pilorama &
+          PID=$!
+          sleep 5
+          kill $PID
