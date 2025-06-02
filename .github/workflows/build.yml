@@ -28,6 +28,25 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         make
 
+    - name: Run Application Headlessly
+      run: |
+        set -e
+        export QT_QPA_PLATFORM=offscreen
+        ./build/Pilorama.app/Contents/MacOS/Pilorama &
+        PID=$!
+        sleep 5
+        if kill -0 $PID 2>/dev/null; then
+          kill $PID
+          wait $PID || true
+        else
+          wait $PID
+          CODE=$?
+          if [ "$CODE" -ne 0 ]; then
+            echo "Application exited early with code $CODE"
+            exit $CODE
+          fi
+        fi
+
   windows:
     name: Test Windows Buildability
     runs-on: windows-2022
@@ -53,6 +72,18 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ../src
         cmake --build . --config Release
 
+    - name: Run Application Headlessly
+      shell: pwsh
+      run: |
+        $env:QT_QPA_PLATFORM="offscreen"
+        $process = Start-Process -FilePath "build\Release\Pilorama.exe" -PassThru -WindowStyle Hidden
+        Start-Sleep -Seconds 5
+        if ($process.HasExited) {
+            if ($process.ExitCode -ne 0) { exit $process.ExitCode }
+        } else {
+            Stop-Process -Id $process.Id
+        }
+
   linux:
     name: Test Linux Buildability
     runs-on: ubuntu-24.04
@@ -73,3 +104,22 @@ jobs:
           mkdir build && cd build
           cmake -DCMAKE_BUILD_TYPE=Release ../src
           cmake --build . --config Release
+
+      - name: Run Application Headlessly
+        run: |
+          set -e
+          export QT_QPA_PLATFORM=offscreen
+          ./build/Pilorama &
+          PID=$!
+          sleep 5
+          if kill -0 $PID 2>/dev/null; then
+            kill $PID
+            wait $PID || true
+          else
+            wait $PID
+            CODE=$?
+            if [ "$CODE" -ne 0 ]; then
+              echo "Application exited early with code $CODE"
+              exit $CODE
+            fi
+          fi
