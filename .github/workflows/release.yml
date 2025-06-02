@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   release:
     types:
-      - released
+      - published
       - prereleased
 
 jobs:
@@ -117,3 +117,31 @@ jobs:
       with:
         name: Pilorama_Setup.exe
         path: Pilorama_Setup.exe
+
+  upload-release:
+    name: Attach Packages to Release
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    permissions:
+      contents: write
+    steps:
+    - name: Download macOS package
+      uses: actions/download-artifact@v4
+      with:
+        name: Pilorama.dmg
+        path: .
+        merge-multiple: true
+    - name: Download Windows package
+      uses: actions/download-artifact@v4
+      with:
+        name: Pilorama_Setup.exe
+        path: .
+        merge-multiple: true
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.release.tag_name }}
+        files: |
+          Pilorama.dmg
+          Pilorama_Setup.exe
