@@ -247,6 +247,47 @@ Item {
                 }
             }
         }
+
+        Item {
+            id: segmentPopUp
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            Checkbox {
+                id: segmentPopUpCheck
+                checked: appSettings.showOnSegmentStart
+            }
+
+            Text {
+                id: segmentPopUpLabel
+                height: 19
+                text: qsTr("Show window on segment start")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: segmentPopUpCheck.right
+                anchors.leftMargin: 0
+                color: colors.getColor("dark")
+                anchors.verticalCenter: parent.verticalCenter
+
+                font.family: localFont.name
+                font.pixelSize: fontSize
+
+                renderType: Text.NativeRendering
+            }
+
+            MouseArea {
+                id: segmentPopUpTrigger
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onReleased: {
+                    appSettings.showOnSegmentStart = !appSettings.showOnSegmentStart
+                }
+            }
+        }
         
         Item {
             id: colorTheme
