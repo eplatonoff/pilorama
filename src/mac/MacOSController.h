@@ -3,6 +3,7 @@
 
 
 #include <QObject>
+#include <QString>
 
 class MacOSController : public QObject
 {
@@ -14,6 +15,8 @@ public slots:
     void disableAppNap();
     void showInDock();
     void hideFromDock();
+    void requestNotificationPermission();
+    void showNotification(const QString &title, const QString &message);
 };
 
 #endif //PILORAMA_MACOSCONTROLLER_H

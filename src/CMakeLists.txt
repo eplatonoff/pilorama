@@ -28,7 +28,7 @@ list(FILTER HDRS EXCLUDE REGEX "^build/")
 list(FILTER QRCS EXCLUDE REGEX "^build/")
 
 IF(APPLE)
-    SET(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -w")
+    SET(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework UserNotifications -w")
     SET(PLATFORM_FILES
             mac/utility.mm
     )
