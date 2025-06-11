@@ -33,5 +33,7 @@ QtObject {
 
     function sendFromItem(item) {
         sendWithSound(masterModel.get(item.id).name)
+        if (appSettings.showOnSegmentStart)
+            tray.popUp()
     }
 }
