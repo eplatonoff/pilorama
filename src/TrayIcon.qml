@@ -119,6 +119,7 @@ SystemTrayIcon {
             showfor = 10000
         }
         showMessage(title, message, iconURL(), showfor)
+        MacOSController.showNotification(title, message)
     }
 
     function popUp(){
