@@ -7,7 +7,7 @@ QtObject {
 
     property bool soundMuted: false
 
-    MediaDevices {
+    property MediaDevices mediaDevices: MediaDevices {
         id: mediaDevices
     }
 
