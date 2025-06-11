@@ -20,4 +20,20 @@ void mac_show_in_dock(void) {
     [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 }
 
+void mac_send_notification(const char *title, const char *message) {
+    if (@available(macOS 10.8, *)) {
+        NSString *titleStr = [NSString stringWithUTF8String:title];
+        NSString *messageStr = message ? [NSString stringWithUTF8String:message] : @"";
+
+        NSUserNotification *notification = [[NSUserNotification alloc] init];
+        notification.title = titleStr;
+        notification.informativeText = messageStr;
+        [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+#if !__has_feature(objc_arc)
+        [notification release];
+#endif
+    }
+}
+
+
 
