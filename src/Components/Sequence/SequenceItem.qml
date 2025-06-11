@@ -156,8 +156,10 @@ Rectangle {
             }
         }
 
-        onEditingFinished: {
-            model.duration = itemtime.text * 60
+        onTextChanged: {
+            if (itemtime.acceptableInput) {
+                model.duration = itemtime.text * 60
+            }
         }
     }
 
