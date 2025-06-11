@@ -122,6 +122,7 @@ ApplicationWindow {
         property string colorTheme: "System"
         property bool showInDock: false
         property bool showPauseUI: true
+        property bool showOnSegmentStart: false
 
         property alias soundMuted: notifications.soundMuted
         property alias splitToSequence: preferences.splitToSequence
