@@ -57,8 +57,16 @@ Pilorama.Timer {
             const notificationsEnabled = pomodoroQueue.infiniteMode || preferences.splitToSequence;
 
             if (notificationsEnabled)
-                if (splitDuration === pomodoroQueue.itemDurationBound(first))
+                if (splitDuration === pomodoroQueue.itemDurationBound(first)) {
                     notifications.sendFromItem(first);
+                    if (Qt.platform.os === "osx") {
+                        const item = masterModel.get(first.id)
+                        const title = item.name + " started"
+                        const message = "Duration: " + item.duration / 60 +
+                                " min.  Ends at " + clock.getNotificationTime().clock
+                        MacOSController.showNotification(title, message)
+                    }
+                }
 
         } else
             splitDuration = 0;
