@@ -7,9 +7,14 @@ QtObject {
 
     property bool soundMuted: false
 
+    MediaDevices {
+        id: mediaDevices
+    }
+
     property SoundEffect sound: SoundEffect {
         id: soundNotification
         muted: notifications.soundMuted
+        audioDevice: mediaDevices.defaultAudioOutput
         source: "qrc:assets/sound/drum_roll.wav"
     }
 
