@@ -39,8 +39,16 @@ void mac_send_notification(const char *title, const char *message,
 
     if (icon && strlen(icon) > 0) {
         NSString *iconPath = [NSString stringWithUTF8String:icon];
-        NSURL *url = [NSURL URLWithString:iconPath];
-        if ([url isFileURL]) {
+        NSURL *url = nil;
+        if ([iconPath hasPrefix:@"file://"]) {
+            url = [NSURL URLWithString:iconPath];
+        } else if ([iconPath hasPrefix:@"/"]) {
+            url = [NSURL fileURLWithPath:iconPath];
+        } else {
+            url = [NSURL URLWithString:iconPath];
+        }
+
+        if (url && [url isFileURL]) {
             NSError *attachError = nil;
             UNNotificationAttachment *attachment =
                 [UNNotificationAttachment attachmentWithIdentifier:@"icon"

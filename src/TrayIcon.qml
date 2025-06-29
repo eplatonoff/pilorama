@@ -72,6 +72,13 @@ SystemTrayIcon {
         return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
     }
 
+    function notificationIconURL() {
+        const color = pomodoroQueue.infiniteMode ?
+                colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) :
+                colors.getThemeColor("dark");
+        return "image://notification_dot_provider/" + color;
+    }
+
     function setDialTime() {
         var t
         if(!pomodoroQueue.infiniteMode) {
@@ -118,11 +125,11 @@ SystemTrayIcon {
             message = "Duration: " + globalTimer.durationBound / 60 + " min"
             showfor = 10000
         }
-        var icon = iconURL()
+
         if (Qt.platform.os === "osx") {
-            MacOSController.showNotification(title, message, icon)
+            MacOSController.showNotification(title, message, notificationIconURL())
         } else {
-            showMessage(title, message, icon, showfor)
+            showMessage(title, message, iconURL(), showfor)
         }
     }
 
