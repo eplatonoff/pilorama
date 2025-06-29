@@ -34,261 +34,61 @@ Item {
         anchors.left: parent.left
 
         anchors.margins: 16
-
-        Item {
+        PreferenceItem {
             id: splitToSequence
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: splitToSequenceCheck
-                checked: preferences.splitToSequence
-            }
-
-            Text {
-                id: splitToSequenceLabel
-                height: 19
-                text: qsTr("Split timer to sequence")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: splitToSequenceCheck.right
-                anchors.leftMargin: 0
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-            }
-
-
-            MouseArea {
-                id: splitToSequenceTrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    preferences.splitToSequence = !preferences.splitToSequence
-                }
-            }
+            cellHeight: preferences.cellHeight
+            fontSize: preferences.fontSize
+            checked: preferences.splitToSequence
+            text: qsTr("Split timer to sequence")
+            onToggled: preferences.splitToSequence = !preferences.splitToSequence
         }
 
-        Item {
+        PreferenceItem {
             id: onTop
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: onTopCheck
-                checked: window.alwaysOnTop
-            }
-
-            Text {
-                id: onTopLabel
-                height: 19
-                text: qsTr("Always on top")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: onTopCheck.right
-                anchors.leftMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-            }
-
-
-            MouseArea {
-                id: onTopTrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    window.alwaysOnTop = !window.alwaysOnTop
-                }
-            }
+            cellHeight: preferences.cellHeight
+            fontSize: preferences.fontSize
+            checked: window.alwaysOnTop
+            text: qsTr("Always on top")
+            onToggled: window.alwaysOnTop = !window.alwaysOnTop
         }
 
-        Item {
+        PreferenceItem {
             id: closeOnQuit
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: closeOnQuitCheck
-                checked: !window.quitOnClose
-            }
-
-            Text {
-                id: closeOnQuitLabel
-                height: 19
-                text: qsTr("On close hide to system tray")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: closeOnQuitCheck.right
-                anchors.leftMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-
-            }
-
-
-            MouseArea {
-                id: closeOnQuitTrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    window.quitOnClose = !window.quitOnClose
-                }
-            }
+            cellHeight: preferences.cellHeight
+            fontSize: preferences.fontSize
+            checked: !window.quitOnClose
+            text: qsTr("On close hide to system tray")
+            onToggled: window.quitOnClose = !window.quitOnClose
         }
 
-        Item {
-            visible: Qt.platform.os === "osx"
-
+        PreferenceItem {
             id: showInDock
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: showInDockCheck
-                checked: appSettings.showInDock
-            }
-
-            Text {
-                id: showInDockLabel
-                height: 19
-                text: qsTr("Show app in Dock")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: showInDockCheck.right
-                anchors.leftMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-            }
-
-            MouseArea {
-                id: showInDockCheckTrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    appSettings.showInDock = !appSettings.showInDock
-                }
-            }
+            visible: Qt.platform.os === "osx"
+            cellHeight: preferences.cellHeight
+            fontSize: preferences.fontSize
+            checked: appSettings.showInDock
+            text: qsTr("Show app in Dock")
+            onToggled: appSettings.showInDock = !appSettings.showInDock
         }
 
-        Item {
+        PreferenceItem {
             id: pauseUISetting
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: pauseUICheck
-                checked: appSettings.showPauseUI
-            }
-
-            Text {
-                id: pauseUILabel
-                height: 19
-                text: qsTr("Enable pause button")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: pauseUICheck.right
-                anchors.leftMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-            }
-
-            MouseArea {
-                id: pauseUITrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    appSettings.showPauseUI = !appSettings.showPauseUI
-                }
-            }
+            cellHeight: preferences.cellHeight
+            fontSize: preferences.fontSize
+            checked: appSettings.showPauseUI
+            text: qsTr("Enable pause button")
+            onToggled: appSettings.showPauseUI = !appSettings.showPauseUI
         }
 
-        Item {
+        PreferenceItem {
             id: segmentPopUp
-            height: preferences.cellHeight
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            Checkbox {
-                id: segmentPopUpCheck
-                checked: appSettings.showOnSegmentStart
-            }
-
-            Text {
-                id: segmentPopUpLabel
-                height: 19
-                text: qsTr("Show window on segment start")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: segmentPopUpCheck.right
-                anchors.leftMargin: 0
-                color: colors.getColor("dark")
-                anchors.verticalCenter: parent.verticalCenter
-
-                font.family: localFont.name
-                font.pixelSize: fontSize
-
-                renderType: Text.NativeRendering
-            }
-
-            MouseArea {
-                id: segmentPopUpTrigger
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onReleased: {
-                    appSettings.showOnSegmentStart = !appSettings.showOnSegmentStart
-                }
-            }
+            cellHeight: preferences.cellHeight
+            fontSize: preferences.fontSize
+            checked: appSettings.showOnSegmentStart
+            text: qsTr("Show window on segment start")
+            onToggled: appSettings.showOnSegmentStart = !appSettings.showOnSegmentStart
         }
-        
+
         Item {
             id: colorTheme
             height: preferences.cellHeight
