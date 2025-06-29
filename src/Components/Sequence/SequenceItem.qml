@@ -158,7 +158,7 @@ Rectangle {
 
         onAcceptableInputChanged: {
             if (itemtime.acceptableInput) {
-                model.duration = itemtime.text * 60
+                model.duration = Number(itemtime.text) * 60
             } else {
                 model.duration = 0
             }
