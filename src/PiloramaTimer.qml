@@ -11,6 +11,7 @@ Pilorama.Timer {
     property real splitDuration: 0
 
     property real timerLimit: 6 * 3600
+    property int trayUpdateCounter: 0
 
     onDurationChanged: {
         window.checkClockMode();
@@ -24,6 +25,9 @@ Pilorama.Timer {
         canvas.requestPaint();
         if ( running ) {
             durationBound = duration;
+            tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
+            tray.setDialTime()
+            trayUpdateCounter = 0
         }
     }
 
@@ -64,7 +68,14 @@ Pilorama.Timer {
         } else
             splitDuration = 0;
 
-        tray.setTime()
+        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
+        trayUpdateCounter += elapsedSecs
+
+        if (trayUpdateCounter >= 10 || tray.runningTime <= 0) {
+            tray.setDialTime()
+            trayUpdateCounter = 0
+        }
+
         canvas.requestPaint();
     }
 }
