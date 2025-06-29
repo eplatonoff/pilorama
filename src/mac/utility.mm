@@ -30,11 +30,28 @@ void mac_request_notification_permission(void)
                           }];
 }
 
-void mac_send_notification(const char *title, const char *message)
+void mac_send_notification(const char *title, const char *message,
+                           const char *icon)
 {
     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
     content.title = [NSString stringWithUTF8String:title];
     content.body = [NSString stringWithUTF8String:message];
+
+    if (icon && strlen(icon) > 0) {
+        NSString *iconPath = [NSString stringWithUTF8String:icon];
+        NSURL *url = [NSURL URLWithString:iconPath];
+        if ([url isFileURL]) {
+            NSError *attachError = nil;
+            UNNotificationAttachment *attachment =
+                [UNNotificationAttachment attachmentWithIdentifier:@"icon"
+                                                             URL:url
+                                                         options:nil
+                                                           error:&attachError];
+            if (!attachError && attachment) {
+                content.attachments = @[ attachment ];
+            }
+        }
+    }
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSUUID UUID] UUIDString]
                                                                           content:content

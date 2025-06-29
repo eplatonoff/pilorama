@@ -118,8 +118,9 @@ SystemTrayIcon {
             message = "Duration: " + globalTimer.durationBound / 60 + " min"
             showfor = 10000
         }
-        showMessage(title, message, iconURL(), showfor)
-        MacOSController.showNotification(title, message)
+        var icon = iconURL()
+        showMessage(title, message, icon, showfor)
+        MacOSController.showNotification(title, message, icon)
     }
 
     function popUp(){

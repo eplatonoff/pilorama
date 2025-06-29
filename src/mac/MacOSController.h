@@ -16,7 +16,8 @@ public slots:
     void showInDock();
     void hideFromDock();
     void requestNotificationPermission();
-    void showNotification(const QString &title, const QString &message);
+    void showNotification(const QString &title, const QString &message,
+                          const QString &iconPath);
 };
 
 #endif //PILORAMA_MACOSCONTROLLER_H
