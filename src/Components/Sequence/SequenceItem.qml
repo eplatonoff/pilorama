@@ -150,14 +150,25 @@ Rectangle {
         font.family: localFont.name
         font.pixelSize: parent.fontSize
 
-        onActiveFocusChanged: {
-            if (!itemtime.acceptableInput) {
-                model.duration = 0
+        Keys.onDownPressed: {
+            const newValue = Number(itemtime.text) - 1;
+            if (newValue >= 1) {
+                model.duration = newValue * 60;
+            }
+        }
+        Keys.onUpPressed: {
+            const newValue = Number(itemtime.text) + 1;
+            if (newValue <= globalTimer.timerLimit / 60) {
+                model.duration = newValue * 60;
             }
         }
 
-        onEditingFinished: {
-            model.duration = itemtime.text * 60
+        onTextEdited: {
+            if (itemtime.acceptableInput) {
+                model.duration = Number(itemtime.text) * 60;
+            } else {
+                model.duration = 0;
+            }
         }
     }
 
