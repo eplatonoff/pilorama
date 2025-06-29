@@ -119,8 +119,11 @@ SystemTrayIcon {
             showfor = 10000
         }
         var icon = iconURL()
-        showMessage(title, message, icon, showfor)
-        MacOSController.showNotification(title, message, icon)
+        if (Qt.platform.os === "osx") {
+            MacOSController.showNotification(title, message, icon)
+        } else {
+            showMessage(title, message, icon, showfor)
+        }
     }
 
     function popUp(){
