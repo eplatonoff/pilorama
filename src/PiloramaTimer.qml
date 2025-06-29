@@ -57,8 +57,9 @@ Pilorama.Timer {
             const notificationsEnabled = pomodoroQueue.infiniteMode || preferences.splitToSequence;
 
             if (notificationsEnabled)
-                if (splitDuration === pomodoroQueue.itemDurationBound(first))
+                if (splitDuration === pomodoroQueue.itemDurationBound(first)) {
                     notifications.sendFromItem(first);
+                }
 
         } else
             splitDuration = 0;

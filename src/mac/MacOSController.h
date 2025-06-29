@@ -3,17 +3,28 @@
 
 
 #include <QObject>
+#include <QString>
+
+class QQmlEngine;
 
 class MacOSController : public QObject
 {
     Q_OBJECT
 public:
     explicit MacOSController(QObject *parent = nullptr);
+    void setEngine(QQmlEngine *engine);
 
 public slots:
-    void disableAppNap();
-    void showInDock();
-    void hideFromDock();
+    static void disableAppNap();
+    static void showInDock();
+    static void hideFromDock();
+    static void requestNotificationPermission();
+
+    void showNotification(const QString &title, const QString &message,
+                          const QString &iconPath) const;
+
+private:
+    QQmlEngine *engine_ = nullptr;
 };
 
 #endif //PILORAMA_MACOSCONTROLLER_H

@@ -1,5 +1,6 @@
 #include "piloramatimer.h"
 #include "trayimageprovider.h"
+#include "notificationdotprovider.h"
 #include "mac/MacOSController.h"
 
 #include <QGuiApplication>
@@ -27,6 +28,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.addImageProvider("tray_icon_provider", new TrayImageProvider());
+    engine.addImageProvider("notification_dot_provider", new NotificationDotProvider());
+    macOSController.setEngine(&engine);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
