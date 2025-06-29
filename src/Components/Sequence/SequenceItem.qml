@@ -156,9 +156,11 @@ Rectangle {
             }
         }
 
-        onTextChanged: {
+        onAcceptableInputChanged: {
             if (itemtime.acceptableInput) {
                 model.duration = itemtime.text * 60
+            } else {
+                model.duration = 0
             }
         }
     }
