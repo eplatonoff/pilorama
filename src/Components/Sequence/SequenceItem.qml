@@ -150,13 +150,7 @@ Rectangle {
         font.family: localFont.name
         font.pixelSize: parent.fontSize
 
-        onActiveFocusChanged: {
-            if (!itemtime.acceptableInput) {
-                model.duration = 0
-            }
-        }
-
-        onAcceptableInputChanged: {
+        onTextEdited: {
             if (itemtime.acceptableInput) {
                 model.duration = Number(itemtime.text) * 60
             } else {
