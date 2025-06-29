@@ -34,6 +34,7 @@ Pilorama.Timer {
 
             } else {
                 notifications.sendWithSound();
+                notifications.clearScheduled();
                 window.clockMode = "start";
                 pomodoroQueue.clear();
                 mouseArea._prevAngle = 0
@@ -59,6 +60,7 @@ Pilorama.Timer {
             if (notificationsEnabled)
                 if (splitDuration === pomodoroQueue.itemDurationBound(first)) {
                     notifications.sendFromItem(first);
+                    notifications.scheduleNextSegment();
                 }
 
         } else

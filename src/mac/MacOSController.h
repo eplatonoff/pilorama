@@ -20,6 +20,11 @@ public slots:
     static void hideFromDock();
     static void requestNotificationPermission();
 
+    static void clearScheduledNotifications();
+
+    void scheduleNotification(const QString &title, const QString &message,
+                              const QString &iconPath, int seconds) const;
+
     void showNotification(const QString &title, const QString &message,
                           const QString &iconPath) const;
 

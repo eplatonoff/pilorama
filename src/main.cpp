@@ -16,7 +16,6 @@
 int main(int argc, char *argv[])
 {
     MacOSController macOSController;
-    macOSController.disableAppNap();
 
     QApplication app(argc, argv);
 

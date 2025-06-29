@@ -48,6 +48,9 @@ extern void mac_disable_app_nap();
 extern void mac_request_notification_permission();
 extern void mac_send_notification(const char *title, const char *message,
                                   const char *icon);
+extern void mac_schedule_notification(const char *title, const char *message,
+                                      const char *icon, double seconds);
+extern void mac_clear_scheduled_notifications(void);
 #endif /* TARGET_OS_MAC */
 #endif /* __APPLE__ */
 
@@ -96,6 +99,43 @@ void MacOSController::requestNotificationPermission()
 #if TARGET_OS_MAC
     mac_request_notification_permission();
 #endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::clearScheduledNotifications()
+{
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_clear_scheduled_notifications();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::scheduleNotification(const QString &title, const QString &message,
+                                           const QString &iconPath, int seconds) const
+{
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    if (engine_ == nullptr) {
+        qWarning() << "Engine is not set";
+        return;
+    }
+    const QString iconFile = prepareIconFile(iconPath, engine_);
+    mac_schedule_notification(title.toUtf8().constData(),
+                              message.toUtf8().constData(),
+                              iconFile.toUtf8().constData(),
+                              seconds);
+#else
+    Q_UNUSED(title)
+    Q_UNUSED(message)
+    Q_UNUSED(iconPath)
+    Q_UNUSED(seconds)
+#endif /* TARGET_OS_MAC */
+#else
+    Q_UNUSED(title)
+    Q_UNUSED(message)
+    Q_UNUSED(iconPath)
+    Q_UNUSED(seconds)
 #endif /* __APPLE__ */
 }
 

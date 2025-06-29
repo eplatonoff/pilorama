@@ -62,6 +62,21 @@ Item {
         return {'h': h, 'min': m, 'sec': s, 'clock': resulting}
     }
 
+    function getTimeAfter(secs) {
+        let _t = getTime().h * 3600 + getTime().min * 60 + getTime().sec
+        let t = _t + secs
+
+        t = t >= 86400 ? t % 86400 : t
+
+        let h = Math.floor(t / 3600)
+        let m = Math.floor(t / 60) - h * 60
+        let s = t - (h * 3600 + m * 60)
+
+        let resulting = pad(h) + ":" + pad(m)
+
+        return {'h': h, 'min': m, 'sec': s, 'clock': resulting}
+    }
+
     function resetClock(){
         currentTime = getTime().clock
         notificationTime = getNotificationTime().clock
