@@ -150,6 +150,24 @@ Rectangle {
         font.family: localFont.name
         font.pixelSize: parent.fontSize
 
+        Keys.onDownPressed: {
+            if (!sequence.blockEdits && itemtime.acceptableInput) {
+                var newValue = Number(text) - 1;
+                if (newValue >= 1) {
+                    model.duration = newValue * 60;
+                }
+            }
+        }
+
+        Keys.onUpPressed: {
+            if (!sequence.blockEdits && (itemtime.acceptableInput || model.duration === 0)) {
+                var newValue = Number(text) + 1;
+                if (newValue <= globalTimer.timerLimit / 60) {
+                    model.duration = newValue * 60;
+                }
+            }
+        }
+
         onTextEdited: {
             if (itemtime.acceptableInput) {
                 model.duration = Number(itemtime.text) * 60
