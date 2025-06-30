@@ -11,6 +11,8 @@ Pilorama.Timer {
     property real splitDuration: 0
 
     property real timerLimit: 6 * 3600
+    // number of seconds between tray icon updates
+    property int trayUpdateInterval: 5
     property int trayUpdateCounter: 0
 
     onDurationChanged: {
@@ -71,7 +73,7 @@ Pilorama.Timer {
         tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
         trayUpdateCounter += elapsedSecs
 
-        if (trayUpdateCounter >= 10 || tray.runningTime <= 0) {
+        if (trayUpdateCounter >= trayUpdateInterval || tray.runningTime <= 0) {
             tray.setDialTime()
             trayUpdateCounter = 0
         }
