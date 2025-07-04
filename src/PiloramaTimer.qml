@@ -20,7 +20,7 @@ Pilorama.Timer {
         trayUpdateCounter += elapsedSecs
 
         if (force || trayUpdateCounter >= trayUpdateInterval || tray.runningTime <= 0) {
-            tray.setDialTime()
+            tray.setTime()
             trayUpdateCounter = 0
         }
     }
