@@ -7,7 +7,6 @@ ListModel {
 
     property QtObject durationSettings: null
 
-    property int totalPomodoros: 0
     property bool infiniteMode: false
     property real currentDurationBound: 0
 
@@ -16,9 +15,6 @@ ListModel {
     }
 
     onCountChanged: {
-        if (count === 0)
-            totalPomodoros = 0;
-
         _tryToCreateBatch();
     }
 
