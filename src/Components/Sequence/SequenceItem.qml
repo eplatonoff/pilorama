@@ -138,7 +138,9 @@ Rectangle {
         id: itemtime
         width: 20
         color: sequenceItem.dimmer()
-        text: Math.trunc( model.duration / 60 )
+        // Round up here as well so the displayed minutes remain stable when
+        // the timer starts and the duration drops by a few seconds.
+        text: Math.ceil(model.duration / 60)
 
         validator: IntValidator { bottom: 1; top: globalTimer.timerLimit / 60}
         inputMethodHints: Qt.ImhDigitsOnly

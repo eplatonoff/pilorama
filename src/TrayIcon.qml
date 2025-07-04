@@ -24,6 +24,7 @@ SystemTrayIcon {
 
     Component.onCompleted: {
        trayUpdateCounter = remainingTime
+       globalTimer.runningChanged.connect(handleTimerStop)
     }
 
     onMessageClicked: popUp()
@@ -40,6 +41,15 @@ SystemTrayIcon {
             trayUpdateCounter = remainingTime
         }
     }
+
+    function handleTimerStop(running) {
+        if (!running) {
+            // Restore the static idle icon once the timer stops
+            icon.source = iconURL()
+            trayUpdateCounter = remainingTime
+        }
+    }
+
 
     function checkMenuItemText() {
         if (globalTimer.running && pomodoroQueue.infiniteMode) {
