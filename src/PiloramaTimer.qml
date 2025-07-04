@@ -28,7 +28,6 @@ Pilorama.Timer {
     onDurationChanged: {
         window.checkClockMode();
         time.updateTime();
-        updateTrayRunningTime()
         canvas.requestPaint();
     }
 
