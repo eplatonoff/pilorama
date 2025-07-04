@@ -279,8 +279,8 @@ ApplicationWindow {
             Dials {
                 id: canvas
                 anchors.fill: parent
-                duration: globalTimer.duration
-                splitDuration: globalTimer.splitDuration
+                duration: globalTimer.remainingTime
+                splitDuration: globalTimer.segmentRemainingTime
                 isRunning: globalTimer.running
                 splitToSequence: appSettings.splitToSequence
                 pomodoroQueue: pomodoroQueue

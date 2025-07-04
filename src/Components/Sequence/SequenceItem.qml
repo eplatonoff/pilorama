@@ -22,11 +22,21 @@ Rectangle {
         const color = colors.getColor('dark')
         const dimColor = colors.getColor('mid')
 
-         if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.duration){
+         if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.remainingTime) {
             return dimColor
-        } else if (model.duration === 0){
+        }
+         else if (model.duration === 0){
             return dimColor
-        } else {
+        }
+         else if (globalTimer.splitMode && globalTimer.remainingTime && globalTimer.running) {
+             const realModel = pomodoroQueue.get(model.id)
+            if (realModel && realModel.duration > 0) {
+                return color
+            } else {
+                return dimColor
+            }
+         }
+         else {
             return color
         }
     }

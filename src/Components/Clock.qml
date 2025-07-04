@@ -6,8 +6,8 @@ Item {
     property string currentTime: ''
     property string notificationTime: ''
 
-    property real duration: globalTimer.duration
-    property real splitDuration: globalTimer.splitDuration
+    property real duration: globalTimer.remainingTime
+    property real splitDuration: globalTimer.segmentRemainingTime
 
     onDurationChanged: resetClock()
     onSplitDurationChanged: resetClock()
@@ -27,10 +27,10 @@ Item {
     }
 
     function getDuration(){
-        if(!pomodoroQueue.infiniteMode){
+        if(!globalTimer.splitMode) {
           return duration
         } else {
-          return splitDuration ?  splitDuration : masterModel.get(0).duration
+          return splitDuration
         }
     }
 

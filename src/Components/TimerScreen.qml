@@ -14,10 +14,10 @@ Item {
     }
 
     function getDuration(){
-        if(!pomodoroQueue.infiniteMode){
-          return globalTimer.duration
+        if(!globalTimer.splitMode){
+          return globalTimer.remainingTime
         } else {
-          return globalTimer.splitDuration
+          return globalTimer.segmentRemainingTime
         }
     }
 
@@ -204,14 +204,8 @@ Item {
 
         function reset() {
             pomodoroQueue.infiniteMode = false;
-            pomodoroQueue.clear();
-            mouseArea._prevAngle = 0
-            mouseArea._totalRotatedSecs = 0
-            globalTimer.duration = 0
-            globalTimer.stop()
-            window.clockMode = "start"
+            globalTimer.stopAndClear()
             notifications.stopSound();
-            sequence.setCurrentItem(-1)
         }
 
     }

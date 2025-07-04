@@ -17,8 +17,8 @@ SystemTrayIcon {
 
 
     // TODO refactor
-    property real remainingTime: pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-    property real totalDuration: pomodoroQueue.infiniteMode ? pomodoroQueue.currentDurationBound : globalTimer.durationBound
+    property real remainingTime: globalTimer.splitMode ? globalTimer.segmentRemainingTime : globalTimer.remainingTime
+    property real totalDuration: globalTimer.segmentTotalDuration
 
     property real trayUpdateCounter: 0
 
@@ -144,20 +144,8 @@ SystemTrayIcon {
             text: tray.menuItemText
             onTriggered: {
                 if (globalTimer.running) {
-
-                    pomodoroQueue.infiniteMode = false;
-                    pomodoroQueue.clear();
-
-                    mouseArea._prevAngle = 0
-                    mouseArea._totalRotatedSecs = 0
-
-                    globalTimer.duration = 0
-                    globalTimer.stop()
-
-                    window.clockMode = "start"
-
-                    notifications.stopSound();
-                    sequence.setCurrentItem(-1)
+                    globalTimer.stopAndClear()
+                    pomodoroQueue.infiniteMode = false
 
                 } else {
                     window.clockMode = "pomodoro"

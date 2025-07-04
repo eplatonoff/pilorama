@@ -25,7 +25,7 @@ MouseArea {
 
     onReleased: {
         cursorShape = Qt.OpenHandCursor
-        if (globalTimer.duration > 0) {
+        if (globalTimer.remainingTime > 0) {
             globalTimer.start()
 
         }  else {
@@ -42,7 +42,7 @@ MouseArea {
         this._totalRotatedSecs += deltaSecs;
 
         if (_totalRotatedSecs >= 0 && _totalRotatedSecs <= _totalRotatedSecsLimit) {
-            globalTimer.duration = _totalRotatedSecs;
+            globalTimer.remainingTime = _totalRotatedSecs;
             durationSettings.timer = _totalRotatedSecs
             pomodoroQueue.changeQueue(deltaSecs);
         } else if (_totalRotatedSecs > _totalRotatedSecsLimit) {
