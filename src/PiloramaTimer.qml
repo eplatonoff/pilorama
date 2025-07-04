@@ -15,9 +15,20 @@ Pilorama.Timer {
     property int trayUpdateInterval: 5
     property int trayUpdateCounter: 0
 
+    function updateTrayRunningTime(elapsedSecs = 0, force = false) {
+        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
+        trayUpdateCounter += elapsedSecs
+
+        if (force || trayUpdateCounter >= trayUpdateInterval || tray.runningTime <= 0) {
+            tray.setDialTime()
+            trayUpdateCounter = 0
+        }
+    }
+
     onDurationChanged: {
         window.checkClockMode();
         time.updateTime();
+        updateTrayRunningTime()
         canvas.requestPaint();
     }
 
@@ -27,9 +38,8 @@ Pilorama.Timer {
         canvas.requestPaint();
         if ( running ) {
             durationBound = duration;
-            tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
-            tray.setDialTime()
             trayUpdateCounter = 0
+            updateTrayRunningTime(0, true)
         }
     }
 
@@ -70,13 +80,7 @@ Pilorama.Timer {
         } else
             splitDuration = 0;
 
-        tray.runningTime = pomodoroQueue.infiniteMode ? splitDuration : duration
-        trayUpdateCounter += elapsedSecs
-
-        if (trayUpdateCounter >= trayUpdateInterval || tray.runningTime <= 0) {
-            tray.setDialTime()
-            trayUpdateCounter = 0
-        }
+        updateTrayRunningTime(elapsedSecs)
 
         canvas.requestPaint();
     }
