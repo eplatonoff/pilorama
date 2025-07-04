@@ -101,12 +101,7 @@ SystemTrayIcon {
 
     function computeUpdateInterval() {
         const secs = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-        if (secs <= 120)
-            return 2
-        else if (secs <= 600)
-            return 5
-        else
-            return 10
+        return secs <= 120 ? 2 : (secs <= 600 ? 5 : 10);
     }
 
     function updateRunningTime(elapsedSecs = 0, force = false) {
