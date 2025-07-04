@@ -20,19 +20,18 @@ ListModel {
             totalPomodoros = 0;
 
         _tryToCreateBatch();
-        currentDurationBound = itemDurationBound();
     }
 
     onInfiniteModeChanged: {
         clear();
         _tryToCreateBatch();
-        currentDurationBound = itemDurationBound();
     }
 
     function _tryToCreateBatch() {
         if (infiniteMode && count === 0) {
             _createBatch();
         }
+      currentDurationBound = itemDurationBound();
     }
 
     function first() {

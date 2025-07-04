@@ -22,6 +22,10 @@ SystemTrayIcon {
 
     property real trayUpdateCounter: 0
 
+    Component.onCompleted: {
+       trayUpdateCounter = remainingTime
+    }
+
     onMessageClicked: popUp()
     onActivated: (reason) => {
         if(reason === SystemTrayIcon.DoubleClick){ popUp(); !menu.visible}
