@@ -90,11 +90,14 @@ Canvas {
                  duration - (mainDialTurns * 3600))
     }
 
+    property bool displayInfiniteMode: pomodoroQueue.infiniteMode ||
+                                       (splitToSequence && isRunning)
+
     function drawCalibrationMarks(ctx) {
-        if (pomodoroQueue.infiniteMode) {
+        if (displayInfiniteMode) {
             drawCalibration(ctx, width, fakeWidth, masterModel.get(
                                 pomodoroQueue.first().id).duration / 60)
-        } else if (!pomodoroQueue.infiniteMode && !isRunning && duration) {
+        } else if (!displayInfiniteMode && !isRunning && duration) {
             drawCalibration(ctx, duration > 0 ? fakeDialDiameter : width,
                             fakeWidth, 12)
         } else {
@@ -104,12 +107,12 @@ Canvas {
     }
 
     function drawPomodoroDial(ctx) {
-        if (pomodoroQueue.infiniteMode) {
+        if (displayInfiniteMode) {
             drawDial(ctx, width, fakeWidth, colors.getColor(
                          masterModel.get(pomodoroQueue.get(0).id).color), 0,
                      splitDuration * 3600 / masterModel.get(pomodoroQueue.first(
                                                                 ).id).duration)
-        } else if (!pomodoroQueue.infiniteMode && splitToSequence) {
+        } else if (!displayInfiniteMode && splitToSequence) {
             var splitVisibleEnd = 0
             var splitVisibleStart = 0
             var splitColor
