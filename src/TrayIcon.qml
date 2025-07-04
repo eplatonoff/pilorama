@@ -20,8 +20,7 @@ SystemTrayIcon {
     property real remainingTime: pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
     property real totalDuration: pomodoroQueue.infiniteMode ? pomodoroQueue.currentDurationBound : globalTimer.durationBound
 
-    property int trayUpdateInterval: 5
-    property int trayUpdateCounter: 0
+    property real trayUpdateCounter: 0
 
     onMessageClicked: popUp()
     onActivated: (reason) => {

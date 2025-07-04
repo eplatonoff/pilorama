@@ -26,7 +26,7 @@ ListModel {
     onInfiniteModeChanged: {
         clear();
         _tryToCreateBatch();
-
+        currentDurationBound = itemDurationBound();
     }
 
     function _tryToCreateBatch() {
