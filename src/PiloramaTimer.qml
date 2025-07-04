@@ -64,7 +64,6 @@ Pilorama.Timer {
         } else
             splitDuration = 0;
 
-        tray.setTime()
         canvas.requestPaint();
     }
 }

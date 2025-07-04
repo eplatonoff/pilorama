@@ -7,31 +7,27 @@ ListModel {
 
     property QtObject durationSettings: null
 
-    property int totalPomodoros: 0
     property bool infiniteMode: false
+    property real currentDurationBound: 0
 
     Component.onCompleted: {
         _tryToCreateBatch();
     }
 
     onCountChanged: {
-
-        if (count === 0)
-            totalPomodoros = 0;
-
         _tryToCreateBatch();
     }
 
     onInfiniteModeChanged: {
         clear();
         _tryToCreateBatch();
-
     }
 
     function _tryToCreateBatch() {
         if (infiniteMode && count === 0) {
             _createBatch();
         }
+      currentDurationBound = itemDurationBound();
     }
 
     function first() {
@@ -145,8 +141,15 @@ ListModel {
         return itemDurationBound(last());
     }
 
-    function itemDurationBound(item) {
-        return masterModel.get(item.id).duration
+    function itemDurationBound(item = null) {
+        if (!item) {
+            if (count > 0)
+                item = first();
+            else
+                return 0;
+        }
+
+        return masterModel.get(item.id).duration;
     }
 
     function _createNext()
