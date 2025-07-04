@@ -18,6 +18,8 @@ SystemTrayIcon {
 
     property real dialTime: 0
     property real runningTime: 0
+    property int trayUpdateInterval: 5
+    property int trayUpdateCounter: 0
 
     onMessageClicked: popUp()
     onActivated: (reason) => {
@@ -95,6 +97,26 @@ SystemTrayIcon {
         runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
         setDialTime()
         updateTime()
+    }
+
+    function computeUpdateInterval() {
+        const secs = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
+        if (secs <= 120)
+            return 2
+        else if (secs <= 600)
+            return 5
+        else
+            return 10
+    }
+
+    function updateRunningTime(elapsedSecs = 0, force = false) {
+        runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
+        trayUpdateCounter += elapsedSecs
+        trayUpdateInterval = computeUpdateInterval()
+        if (force || trayUpdateCounter >= trayUpdateInterval || runningTime <= 0) {
+            setTime()
+            trayUpdateCounter = 0
+        }
     }
 
     function pad(value) {
