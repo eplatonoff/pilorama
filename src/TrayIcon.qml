@@ -76,7 +76,12 @@ SystemTrayIcon {
                 return 'qrc:/assets/tray/static-day.svg'
             }
 
-        const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");
+        let color
+        if (pomodoroQueue.infiniteMode || preferences.splitToSequence) {
+            color = colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+        } else {
+            color = colors.getThemeColor("dark")
+        }
         const placeholderColor = colors.getThemeColor("light")
 
         return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
