@@ -134,7 +134,6 @@ ApplicationWindow {
 
         property alias alwaysOnTop: window.alwaysOnTop
         property alias quitOnClose: window.quitOnClose
-        property alias showQueue: sequence.showQueue
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }

@@ -41,6 +41,17 @@ SystemTrayIcon {
         }
     }
 
+    Connections {
+        target: globalTimer
+        function onRunningChanged(running) {
+            if (!running) {
+                // Restore the static idle icon once the timer stops
+                icon.source = iconURL()
+                trayUpdateCounter = remainingTime
+            }
+        }
+    }
+
     function checkMenuItemText() {
         if (globalTimer.running && pomodoroQueue.infiniteMode) {
             return "Reset Timer"
