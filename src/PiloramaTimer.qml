@@ -57,7 +57,12 @@ Pilorama.Timer {
         }
 
         if (splitMode) {
-            sequence.setCurrentItem(pomodoroQueue.first().id);
+            const activeItem = pomodoroQueue.first();
+            if (activeItem) {
+                sequence.setCurrentItem(activeItem.id);
+            } else {
+                sequence.setCurrentItem();
+            }
         } else {
             sequence.setCurrentItem();
         }

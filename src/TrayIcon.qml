@@ -24,7 +24,8 @@ SystemTrayIcon {
 
     Component.onCompleted: {
        trayUpdateCounter = remainingTime
-       globalTimer.runningChanged.connect(handleTimerStop)
+       globalTimer.runningChanged.connect(handleTimerState)
+       pomodoroQueue.infiniteModeChanged.connect(() => tray.menuItemText = checkMenuItemText())
     }
 
     onMessageClicked: popUp()
@@ -42,8 +43,12 @@ SystemTrayIcon {
         }
     }
 
-    function handleTimerStop(running) {
-        if (!running) {
+    function handleTimerState(running) {
+        tray.menuItemText = checkMenuItemText()
+        if (running && totalDuration > 0) {
+            icon.source = iconURL(Math.round((remainingTime * 3600 / totalDuration) / 10) * 10)
+            trayUpdateCounter = remainingTime
+        } else if (!running) {
             // Restore the static idle icon once the timer stops
             icon.source = iconURL()
             trayUpdateCounter = remainingTime
@@ -52,11 +57,13 @@ SystemTrayIcon {
 
 
     function checkMenuItemText() {
-        if (globalTimer.running && pomodoroQueue.infiniteMode) {
-            return "Reset Timer"
-        } else {
-            return "Start Sequence"
+        if (globalTimer.running) {
+            if (pomodoroQueue.infiniteMode) {
+                return "Reset Timer"
+            }
+            return "Stop Sequence"
         }
+        return "Start Sequence"
     }
 
     function checkSoundItemText() {
@@ -77,7 +84,7 @@ SystemTrayIcon {
             }
 
         let color
-        if (pomodoroQueue.infiniteMode || preferences.splitToSequence) {
+        if ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0) {
             color = colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
         } else {
             color = colors.getThemeColor("dark")
@@ -88,7 +95,7 @@ SystemTrayIcon {
     }
 
     function notificationIconURL() {
-        const color = pomodoroQueue.infiniteMode ?
+        const color = (pomodoroQueue.infiniteMode || pomodoroQueue.count > 0) ?
                 colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) :
                 colors.getThemeColor("dark");
         return "image://notification_dot_provider/" + color;
@@ -161,12 +168,13 @@ SystemTrayIcon {
                 if (globalTimer.running) {
                     globalTimer.stopAndClear()
                     pomodoroQueue.infiniteMode = false
-
                 } else {
                     window.clockMode = "pomodoro"
                     pomodoroQueue.infiniteMode = true
                     globalTimer.start()
-                    notifications.sendFromItem(pomodoroQueue.first())
+                    if (pomodoroQueue.count > 0) {
+                        notifications.sendFromItem(pomodoroQueue.first())
+                    }
                 }
 
             }
