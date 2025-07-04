@@ -9,17 +9,18 @@ ListModel {
 
     property int totalPomodoros: 0
     property bool infiniteMode: false
+    property real currentDurationBound: 0
 
     Component.onCompleted: {
         _tryToCreateBatch();
     }
 
     onCountChanged: {
-
         if (count === 0)
             totalPomodoros = 0;
 
         _tryToCreateBatch();
+        currentDurationBound = itemDurationBound();
     }
 
     onInfiniteModeChanged: {
@@ -145,8 +146,15 @@ ListModel {
         return itemDurationBound(last());
     }
 
-    function itemDurationBound(item) {
-        return masterModel.get(item.id).duration
+    function itemDurationBound(item = null) {
+        if (!item) {
+            if (count > 0)
+                item = first();
+            else
+                return 0;
+        }
+
+        return masterModel.get(item.id).duration;
     }
 
     function _createNext()

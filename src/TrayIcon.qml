@@ -16,14 +16,26 @@ SystemTrayIcon {
     property string soundItemText: "Turn sound " + checkSoundItemText()
 
 
-    property real dialTime: 0
-    property real runningTime: 0
+    // TODO refactor
+    property real remainingTime: pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
+    property real totalDuration: pomodoroQueue.infiniteMode ? pomodoroQueue.currentDurationBound : globalTimer.durationBound
+
     property int trayUpdateInterval: 5
     property int trayUpdateCounter: 0
 
     onMessageClicked: popUp()
     onActivated: (reason) => {
         if(reason === SystemTrayIcon.DoubleClick){ popUp(); !menu.visible}
+    }
+
+    onRemainingTimeChanged: {
+        const diff = Math.abs(remainingTime - trayUpdateCounter);
+        if (diff >= computeUpdateInterval()) {
+            icon.source = iconURL(
+                Math.round((remainingTime * 3600 / totalDuration) / 10) * 10
+            )
+            trayUpdateCounter = remainingTime
+        }
     }
 
     function checkMenuItemText() {
@@ -42,24 +54,9 @@ SystemTrayIcon {
         }
     }
 
-    function iconDialMin() {
-        var precision = 120
-        var y = Math.abs(dialTime) + precision / 2;
-        y = y - y % precision;
-        return y / 60
-    }
-
-    function messageIcon() {
-        if (systemPalette.sysemDarkMode) {
-            return 'qrc:/assets/tray/static-night.svg';
-        } else {
-            return 'qrc:/assets/tray/static-day.svg'
-        }
-    }
-
-    function iconURL()
+    function iconURL(renderSecs = 0)
     {
-        if (!globalTimer.running)
+        if (!globalTimer.running || renderSecs === 0 || renderSecs === Infinity || isNaN(renderSecs))
             if (systemPalette.sysemDarkMode) {
                 return 'qrc:/assets/tray/static-night.svg';
             } else {
@@ -68,8 +65,6 @@ SystemTrayIcon {
 
         const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");
         const placeholderColor = colors.getThemeColor("light")
-
-        const renderSecs = Math.round(dialTime / 10) * 10;
 
         return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
     }
@@ -81,37 +76,8 @@ SystemTrayIcon {
         return "image://notification_dot_provider/" + color;
     }
 
-    function setDialTime() {
-        var t
-        if(!pomodoroQueue.infiniteMode) {
-            t = globalTimer.duration * 3600 / globalTimer.durationBound
-            dialTime = globalTimer.duration ? t : 0;
-        } else {
-            t = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
-            dialTime = pomodoroQueue.first() ? t : 0;
-        }
-
-    }
-
-    function setTime() {
-        runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-        setDialTime()
-        updateTime()
-    }
-
     function computeUpdateInterval() {
-        const secs = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-        return secs <= 120 ? 2 : (secs <= 600 ? 5 : 10);
-    }
-
-    function updateRunningTime(elapsedSecs = 0, force = false) {
-        runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-        trayUpdateCounter += elapsedSecs
-        trayUpdateInterval = computeUpdateInterval()
-        if (force || trayUpdateCounter >= trayUpdateInterval || runningTime <= 0) {
-            setTime()
-            trayUpdateCounter = 0
-        }
+        return totalDuration <= 120 ? 2 : (totalDuration <= 600 ? 5 : 10);
     }
 
     function pad(value) {
@@ -120,10 +86,10 @@ SystemTrayIcon {
     }
 
     function updateTime() {
-        let h = Math.trunc(runningTime / 3600)
+        let h = Math.trunc(remainingTime / 3600)
         let hour = h > 0 ? h + ":" : ""
-        let min = pad(Math.trunc(runningTime / 60) - Math.trunc(runningTime / 3600) * 60)
-        let sec = pad(Math.trunc(runningTime % 60))
+        let min = pad(Math.trunc(remainingTime / 60) - Math.trunc(remainingTime / 3600) * 60)
+        let sec = pad(Math.trunc(remainingTime % 60))
         return "Time left: " + hour + min + ":" + sec
     }
 

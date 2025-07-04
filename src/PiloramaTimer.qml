@@ -15,7 +15,6 @@ Pilorama.Timer {
     onDurationChanged: {
         window.checkClockMode();
         time.updateTime();
-        tray.updateRunningTime()
         canvas.requestPaint();
     }
 
@@ -25,7 +24,6 @@ Pilorama.Timer {
         canvas.requestPaint();
         if ( running ) {
             durationBound = duration;
-            tray.updateRunningTime(0, true)
         }
     }
 
@@ -65,8 +63,6 @@ Pilorama.Timer {
 
         } else
             splitDuration = 0;
-
-        tray.updateRunningTime(elapsedSecs)
 
         canvas.requestPaint();
     }
