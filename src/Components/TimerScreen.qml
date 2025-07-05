@@ -14,11 +14,12 @@ Item {
     }
 
     function getDuration(){
-        if(!globalTimer.splitMode){
+
+        // if(!globalTimer.splitMode){
           return globalTimer.remainingTime
-        } else {
-          return globalTimer.segmentRemainingTime
-        }
+        // } else {
+          // return globalTimer.segmentRemainingTime
+        // }
     }
 
     function count(duration){

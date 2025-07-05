@@ -82,22 +82,20 @@ Canvas {
 
     function drawMainDialTurns(ctx) {
         for (var t = mainDialTurns; t > 0; t--) {
-            drawDial(ctx,
-                     width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding),
+            drawDial(ctx, width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding),
                      mainTurnsWidth, colors.getColor('light'), 0, 3600)
         }
         drawDial(ctx, mainDialDiameter, mainWidth, colors.getColor('mid'), 0,
                  duration - (mainDialTurns * 3600))
     }
 
-    property bool displayInfiniteMode: pomodoroQueue.infiniteMode ||
-                                       (splitToSequence && isRunning)
+    property bool displayInfiniteMode: pomodoroQueue.infiniteMode || splitToSequence
 
     function drawCalibrationMarks(ctx) {
-        if (displayInfiniteMode) {
+        if (pomodoroQueue.infiniteMode) {
             drawCalibration(ctx, width, fakeWidth, masterModel.get(
                                 pomodoroQueue.first().id).duration / 60)
-        } else if (!displayInfiniteMode && !isRunning && duration) {
+        } else if (!pomodoroQueue.infiniteMode && !isRunning && duration) {
             drawCalibration(ctx, duration > 0 ? fakeDialDiameter : width,
                             fakeWidth, 12)
         } else {
@@ -107,12 +105,10 @@ Canvas {
     }
 
     function drawPomodoroDial(ctx) {
-        if (displayInfiniteMode) {
-            drawDial(ctx, width, fakeWidth, colors.getColor(
-                         masterModel.get(pomodoroQueue.get(0).id).color), 0,
-                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first(
-                                                                ).id).duration)
-        } else if (!displayInfiniteMode && splitToSequence) {
+        if (pomodoroQueue.infiniteMode) {
+            drawDial(ctx, width, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+        } else if (!pomodoroQueue.infiniteMode && splitToSequence) {
             var splitVisibleEnd = 0
             var splitVisibleStart = 0
             var splitColor
@@ -126,13 +122,19 @@ Canvas {
                             i).duration + splitVisibleEnd
                 splitColor = masterModel.get(pomodoroQueue.get(i).id).color
 
-                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(
-                             splitColor), splitVisibleStart
-                         <= mainDialTurns * 3600 ? mainDialTurns
-                                                   * 3600 : splitVisibleStart, splitVisibleEnd
-                         <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
+                if(!isRunning){
+                    drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(splitColor), splitVisibleStart
+                             <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart, splitVisibleEnd
+                             <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
+                } else {
+                    drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+                             splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+                }
+
+
             }
-        } else {
+        }
+        else {
             drawDial(ctx, fakeDialDiameter, fakeWidth,
                      colors.getColor('light'), 0,
                      duration - (mainDialTurns * 3600))
