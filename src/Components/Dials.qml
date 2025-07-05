@@ -108,36 +108,12 @@ Canvas {
         if (pomodoroQueue.infiniteMode) {
             drawDial(ctx, width, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
                      splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
-        } else if (!pomodoroQueue.infiniteMode && splitToSequence) {
-            var splitVisibleEnd = 0
-            var splitVisibleStart = 0
-            var splitColor
-            var prevSplit = 0
-            var splitIncrement = 3600 / duration
-
-            for (var i = 0; i <= pomodoroQueue.count - 1; i++) {
-                prevSplit = i <= 0 ? 0 : pomodoroQueue.get(i - 1).duration
-                splitVisibleStart = prevSplit + splitVisibleStart
-                splitVisibleEnd = pomodoroQueue.get(
-                            i).duration + splitVisibleEnd
-                splitColor = masterModel.get(pomodoroQueue.get(i).id).color
-
-                if(!isRunning){
-                    drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(splitColor), splitVisibleStart
-                             <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart, splitVisibleEnd
-                             <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
-                } else {
-                    drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
-                             splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
-                }
-
-
-            }
-        }
-        else {
-            drawDial(ctx, fakeDialDiameter, fakeWidth,
-                     colors.getColor('light'), 0,
-                     duration - (mainDialTurns * 3600))
+        } else if(splitToSequence && isRunning ){
+                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+                         splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+        } else {
+                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor('light'), 0,
+                         duration - (mainDialTurns * 3600))
         }
     }
 
