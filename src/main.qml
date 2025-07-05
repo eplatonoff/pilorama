@@ -282,6 +282,7 @@ ApplicationWindow {
                 splitDuration: globalTimer.segmentRemainingTime
                 isRunning: globalTimer.running
                 splitToSequence: appSettings.splitToSequence
+                dragging: mouseArea.dragging
                 pomodoroQueue: pomodoroQueue
                 masterModel: masterModel
                 colors: colors

@@ -16,7 +16,6 @@ SystemTrayIcon {
     property string soundItemText: "Turn sound " + checkSoundItemText()
 
 
-    // TODO refactor
     property real remainingTime: globalTimer.splitMode ? globalTimer.segmentRemainingTime : globalTimer.remainingTime
     property real totalDuration: globalTimer.segmentTotalDuration
 

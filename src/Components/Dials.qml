@@ -7,6 +7,7 @@ Canvas {
     required property real splitDuration
     required property bool isRunning
     required property var splitToSequence
+    required property bool dragging
 
     required property var pomodoroQueue
     required property var masterModel
@@ -104,16 +105,35 @@ Canvas {
         }
     }
 
+    // TODO refactor
     function drawPomodoroDial(ctx) {
         if (pomodoroQueue.infiniteMode) {
-            drawDial(ctx, width, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+            drawDial(ctx, width, fakeWidth,
+                     colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
                      splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
-        } else if(splitToSequence && isRunning ){
-                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
-                         splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+        } else if (splitToSequence && isRunning) {
+            drawDial(ctx, fakeDialDiameter, fakeWidth,
+                     colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+        } else if (splitToSequence && dragging) {
+            var splitVisibleEnd = 0
+            var splitVisibleStart = 0
+            var prevSplit = 0
+            for (var i = 0; i <= pomodoroQueue.count - 1; i++) {
+                prevSplit = i <= 0 ? 0 : pomodoroQueue.get(i - 1).duration
+                splitVisibleStart += prevSplit
+                splitVisibleEnd += pomodoroQueue.get(i).duration
+                var splitColor = masterModel.get(pomodoroQueue.get(i).id).color
+
+                drawDial(ctx, fakeDialDiameter, fakeWidth,
+                         colors.getColor(splitColor),
+                         splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
+                         splitVisibleEnd   <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
+            }
         } else {
-                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor('light'), 0,
-                         duration - (mainDialTurns * 3600))
+            drawDial(ctx, fakeDialDiameter, fakeWidth,
+                     colors.getColor('light'), 0,
+                     duration - (mainDialTurns * 3600))
         }
     }
 
