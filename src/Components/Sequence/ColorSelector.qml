@@ -41,7 +41,7 @@ Rectangle {
 
     function dimmer(color) {
         const dimColor = colors.getColor('light')
-        if (!splitToSequence && globalTimer.duration){
+        if (!splitToSequence && globalTimer.remainingTime){
             dimm = true
             return dimColor
         } else if (model.duration === 0){
