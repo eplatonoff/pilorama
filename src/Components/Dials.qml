@@ -7,6 +7,7 @@ Canvas {
     required property real splitDuration
     required property bool isRunning
     required property var splitToSequence
+    required property bool dragging
 
     required property var pomodoroQueue
     required property var masterModel
@@ -82,13 +83,14 @@ Canvas {
 
     function drawMainDialTurns(ctx) {
         for (var t = mainDialTurns; t > 0; t--) {
-            drawDial(ctx,
-                     width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding),
+            drawDial(ctx, width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding),
                      mainTurnsWidth, colors.getColor('light'), 0, 3600)
         }
         drawDial(ctx, mainDialDiameter, mainWidth, colors.getColor('mid'), 0,
                  duration - (mainDialTurns * 3600))
     }
+
+    property bool displayInfiniteMode: pomodoroQueue.infiniteMode || splitToSequence
 
     function drawCalibrationMarks(ctx) {
         if (pomodoroQueue.infiniteMode) {
@@ -103,31 +105,30 @@ Canvas {
         }
     }
 
+    // TODO refactor
     function drawPomodoroDial(ctx) {
         if (pomodoroQueue.infiniteMode) {
-            drawDial(ctx, width, fakeWidth, colors.getColor(
-                         masterModel.get(pomodoroQueue.get(0).id).color), 0,
-                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first(
-                                                                ).id).duration)
-        } else if (!pomodoroQueue.infiniteMode && splitToSequence) {
+            drawDial(ctx, width, fakeWidth,
+                     colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+        } else if (splitToSequence && isRunning) {
+            drawDial(ctx, fakeDialDiameter, fakeWidth,
+                     colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
+                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
+        } else if (splitToSequence && dragging) {
             var splitVisibleEnd = 0
             var splitVisibleStart = 0
-            var splitColor
             var prevSplit = 0
-            var splitIncrement = 3600 / duration
-
             for (var i = 0; i <= pomodoroQueue.count - 1; i++) {
                 prevSplit = i <= 0 ? 0 : pomodoroQueue.get(i - 1).duration
-                splitVisibleStart = prevSplit + splitVisibleStart
-                splitVisibleEnd = pomodoroQueue.get(
-                            i).duration + splitVisibleEnd
-                splitColor = masterModel.get(pomodoroQueue.get(i).id).color
+                splitVisibleStart += prevSplit
+                splitVisibleEnd += pomodoroQueue.get(i).duration
+                var splitColor = masterModel.get(pomodoroQueue.get(i).id).color
 
-                drawDial(ctx, fakeDialDiameter, fakeWidth, colors.getColor(
-                             splitColor), splitVisibleStart
-                         <= mainDialTurns * 3600 ? mainDialTurns
-                                                   * 3600 : splitVisibleStart, splitVisibleEnd
-                         <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
+                drawDial(ctx, fakeDialDiameter, fakeWidth,
+                         colors.getColor(splitColor),
+                         splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
+                         splitVisibleEnd   <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
             }
         } else {
             drawDial(ctx, fakeDialDiameter, fakeWidth,
