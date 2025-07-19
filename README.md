@@ -49,8 +49,9 @@ can be built with:
     $ make -j
 
 The resulting `Pilorama.html` can be served from any HTTP server. Note that the
-WebAssembly build disables the system tray icon and preset file import/export
-functionality.
+WebAssembly build disables the system tray icon. The preset import/export
+buttons remain visible but are disabled with tooltips until filesystem access
+is implemented.
 
 
 ## Development / Code of Conduct 

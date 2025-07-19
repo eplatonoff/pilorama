@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import ".."
 
 Rectangle {
@@ -98,10 +99,13 @@ Rectangle {
 
     Icon {
         id: loadButton
-        visible: Qt.platform.os !== "wasm"
         glyph: "\uea0b"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
+        enabled: Qt.platform.os !== "wasm"
+
+        ToolTip.visible: !loadButton.enabled && loadButton.containsMouse
+        ToolTip.text: qsTr("Import not supported in WebAssembly build")
 
         onReleased: { if (fileDialogue.item) fileDialogue.item.openDialogue() }
 
@@ -109,10 +113,13 @@ Rectangle {
 
     Icon {
         id: saveButton
-        visible: Qt.platform.os !== "wasm"
         glyph: "\uea07"
         anchors.left: loadButton.right
         anchors.verticalCenter: parent.verticalCenter
+        enabled: Qt.platform.os !== "wasm"
+
+        ToolTip.visible: !saveButton.enabled && saveButton.containsMouse
+        ToolTip.text: qsTr("Export not supported in WebAssembly build")
 
         onReleased: { if (fileDialogue.item) fileDialogue.item.saveDialogue() }
 
