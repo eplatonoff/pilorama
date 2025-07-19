@@ -3,7 +3,7 @@
 #include "notificationdotprovider.h"
 #include "mac/MacOSController.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QTimer>
 #include <QDebug>
