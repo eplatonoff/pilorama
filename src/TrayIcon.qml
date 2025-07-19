@@ -196,6 +196,7 @@ SystemTrayIcon {
         MenuItem {
             text: qsTr("Quit")
             onTriggered: {
+                window.quitOnClose = true
                 window.close()
                 Qt.quit()
             }

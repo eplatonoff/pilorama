@@ -12,7 +12,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt6 REQUIRED COMPONENTS
         Core
         Quick
-        Widgets
         Svg
         Xml
         Multimedia
@@ -92,7 +91,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE QT_DEPRECATED_WARNINGS)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
         Qt::Quick
-        Qt::Widgets
         Qt::Svg
         Qt::Xml
         PRIVATE Qt6::Core
