@@ -27,7 +27,9 @@
         <file>PiloramaTimer.qml</file>
         <file>MouseTracker.qml</file>
         <file>TrayIcon.qml</file>
+        <file>TrayIconStub.qml</file>
         <file>FileDialogue.qml</file>
+        <file>FileDialogueStub.qml</file>
         <file>MasterModel.qml</file>
         <file>ModelBurner.qml</file>
         <file>Components/Colors.qml</file>

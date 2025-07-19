@@ -82,8 +82,7 @@ ApplicationWindow {
                 if (appSettings.showInDock) {
                     MacOSController.hideFromDock()
                 }
-            }
-            else {
+            } else if (Qt.platform.os !== "wasm") {
                 window.visibility = ApplicationWindow.Minimized;
             }
         }
@@ -183,8 +182,9 @@ ApplicationWindow {
         durationSettings: durationSettings
     }
 
-    TrayIcon {
+    Loader {
         id: tray
+        source: Qt.platform.os === "wasm" ? "TrayIconStub.qml" : "TrayIcon.qml"
     }
 
     NotificationSystem {
@@ -199,8 +199,9 @@ ApplicationWindow {
         id: clock
     }
 
-    FileDialogue {
+    Loader {
         id: fileDialogue
+        source: Qt.platform.os === "wasm" ? "FileDialogueStub.qml" : "FileDialogue.qml"
     }
 
     QtObject {

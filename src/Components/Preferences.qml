@@ -54,6 +54,7 @@ Item {
 
         PreferenceItem {
             id: closeOnQuit
+            visible: Qt.platform.os !== "wasm"
             cellHeight: preferences.cellHeight
             fontSize: preferences.fontSize
             checked: !window.quitOnClose

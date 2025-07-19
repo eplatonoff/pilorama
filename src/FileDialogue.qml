@@ -11,11 +11,13 @@ Item{
     property var title: masterModel.title
 
     function openDialogue(){
-        openFileDialog.open()
+        if (Qt.platform.os !== "wasm")
+            openFileDialog.open()
     }
 
     function saveDialogue(){
-        saveFileDialog.open()
+        if (Qt.platform.os !== "wasm")
+            saveFileDialog.open()
     }
 
     function getTitle(url){
@@ -24,6 +26,9 @@ Item{
     }
 
     function openFile(url) {
+        if (Qt.platform.os === "wasm")
+            return { title: "", data: "" }
+
         var request = new XMLHttpRequest();
         request.open("GET", url, false);
         request.send(null)
@@ -31,6 +36,9 @@ Item{
     }
 
     function saveFile(url) {
+        if (Qt.platform.os === "wasm")
+            return ""
+
         var request = new XMLHttpRequest();
         request.open("PUT", url, true); // async false created empty files on macos
         request.send(masterModel.data);
@@ -39,6 +47,7 @@ Item{
 
     FileDialog {
         id: openFileDialog
+        visible: Qt.platform.os !== "wasm"
         nameFilters: ["JSON files (*.json)"]
         currentFolder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
 
@@ -51,6 +60,7 @@ Item{
 
     FileDialog {
         id: saveFileDialog
+        visible: Qt.platform.os !== "wasm"
         fileMode: FileDialog.SaveFile
         nameFilters: ["JSON files (*.json)"]
         defaultSuffix : 'json'

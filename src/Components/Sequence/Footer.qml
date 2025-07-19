@@ -98,21 +98,23 @@ Rectangle {
 
     Icon {
         id: loadButton
+        visible: Qt.platform.os !== "wasm"
         glyph: "\uea0b"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
 
-        onReleased: { fileDialogue.openDialogue() }
+        onReleased: { if (fileDialogue.item) fileDialogue.item.openDialogue() }
 
     }
 
     Icon {
         id: saveButton
+        visible: Qt.platform.os !== "wasm"
         glyph: "\uea07"
         anchors.left: loadButton.right
         anchors.verticalCenter: parent.verticalCenter
 
-        onReleased: { fileDialogue.saveDialogue() }
+        onReleased: { if (fileDialogue.item) fileDialogue.item.saveDialogue() }
 
     }
 }

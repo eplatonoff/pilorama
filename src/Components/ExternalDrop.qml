@@ -45,12 +45,15 @@ Item{
         onExited: {
                 externalDrop.validFile = false
         }
-        onDropped: if (drop.hasText) {
+        onDropped: if (Qt.platform.os !== "wasm" && drop.hasText) {
             if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
 
-                masterModel.data = fileDialogue.openFile(drop.text).data
-                masterModel.title = fileDialogue.openFile(drop.text).title
-                masterModel.load()
+                var file = fileDialogue.item ? fileDialogue.item.openFile(drop.text) : null
+                if (file) {
+                    masterModel.data = file.data
+                    masterModel.title = file.title
+                    masterModel.load()
+                }
 
                 drop.acceptProposedAction()
                 externalDrop.validFile = false

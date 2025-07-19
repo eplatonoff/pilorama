@@ -33,12 +33,13 @@ QtObject {
 
     function sendWithSound(name) {
         soundNotification.play();
-        tray.send(name)
+        if (tray.item && tray.item.send)
+            tray.item.send(name)
     }
 
     function sendFromItem(item) {
         sendWithSound(masterModel.get(item.id).name)
-        if (appSettings.showOnSegmentStart)
-            tray.popUp()
+        if (appSettings.showOnSegmentStart && tray.item && tray.item.popUp)
+            tray.item.popUp()
     }
 }

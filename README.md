@@ -39,6 +39,19 @@ Building from source:
     $ make -j
     $ ./Pilorama
 
+### WebAssembly
+
+Qt for WebAssembly build requires the Emscripten toolchain and a Qt installation
+compiled with WebAssembly support. After installing those dependencies, the app
+can be built with:
+
+    $ emcmake cmake ../src -DQT_HOST_PATH=/path/to/qt
+    $ make -j
+
+The resulting `Pilorama.html` can be served from any HTTP server. Note that the
+WebAssembly build disables the system tray icon and preset file import/export
+functionality.
+
 
 ## Development / Code of Conduct 
 #### Release Process
