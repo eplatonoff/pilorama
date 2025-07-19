@@ -7,9 +7,6 @@
 #include <QQmlApplicationEngine>
 #include <QTimer>
 #include <QDebug>
-#include <QSystemTrayIcon>
-#include <QPixmap>
-#include <QApplication>
 #include <QQmlContext>
 
 
@@ -18,7 +15,7 @@ int main(int argc, char *argv[])
     MacOSController macOSController;
     macOSController.disableAppNap();
 
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
     app.setOrganizationName("Some Humans");
     app.setOrganizationDomain("somehumans.com");
@@ -30,6 +27,9 @@ int main(int argc, char *argv[])
     engine.addImageProvider("tray_icon_provider", new TrayImageProvider());
     engine.addImageProvider("notification_dot_provider", new NotificationDotProvider());
     macOSController.setEngine(&engine);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::quit,
+                     &app, &QCoreApplication::quit);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
