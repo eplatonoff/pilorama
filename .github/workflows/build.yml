@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-14
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -52,7 +52,7 @@ jobs:
     runs-on: windows-2022
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
