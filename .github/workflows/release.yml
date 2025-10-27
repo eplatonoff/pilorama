@@ -127,13 +127,13 @@ jobs:
       contents: write
     steps:
     - name: Download macOS package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: Pilorama.dmg
         path: .
         merge-multiple: true
     - name: Download Windows package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: Pilorama_Setup.exe
         path: .
