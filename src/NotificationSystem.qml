@@ -15,7 +15,7 @@ QtObject {
         id: soundNotification
         muted: notifications.soundMuted
         audioDevice: mediaDevices.defaultAudioOutput
-        source: "qrc:assets/sound/drum_roll.wav"
+        source: appSettings.soundPath
     }
 
     onSoundMutedChanged: {

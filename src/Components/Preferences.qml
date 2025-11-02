@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
 import "Preferences"
 
@@ -128,6 +129,79 @@ Item {
                 }
             }
 
+        }
+
+        Item {
+            id: notificationSound
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+
+            Text {
+                id: soundLabel
+                height: 19
+                text: qsTr("Notification")
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.verticalCenter: parent.verticalCenter
+                color: colors.getColor("dark")
+                font.family: localFont.name
+                font.pixelSize: fontSize
+                renderType: Text.NativeRendering
+            }
+
+            Text {
+                id: soundPathText
+                anchors.left: soundLabel.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                text: appSettings.soundPath ? appSettings.soundPath.split("/").pop() : "—"
+                font.family: localFont.name
+                font.pixelSize: preferences.infoFontSize
+                elide: Text.ElideRight
+                width: Math.min(implicitWidth, 120)
+                verticalAlignment: Text.AlignVCenter
+                color: colors.getColor('mid')
+            }
+
+            Button {
+                id: chooseSoundButton
+                anchors.left: soundPathText.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                width: 28
+                text: qsTr("...")
+                onClicked: soundFileDialog.open()
+            }
+
+            Button {
+                id: restoreDefaultSoundButton
+                anchors.left: chooseSoundButton.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                width: 28
+                text: qsTr("↩")
+                ToolTip.visible: hovered
+                ToolTip.text: qsTr("Restore default notification sound")
+                onClicked: {
+                    appSettings.soundPath = "qrc:assets/sound/drum_roll.wav"
+                }
+            }
+
+            FileDialog {
+                id: soundFileDialog
+                title: qsTr("Select notification sound")
+                nameFilters: [qsTr("WAV files (*.wav)")]
+                onAccepted: {
+                    if (selectedFile) {
+                        appSettings.soundPath = selectedFile
+                    }
+                }
+            }
+            
         }
     }
 

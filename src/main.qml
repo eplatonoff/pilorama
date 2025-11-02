@@ -125,6 +125,7 @@ ApplicationWindow {
         property bool showOnSegmentStart: false
 
         property alias soundMuted: notifications.soundMuted
+        property string soundPath: "qrc:assets/sound/drum_roll.wav"
         property alias splitToSequence: preferences.splitToSequence
 
         property alias windowX: window.x
