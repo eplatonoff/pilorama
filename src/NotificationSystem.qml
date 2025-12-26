@@ -5,6 +5,7 @@ QtObject {
     id: notifications
 
     property var settings
+    property var soundSettings
     readonly property bool soundMuted: settings ? settings.soundMuted : false
 
     // Default and effective sound paths

@@ -198,6 +198,7 @@ ApplicationWindow {
     NotificationSystem {
         id: notifications
         settings: appSettings
+        soundSettings: soundSettings
     }
 
     PiloramaTimer {
