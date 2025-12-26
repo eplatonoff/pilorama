@@ -12,8 +12,10 @@ SystemTrayIcon {
     property string appTitle: window.title
     property string messageText: ""
     property string messageTitle: ""
-    property string menuItemText: checkMenuItemText()
-    property string soundItemText: "Turn sound " + checkSoundItemText()
+    readonly property string menuItemText: (globalTimer.running && pomodoroQueue.infiniteMode)
+                                          ? "Reset Timer"
+                                          : "Start Sequence"
+    readonly property string soundItemText: notifications.soundMuted ? "Turn sound on" : "Turn sound off"
 
 
     // TODO refactor
@@ -38,22 +40,6 @@ SystemTrayIcon {
                 Math.round((remainingTime * 3600 / totalDuration) / 10) * 10
             )
             trayUpdateCounter = remainingTime
-        }
-    }
-
-    function checkMenuItemText() {
-        if (globalTimer.running && pomodoroQueue.infiniteMode) {
-            return "Reset Timer"
-        } else {
-            return "Start Sequence"
-        }
-    }
-
-    function checkSoundItemText() {
-        if (notifications.soundMuted) {
-            return "on"
-        } else {
-            return "off"
         }
     }
 

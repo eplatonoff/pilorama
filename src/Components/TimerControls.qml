@@ -84,7 +84,7 @@ Item {
             propagateComposedEvents: false
             visible: !button.splitMode
             anchors.fill: parent
-            onClicked: button.startResetClicked()
+            onPressed: button.startResetClicked()
 
             Text {
                 id: buttonText
@@ -118,7 +118,7 @@ Item {
             color: colors.getColor("dark")
             size: button.iconSize
 
-            onReleased: button.startResetClicked()
+            onPressed: button.startResetClicked()
         }
 
         Rectangle {
@@ -151,7 +151,7 @@ Item {
 
             color: colors.getColor("dark")
 
-            onReleased: button.toggleClicked()
+            onPressed: button.toggleClicked()
 
             Behavior on opacity { NumberAnimation { duration: 300 } }
 
