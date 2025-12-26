@@ -352,6 +352,8 @@ ApplicationWindow {
 
                 Preferences {
                 id: preferences
+                appSettings: appSettings
+                soundSettings: soundSettings
         }
     }
 

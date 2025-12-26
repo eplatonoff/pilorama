@@ -9,6 +9,8 @@ Item {
     id: preferences
     visible: false
 
+    property var appSettings
+    property var soundSettings
     property bool splitToSequence: false
 
     property int cellHeight: 38
