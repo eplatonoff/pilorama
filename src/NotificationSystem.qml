@@ -1,31 +1,35 @@
 import QtQuick
 import QtMultimedia
 
-import "utils/sound.mjs" as SoundUtils
-
 QtObject {
     id: notifications
 
-    property bool soundMuted: false
+    property var settings
+    readonly property bool soundMuted: settings ? settings.soundMuted : false
 
     // Default and effective sound paths
-    property url effectiveSoundPath: SoundUtils.isWav(appSettings.soundPath) ? appSettings.soundPath : appSettings.defaultSound
+    property url effectiveSoundPath: soundSettings.effectiveSoundPath
+    property url currentSoundSource: effectiveSoundPath
+    property bool pendingPlay: false
+
+    onEffectiveSoundPathChanged: {
+        currentSoundSource = effectiveSoundPath;
+    }
 
     // QtObject has no default property; SoundEffect must be declared as a property.
     property SoundEffect soundNotification: SoundEffect {
         muted: notifications.soundMuted
         // Let Qt choose the default audio device to avoid null connections
-        source: notifications.effectiveSoundPath
+        source: notifications.currentSoundSource
         onStatusChanged: {
-            if (status === SoundEffect.Error && source !== appSettings.defaultSound) {
-                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", appSettings.defaultSound);
+            if (status === SoundEffect.Error && source !== soundSettings.defaultSound) {
+                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", soundSettings.defaultSound);
+                notifications.currentSoundSource = soundSettings.defaultSound;
+            } else if (status === SoundEffect.Ready && notifications.pendingPlay) {
+                notifications.pendingPlay = false;
+                soundNotification.play();
             }
         }
-    }
-
-    property SoundEffect fallbackSound: SoundEffect {
-        muted: soundNotification.muted
-        source: appSettings.defaultSound
     }
 
     onSoundMutedChanged: {
@@ -34,20 +38,21 @@ QtObject {
     }
 
     function toggleSoundNotifications() {
-        soundMuted = !soundMuted;
+        if (settings) {
+            settings.soundMuted = !settings.soundMuted;
+        }
     }
 
     function stopSound() {
+        pendingPlay = false;
         soundNotification.stop();
-        fallbackSound.stop();
     }
 
     function playNotificationSound() {
+        pendingPlay = true;
         if (soundNotification.status === SoundEffect.Ready) {
+            pendingPlay = false;
             soundNotification.play();
-        } else {
-            // Fallback quickly if current source is not ready/unsupported
-            fallbackSound.play();
         }
     }
 

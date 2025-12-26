@@ -125,8 +125,8 @@ ApplicationWindow {
         property bool showOnSegmentStart: false
 
         property url defaultSound: "qrc:assets/sound/drum_roll.wav"
-        property alias soundMuted: notifications.soundMuted
-        property string soundPath: defaultSound
+        property bool soundMuted: false
+        property url soundPath: defaultSound
         property alias splitToSequence: preferences.splitToSequence
 
         property alias windowX: window.x
@@ -141,6 +141,12 @@ ApplicationWindow {
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
         onShowInDockChanged: { updateDockVisibility(); }
+    }
+
+    SoundSettings {
+        id: soundSettings
+        settings: appSettings
+        defaultSound: appSettings.defaultSound
     }
 
     Settings {
@@ -191,6 +197,7 @@ ApplicationWindow {
 
     NotificationSystem {
         id: notifications
+        settings: appSettings
     }
 
     PiloramaTimer {

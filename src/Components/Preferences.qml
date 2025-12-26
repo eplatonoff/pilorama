@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 
-import "../utils/sound.mjs" as SoundUtils
 import "Preferences"
 
 Item {
@@ -144,7 +143,7 @@ Item {
             Text {
                 id: soundLabel
                 height: 19
-                text: qsTr("Notification")
+                text: qsTr("Sound")
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
@@ -161,19 +160,19 @@ Item {
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 maxWidth: 120
-                text: SoundUtils.soundFileName(appSettings.soundPath)
+                text: soundSettings.displayName
                 tooltipElide: Text.ElideMiddle
-                tooltipText: SoundUtils.clampedSoundPath(appSettings.soundPath)
+                tooltipText: soundSettings.displayPath
                 onPressed: {
+                    var path = String(soundSettings.soundPath);
                     // Preselect current custom WAV if present
-                    if (appSettings.soundPath && appSettings.soundPath.startsWith("file:") && SoundUtils.isWav(appSettings.soundPath)) {
-                        var p = appSettings.soundPath;
-                        var lastSlash = p.lastIndexOf("/");
+                    if (path && path.startsWith("file:") && soundSettings.isWav(path)) {
+                        var lastSlash = path.lastIndexOf("/");
                         if (lastSlash > 0) {
-                            soundFileDialog.currentFolder = p.slice(0, lastSlash);
+                            soundFileDialog.currentFolder = path.slice(0, lastSlash);
                         }
                         // Many platforms honor selectedFile preselection
-                        soundFileDialog.selectedFile = p;
+                        soundFileDialog.selectedFile = path;
                     }
                     soundFileDialog.open();
                 }
@@ -184,20 +183,20 @@ Item {
                 anchors.left: chooseSoundButton.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                visible: appSettings.soundPath !== appSettings.defaultSound
+                visible: soundSettings.soundPath !== soundSettings.defaultSound
                 width: 34
                 text: "↺"
                 tooltipText: qsTr("Restore default notification sound")
-                onPressed: appSettings.soundPath = appSettings.defaultSound
+                onPressed: soundSettings.restoreDefault()
             }
 
             FileDialog {
                 id: soundFileDialog
-                title: qsTr("Select notification sound")
-                nameFilters: [qsTr("WAV files (*.wav)")]
+                title: qsTr("Select WAV sound file")
+                nameFilters: [qsTr("WAV audio (*.wav)")]
                 onAccepted: {
                     if (selectedFile) {
-                        appSettings.soundPath = selectedFile
+                        soundSettings.applySelectedFile(selectedFile)
                     }
                 }
             }
