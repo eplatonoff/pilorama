@@ -13,7 +13,7 @@ jobs:
     runs-on: macos-14
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -73,7 +73,7 @@ jobs:
         create-dmg --volname Pilorama --background assets/background.png --window-size 540 320 --icon Pilorama.app 128 128 --app-drop-link 384 128 --no-internet-enable Pilorama.dmg executable/
 
     - name: Store Package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Pilorama.dmg
         path: Pilorama.dmg
@@ -83,7 +83,7 @@ jobs:
     runs-on: windows-2022
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -113,7 +113,7 @@ jobs:
         iscc wndws.iss
 
     - name: Store Package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Pilorama_Setup.exe
         path: Pilorama_Setup.exe
@@ -127,13 +127,13 @@ jobs:
       contents: write
     steps:
     - name: Download macOS package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: Pilorama.dmg
         path: .
         merge-multiple: true
     - name: Download Windows package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: Pilorama_Setup.exe
         path: .
