@@ -143,7 +143,7 @@ Item {
             Text {
                 id: soundLabel
                 height: 19
-                text: qsTr("Sound")
+                text: qsTr("Alert Sound")
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
@@ -167,9 +167,9 @@ Item {
                     var path = String(soundSettings.soundPath);
                     // Preselect current custom WAV if present
                     if (path && path.startsWith("file:") && soundSettings.isWav(path)) {
-                        var lastSlash = path.lastIndexOf("/");
-                        if (lastSlash > 0) {
-                            soundFileDialog.currentFolder = path.slice(0, lastSlash);
+                        var folder = SoundUtils.directoryFromPath(path);
+                        if (folder !== "") {
+                            soundFileDialog.currentFolder = folder;
                         }
                         // Many platforms honor selectedFile preselection
                         soundFileDialog.selectedFile = path;

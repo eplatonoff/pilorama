@@ -21,8 +21,10 @@ QtObject {
         muted: notifications.soundMuted
         // Let Qt choose the default audio device to avoid null connections
         source: notifications.currentSoundSource
-        onStatusChanged: {
-            if (status === SoundEffect.Error && source !== soundSettings.defaultSound) {
+        onStatusChanged: function(status) {
+            var currentSource = Qt.resolvedUrl(String(source));
+            var defaultSource = Qt.resolvedUrl(String(soundSettings.defaultSound));
+            if (status === SoundEffect.Error && currentSource !== defaultSource) {
                 console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", soundSettings.defaultSound);
                 notifications.currentSoundSource = soundSettings.defaultSound;
             } else if (status === SoundEffect.Ready && notifications.pendingPlay) {
