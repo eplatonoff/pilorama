@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 
+import "../utils/sound.mjs" as SoundUtils
 import "Preferences"
 
 Item {
