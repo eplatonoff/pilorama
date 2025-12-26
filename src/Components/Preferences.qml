@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 
+import "../utils/sound.mjs" as SoundUtils
 import "Preferences"
 
 Item {
@@ -160,15 +161,12 @@ Item {
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 maxWidth: 120
-                text: appSettings.soundPath ? appSettings.soundPath.split("/").pop() : "—"
-                tooltipEnabled: !!appSettings.soundPath
+                text: SoundUtils.soundFileName(appSettings.soundPath)
                 tooltipElide: Text.ElideMiddle
-                tooltipText: (appSettings.soundPath && appSettings.soundPath.length > 500)
-                             ? (appSettings.soundPath.slice(0, 250) + "…" + appSettings.soundPath.slice(-249))
-                             : (appSettings.soundPath || "")
+                tooltipText: SoundUtils.clampedSoundPath(appSettings.soundPath)
                 onPressed: {
                     // Preselect current custom WAV if present
-                    if (appSettings.soundPath && appSettings.soundPath.startsWith("file:") && appSettings.soundPath.toLowerCase().endsWith(".wav")) {
+                    if (appSettings.soundPath && appSettings.soundPath.startsWith("file:") && SoundUtils.isWav(appSettings.soundPath)) {
                         var p = appSettings.soundPath;
                         var lastSlash = p.lastIndexOf("/");
                         if (lastSlash > 0) {
@@ -186,12 +184,11 @@ Item {
                 anchors.left: chooseSoundButton.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                visible: appSettings.soundPath !== notifications.defaultSound
+                visible: appSettings.soundPath !== appSettings.defaultSound
                 width: 34
                 text: "↺"
-                tooltipEnabled: true
                 tooltipText: qsTr("Restore default notification sound")
-                onPressed: appSettings.soundPath = notifications.defaultSound
+                onPressed: appSettings.soundPath = appSettings.defaultSound
             }
 
             FileDialog {

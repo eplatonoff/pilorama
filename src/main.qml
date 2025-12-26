@@ -124,8 +124,9 @@ ApplicationWindow {
         property bool showPauseUI: true
         property bool showOnSegmentStart: false
 
+        property url defaultSound: "qrc:assets/sound/drum_roll.wav"
         property alias soundMuted: notifications.soundMuted
-        property string soundPath: notifications.defaultSound
+        property string soundPath: defaultSound
         property alias splitToSequence: preferences.splitToSequence
 
         property alias windowX: window.x
@@ -348,4 +349,3 @@ ApplicationWindow {
     }
 
 }
-

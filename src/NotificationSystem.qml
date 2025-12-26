@@ -1,6 +1,7 @@
 import QtQuick
 import QtMultimedia
 
+import "utils/sound.mjs" as SoundUtils
 
 QtObject {
     id: notifications
@@ -8,8 +9,7 @@ QtObject {
     property bool soundMuted: false
 
     // Default and effective sound paths
-    property url defaultSound: "qrc:assets/sound/drum_roll.wav"
-    property url effectiveSoundPath: (appSettings.soundPath && appSettings.soundPath.toLowerCase().endsWith(".wav")) ? appSettings.soundPath : defaultSound
+    property url effectiveSoundPath: SoundUtils.isWav(appSettings.soundPath) ? appSettings.soundPath : appSettings.defaultSound
 
     // QtObject has no default property; SoundEffect must be declared as a property.
     property SoundEffect soundNotification: SoundEffect {
@@ -17,15 +17,15 @@ QtObject {
         // Let Qt choose the default audio device to avoid null connections
         source: notifications.effectiveSoundPath
         onStatusChanged: {
-            if (status === SoundEffect.Error && source !== notifications.defaultSound) {
-                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", notifications.defaultSound);
+            if (status === SoundEffect.Error && source !== appSettings.defaultSound) {
+                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", appSettings.defaultSound);
             }
         }
     }
 
     property SoundEffect fallbackSound: SoundEffect {
         muted: soundNotification.muted
-        source: notifications.defaultSound
+        source: appSettings.defaultSound
     }
 
     onSoundMutedChanged: {

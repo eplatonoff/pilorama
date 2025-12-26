@@ -23,6 +23,7 @@
         <file>assets/img/github.svg</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
+        <file>utils/sound.mjs</file>
         <file>NotificationSystem.qml</file>
         <file>PiloramaTimer.qml</file>
         <file>MouseTracker.qml</file>
