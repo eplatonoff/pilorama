@@ -125,6 +125,7 @@ ApplicationWindow {
         property bool showOnSegmentStart: false
 
         property alias soundMuted: notifications.soundMuted
+        property string soundPath: notifications.defaultSound
         property alias splitToSequence: preferences.splitToSequence
 
         property alias windowX: window.x
@@ -347,5 +348,4 @@ ApplicationWindow {
     }
 
 }
-
 

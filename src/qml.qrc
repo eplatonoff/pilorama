@@ -45,6 +45,7 @@
         <file>Components/Preferences/Header.qml</file>
         <file>Components/Preferences/Checkbox.qml</file>
         <file>Components/Preferences/PreferenceItem.qml</file>
+        <file>Components/Preferences/PillButton.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
         <file>assets/font/pilorama.ttf</file>

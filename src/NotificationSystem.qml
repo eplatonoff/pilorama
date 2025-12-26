@@ -7,15 +7,25 @@ QtObject {
 
     property bool soundMuted: false
 
-    property MediaDevices mediaDevices: MediaDevices {
-        id: mediaDevices
+    // Default and effective sound paths
+    property url defaultSound: "qrc:assets/sound/drum_roll.wav"
+    property url effectiveSoundPath: (appSettings.soundPath && appSettings.soundPath.toLowerCase().endsWith(".wav")) ? appSettings.soundPath : defaultSound
+
+    // QtObject has no default property; SoundEffect must be declared as a property.
+    property SoundEffect soundNotification: SoundEffect {
+        muted: notifications.soundMuted
+        // Let Qt choose the default audio device to avoid null connections
+        source: notifications.effectiveSoundPath
+        onStatusChanged: {
+            if (status === SoundEffect.Error && source !== notifications.defaultSound) {
+                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", notifications.defaultSound);
+            }
+        }
     }
 
-    property SoundEffect sound: SoundEffect {
-        id: soundNotification
-        muted: notifications.soundMuted
-        audioDevice: mediaDevices.defaultAudioOutput
-        source: "qrc:assets/sound/drum_roll.wav"
+    property SoundEffect fallbackSound: SoundEffect {
+        muted: soundNotification.muted
+        source: notifications.defaultSound
     }
 
     onSoundMutedChanged: {
@@ -29,10 +39,20 @@ QtObject {
 
     function stopSound() {
         soundNotification.stop();
+        fallbackSound.stop();
+    }
+
+    function playNotificationSound() {
+        if (soundNotification.status === SoundEffect.Ready) {
+            soundNotification.play();
+        } else {
+            // Fallback quickly if current source is not ready/unsupported
+            fallbackSound.play();
+        }
     }
 
     function sendWithSound(name) {
-        soundNotification.play();
+        playNotificationSound();
         tray.send(name)
     }
 

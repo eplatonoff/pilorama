@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
 import "Preferences"
 
@@ -14,7 +15,7 @@ Item {
     property int fontSize: 14
     property int infoFontSize: 12
 
-    
+
 
         Header {
             id: prefsHeader
@@ -125,6 +126,82 @@ Item {
                 palette.buttonText: colors.getColor("dark")
                 onActivated: {
                     appSettings.colorTheme = colorThemeCombo.currentText
+                }
+            }
+
+        }
+
+        Item {
+            id: notificationSound
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+
+            Text {
+                id: soundLabel
+                height: 19
+                text: qsTr("Notification")
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.verticalCenter: parent.verticalCenter
+                color: colors.getColor("dark")
+                font.family: localFont.name
+                font.pixelSize: fontSize
+                renderType: Text.NativeRendering
+            }
+
+
+            PillButton {
+                id: chooseSoundButton
+                anchors.left: soundLabel.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                maxWidth: 120
+                text: appSettings.soundPath ? appSettings.soundPath.split("/").pop() : "—"
+                tooltipEnabled: !!appSettings.soundPath
+                tooltipElide: Text.ElideMiddle
+                tooltipText: (appSettings.soundPath && appSettings.soundPath.length > 500)
+                             ? (appSettings.soundPath.slice(0, 250) + "…" + appSettings.soundPath.slice(-249))
+                             : (appSettings.soundPath || "")
+                onPressed: {
+                    // Preselect current custom WAV if present
+                    if (appSettings.soundPath && appSettings.soundPath.startsWith("file:") && appSettings.soundPath.toLowerCase().endsWith(".wav")) {
+                        var p = appSettings.soundPath;
+                        var lastSlash = p.lastIndexOf("/");
+                        if (lastSlash > 0) {
+                            soundFileDialog.currentFolder = p.slice(0, lastSlash);
+                        }
+                        // Many platforms honor selectedFile preselection
+                        soundFileDialog.selectedFile = p;
+                    }
+                    soundFileDialog.open();
+                }
+            }
+
+            PillButton {
+                id: restoreDefaultSoundButton
+                anchors.left: chooseSoundButton.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                visible: appSettings.soundPath !== notifications.defaultSound
+                width: 34
+                text: "↺"
+                tooltipEnabled: true
+                tooltipText: qsTr("Restore default notification sound")
+                onPressed: appSettings.soundPath = notifications.defaultSound
+            }
+
+            FileDialog {
+                id: soundFileDialog
+                title: qsTr("Select notification sound")
+                nameFilters: [qsTr("WAV files (*.wav)")]
+                onAccepted: {
+                    if (selectedFile) {
+                        appSettings.soundPath = selectedFile
+                    }
                 }
             }
 
