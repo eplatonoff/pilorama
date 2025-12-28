@@ -23,6 +23,7 @@
         <file>assets/img/github.svg</file>
         <file>main.qml</file>
         <file>utils/geometry.mjs</file>
+        <file>utils/sound.mjs</file>
         <file>NotificationSystem.qml</file>
         <file>PiloramaTimer.qml</file>
         <file>MouseTracker.qml</file>
@@ -45,6 +46,8 @@
         <file>Components/Preferences/Header.qml</file>
         <file>Components/Preferences/Checkbox.qml</file>
         <file>Components/Preferences/PreferenceItem.qml</file>
+        <file>Components/Preferences/PillButton.qml</file>
+        <file>Components/SoundSettings.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
         <file>assets/font/pilorama.ttf</file>
