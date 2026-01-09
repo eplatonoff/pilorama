@@ -12,6 +12,7 @@
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_QUICK_CONTROLS_STYLE", "Basic");
     MacOSController macOSController;
     macOSController.disableAppNap();
 
