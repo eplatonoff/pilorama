@@ -109,27 +109,20 @@ Item {
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
                 color: colors.getColor("dark")
-
                 font.family: localFont.name
                 font.pixelSize: fontSize
-
                 renderType: Text.NativeRendering
             }
 
-            ComboBox {
+            StyledComboBox {
                 id: colorThemeCombo
-                model: ["Light", "Dark", "System"]
-                currentIndex: {
-                    const index = colorThemeCombo.model.indexOf(appSettings.colorTheme);
-                    return index !== -1 ? index : 0;
-                }
                 anchors.left: colorThemeLabel.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                palette.buttonText: colors.getColor("dark")
-                onActivated: {
-                    appSettings.colorTheme = colorThemeCombo.currentText
-                }
+                width: 120
+                model: ["Light", "Dark", "System"]
+                currentIndex: Math.max(0, model.indexOf(appSettings.colorTheme))
+                onActivated: appSettings.colorTheme = currentText
             }
 
         }
