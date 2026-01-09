@@ -15,6 +15,7 @@ Rectangle {
 
     property bool currentItem: delegateItem.ListView.isCurrentItem
     property bool blockEdits: sequence.blockEdits
+    property bool rowHovered: false
 
     property bool dimm: false
 
@@ -120,6 +121,21 @@ Rectangle {
             id: colorItem
             height: colorSelector.height
             width: colorSelector.itemWidth
+            property bool hoverActive: false
+
+            Rectangle {
+                id: hoverRing
+                width: 17
+                height: 17
+                radius: 9
+                color: "transparent"
+                border.width: 2
+                border.color: colors.getColor("light")
+                anchors.centerIn: parent
+                opacity: (colorItem.hoverActive || colorSelector.rowHovered) && index === 0 ? 1 : 0
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 120 } }
+            }
 
             Rectangle {
                 width: 13
@@ -135,6 +151,10 @@ Rectangle {
                 visible: !(colorSelector.blockEdits || dimm)
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+
+                onEntered: { colorItem.hoverActive = true }
+                onExited: { colorItem.hoverActive = false }
 
                 onReleased: {
                     if(index === 0){

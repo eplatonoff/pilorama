@@ -6,6 +6,46 @@ Item{
 
     property bool validFile: false
 
+    function isSequenceDrag(drag) {
+        return drag.keys && drag.keys.indexOf("sequenceItems") !== -1
+    }
+
+    function isJsonUrl(url) {
+        if (!url) {
+            return false
+        }
+        const value = url.toString().toLowerCase()
+        return value.endsWith(".json") || value.indexOf(".json?") !== -1 || value.indexOf(".json#") !== -1
+    }
+
+    function hasJsonFile(drag) {
+        if (drag.hasUrls) {
+            for (var i = 0; i < drag.urls.length; i++) {
+                if (isJsonUrl(drag.urls[i])) {
+                    return true
+                }
+            }
+        }
+        if (drag.hasText) {
+            return isJsonUrl(drag.text)
+        }
+        return false
+    }
+
+    function firstJsonUrl(drag) {
+        if (drag.hasUrls) {
+            for (var i = 0; i < drag.urls.length; i++) {
+                if (isJsonUrl(drag.urls[i])) {
+                    return drag.urls[i].toString()
+                }
+            }
+        }
+        if (drag.hasText && isJsonUrl(drag.text)) {
+            return drag.text
+        }
+        return ""
+    }
+
     Rectangle{
         id: rectangle
         visible: validFile
@@ -37,7 +77,11 @@ Item{
     DropArea {
         id: dropData
         anchors.fill: parent
-        onEntered: {
+        onEntered: function(drag) {
+                if (externalDrop.isSequenceDrag(drag) || !externalDrop.hasJsonFile(drag)) {
+                    externalDrop.validFile = false
+                    return
+                }
                 externalDrop.validFile = true
                 drag.accept()
                 externalDropText.text = "Drop "+ window.title + " preset here"
@@ -45,11 +89,20 @@ Item{
         onExited: {
                 externalDrop.validFile = false
         }
-        onDropped: if (drop.hasText) {
+        onDropped: function(drop) {
+            if (externalDrop.isSequenceDrag(drop)) {
+                externalDrop.validFile = false
+                return
+            }
+            const url = externalDrop.firstJsonUrl(drop)
+            if (!url) {
+                externalDrop.validFile = false
+                return
+            }
             if (drop.proposedAction == Qt.MoveAction || drop.proposedAction == Qt.CopyAction) {
 
-                masterModel.data = fileDialogue.openFile(drop.text).data
-                masterModel.title = fileDialogue.openFile(drop.text).title
+                masterModel.data = fileDialogue.openFile(url).data
+                masterModel.title = fileDialogue.openFile(url).title
                 masterModel.load()
 
                 drop.acceptProposedAction()

@@ -31,7 +31,7 @@ Rectangle {
         }
     }
 
-    Drag.active: itemDragTrigger.drag.active
+    Drag.active: handleDragTrigger.drag.active
     Drag.hotSpot.x: width / 2
     Drag.hotSpot.y: height / 2
     Drag.keys: ["sequenceItems"]
@@ -58,6 +58,7 @@ Rectangle {
         width: sequence.blockEdits ? 0 : 24
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
+        cursorShape: Qt.OpenHandCursor
 
         propagateComposedEvents: false
 
@@ -69,30 +70,64 @@ Rectangle {
     }
 
     MouseArea {
-        id: itemDragTrigger
-        anchors.fill: parent
+        id: handleDragTrigger
+        anchors.fill: handler
         visible: !sequence.blockEdits
-
         hoverEnabled: true
         propagateComposedEvents: true
+        cursorShape: Qt.OpenHandCursor
 
         drag.target: sequenceItem
 
         onPressAndHold: {
-            if (itemDragTrigger.drag.active) {
+            if (handleDragTrigger.drag.active) {
                 sequenceItem.dragItemIndex = index;
             }
         }
-
-        onEntered: {
-            itemControls.visible = true
-            itemControls.width = 40
+        onPressed: (mouse) => {
+            const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
+            sequenceView.updateEdgeScroll(local.y)
         }
-
-        onExited: {
-            itemControls.visible = false
-            itemControls.width = 0
+        onPositionChanged: (mouse) => {
+            if (handleDragTrigger.drag.active) {
+                const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
+                sequenceView.updateEdgeScroll(local.y)
+            }
         }
+        onReleased: {
+            sequenceView.edgeScrollDirection = 0
+        }
+    }
+
+    HoverHandler {
+        id: itemHover
+        enabled: !sequence.blockEdits
+        onPointChanged: updateHoverCursor(point.position.x)
+        onHoveredChanged: {
+            itemControls.visible = hovered
+            itemControls.width = hovered ? 40 : 0
+            if (!hovered) {
+                cursorShape = Qt.ArrowCursor
+            } else {
+                updateHoverCursor(point.position.x)
+            }
+        }
+    }
+
+    function updateHoverCursor(xPos) {
+        if (handler.visible && xPos >= handler.x && xPos <= handler.x + handler.width) {
+            itemHover.cursorShape = Qt.OpenHandCursor
+            return
+        }
+        if (itemControls.visible && xPos >= itemControls.x && xPos <= itemControls.x + itemControls.width) {
+            itemHover.cursorShape = Qt.PointingHandCursor
+            return
+        }
+        if (colorSelector.visible && xPos >= colorSelector.x && xPos <= colorSelector.x + colorSelector.width) {
+            itemHover.cursorShape = Qt.PointingHandCursor
+            return
+        }
+        itemHover.cursorShape = Qt.ArrowCursor
     }
 
 
@@ -192,6 +227,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: handler.right
         lineId: index
+        rowHovered: itemHover.hovered
 
     }
 
@@ -235,5 +271,3 @@ Rectangle {
 
     }
 }
-
-
