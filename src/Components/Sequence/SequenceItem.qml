@@ -14,6 +14,9 @@ Rectangle {
     property real fontSize: 14
     property int dragItemIndex: index
     property bool currentItem: delegateItem.ListView.isCurrentItem
+    property int dragCursor: (handleDragTrigger.pressed || handleDragTrigger.drag.active)
+        ? Qt.ClosedHandCursor
+        : Qt.OpenHandCursor
 
 //    property bool dim: sequence.blockEdits - currentItem
     property bool splitToSequence: preferences.splitToSequence
@@ -58,7 +61,6 @@ Rectangle {
         width: sequence.blockEdits ? 0 : 24
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        cursorShape: Qt.OpenHandCursor
 
         propagateComposedEvents: false
 
@@ -75,10 +77,14 @@ Rectangle {
         visible: !sequence.blockEdits
         hoverEnabled: true
         propagateComposedEvents: true
-        cursorShape: Qt.OpenHandCursor
+        cursorShape: sequenceItem.dragCursor
 
         drag.target: sequenceItem
 
+        onPressed: {
+            sequenceView.closeOpenColorSelector()
+            itemHover.cursorShape = sequenceItem.dragCursor
+        }
         onPressAndHold: {
             if (handleDragTrigger.drag.active) {
                 sequenceItem.dragItemIndex = index;
@@ -92,6 +98,7 @@ Rectangle {
         }
         onReleased: {
             sequenceView.edgeScrollDirection = 0
+            updateHoverCursor(itemHover.point.position.x)
         }
     }
 
@@ -101,7 +108,7 @@ Rectangle {
         onPointChanged: updateHoverCursor(point.position.x)
         onHoveredChanged: {
             if (!hovered) {
-                cursorShape = Qt.ArrowCursor
+                cursorShape = sequenceItem.Drag.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
             } else {
                 updateHoverCursor(point.position.x)
             }
@@ -110,8 +117,10 @@ Rectangle {
 
     function updateHoverCursor(xPos) {
         let nextCursor = Qt.ArrowCursor
-        if (isInHoverRegion(handler, xPos)) {
-            nextCursor = Qt.OpenHandCursor
+        if (handleDragTrigger.pressed || sequenceItem.Drag.active) {
+            nextCursor = sequenceItem.dragCursor
+        } else if (isInHoverRegion(handler, xPos)) {
+            nextCursor = sequenceItem.dragCursor
         } else if (isInHoverRegion(itemControls, xPos)) {
             nextCursor = Qt.PointingHandCursor
         }
@@ -126,6 +135,19 @@ Rectangle {
             && xPos <= regionItem.x + regionItem.width
     }
 
+    Component {
+        id: iBeamOverlay
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton
+            propagateComposedEvents: true
+            onPressed: (mouse) => {
+                sequenceView.closeOpenColorSelector()
+                mouse.accepted = false
+            }
+        }
+    }
 
     TextInput {
         id: itemName
@@ -145,11 +167,9 @@ Rectangle {
 
         renderType: Text.NativeRendering
 
-        MouseArea {
+        Loader {
             anchors.fill: parent
-            cursorShape: Qt.IBeamCursor
-            acceptedButtons: Qt.NoButton
-            propagateComposedEvents: true
+            sourceComponent: iBeamOverlay
         }
 
         selectedTextColor : colors.getColor('dark')
@@ -175,11 +195,9 @@ Rectangle {
         selectByMouse : !sequence.blockEdits
         renderType: Text.NativeRendering
 
-        MouseArea {
+        Loader {
             anchors.fill: parent
-            cursorShape: Qt.IBeamCursor
-            acceptedButtons: Qt.NoButton
-            propagateComposedEvents: true
+            sourceComponent: iBeamOverlay
         }
 
         horizontalAlignment: Text.AlignRight

@@ -26,7 +26,7 @@ ScrollBar {
         Behavior on opacity { NumberAnimation { duration: customScrollBar.transitionDuration } }
 
         HoverHandler {
-            cursorShape: Qt.OpenHandCursor
+            cursorShape: customScrollBar.pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         }
 
     }

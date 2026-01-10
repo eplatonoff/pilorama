@@ -63,9 +63,15 @@ Item {
             property int itemHeight: 38
             property bool isDragging: false
             property var dragSource: null
+            property var openColorSelector: null
             property int edgeScrollDirection: 0
             property int edgeScrollThreshold: 24
             property int edgeScrollStep: 6
+            function closeOpenColorSelector() {
+                if (openColorSelector) {
+                    openColorSelector.expanded = false
+                }
+            }
             function setEdgeScrollDirection(y) {
                 if (y < edgeScrollThreshold) {
                     edgeScrollDirection = -1
@@ -121,6 +127,28 @@ Item {
                     onEntered: (drag) => {
                         var draggedId = drag.source.dragItemIndex
                         masterModel.move(draggedId, index, 1)
+                    }
+                }
+            }
+
+            TapHandler {
+                enabled: sequenceView.openColorSelector !== null
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onTapped: (eventPoint, button) => {
+                    const selector = sequenceView.openColorSelector
+                    if (!selector) {
+                        return
+                    }
+                    const local = selector.mapFromItem(
+                        sequenceView,
+                        eventPoint.position.x,
+                        eventPoint.position.y)
+                    const inside = local.x >= 0
+                        && local.x <= selector.width
+                        && local.y >= 0
+                        && local.y <= selector.height
+                    if (!inside) {
+                        selector.expanded = false
                     }
                 }
             }

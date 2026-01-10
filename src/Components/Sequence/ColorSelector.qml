@@ -28,7 +28,18 @@ Rectangle {
         function onRunningChanged(running) { activateBlink(running && colorSelector.currentItem) }
     }
 
-    onExpandedChanged: { width = expanded ? expWidth : colWidth }
+    onExpandedChanged: {
+        width = expanded ? expWidth : colWidth
+        if (expanded) {
+            if (sequenceView.openColorSelector
+                && sequenceView.openColorSelector !== colorSelector) {
+                sequenceView.openColorSelector.expanded = false
+            }
+            sequenceView.openColorSelector = colorSelector
+        } else if (sequenceView.openColorSelector === colorSelector) {
+            sequenceView.openColorSelector = null
+        }
+    }
 
     function activateBlink(bool){
         if(bool && masterModel.get(lineId).duration !== 0){
@@ -51,19 +62,6 @@ Rectangle {
         } else {
             dimm = false
             return color
-        }
-    }
-
-    MouseArea {
-
-        visible: !(colorSelector.blockEdits || dimm)
-        hoverEnabled: true
-        anchors.fill: parent
-        onExited: {
-            expanded = false
-        }
-        onFocusChanged: {
-            expanded = false
         }
     }
 
@@ -121,8 +119,6 @@ Rectangle {
             id: colorItem
             height: colorSelector.height
             width: colorSelector.itemWidth
-            property bool hoverActive: false
-
             Rectangle {
                 id: hoverRing
                 width: 17
@@ -132,7 +128,7 @@ Rectangle {
                 border.width: 2
                 border.color: colors.getColor("light")
                 anchors.centerIn: parent
-                opacity: (colorItem.hoverActive || colorSelector.rowHovered) ? 1 : 0
+                opacity: (colorItemHover.hovered || colorSelector.rowHovered) ? 1 : 0
                 visible: index === 0
                 Behavior on opacity { NumberAnimation { duration: 120 } }
             }
@@ -151,10 +147,6 @@ Rectangle {
                 visible: !(colorSelector.blockEdits || dimm)
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-
-                onEntered: { colorItem.hoverActive = true }
-                onExited: { colorItem.hoverActive = false }
 
                 onReleased: {
                     if(index === 0){
@@ -162,8 +154,14 @@ Rectangle {
                     } else {
                         colorModel.topColor(model.color)
                         masterModel.get(lineId).color = model.color
+                        expanded = false
                     }
                 }
+            }
+
+            HoverHandler {
+                id: colorItemHover
+                enabled: !(colorSelector.blockEdits || dimm)
             }
         }
 
