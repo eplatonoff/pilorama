@@ -110,25 +110,6 @@ ApplicationWindow {
         }
     }
 
-    // Allow window to be dragged by any part of the window (macOS frameless)
-    MouseArea {
-        property point origin: Qt.point(0, 0)
-
-        anchors.fill: parent
-        enabled: macTitlebar
-
-        onPositionChanged: (mouse) => {
-            if (mouse.buttons & Qt.LeftButton) {
-                const delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
-                window.x += delta.x
-                window.y += delta.y
-            }
-        }
-        onPressed: (mouse) => {
-            origin = Qt.point(mouse.x, mouse.y)
-        }
-    }
-
 
     function checkClockMode (){
 
@@ -276,6 +257,28 @@ ApplicationWindow {
             anchors.rightMargin: 16
             anchors.topMargin: 2
             anchors.bottomMargin: 2
+
+            MouseArea {
+                id: windowDragArea
+
+                property point origin: Qt.point(0, 0)
+
+                anchors.fill: parent
+                enabled: macTitlebar
+                acceptedButtons: Qt.LeftButton
+                propagateComposedEvents: true
+
+                onPositionChanged: (mouse) => {
+                    if (mouse.buttons & Qt.LeftButton) {
+                        const delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
+                        window.x += delta.x
+                        window.y += delta.y
+                    }
+                }
+                onPressed: (mouse) => {
+                    origin = Qt.point(mouse.x, mouse.y)
+                }
+            }
 
             Image {
                 id: headerLogo
