@@ -20,11 +20,24 @@ Pilorama.Timer {
     function stopAndClear() {
         stop();
         remainingTime = 0;
+        segmentRemainingTime = 0;
+        segmentTotalDuration = 0;
+        _activeSegmentKey = -1;
         window.clockMode = "start";
         pomodoroQueue.clear();
         mouseArea._prevAngle = 0;
         mouseArea._totalRotatedSecs = 0;
         sequence.setCurrentItem(-1);
+    }
+
+    function segmentTotalForItem(item) {
+        if (!item) {
+            return 0;
+        }
+        if (item.total !== undefined) {
+            return item.total;
+        }
+        return item.duration;
     }
 
     onRemainingTimeChanged: {
@@ -48,7 +61,7 @@ Pilorama.Timer {
                 const currentSegment = pomodoroQueue.first();
                 if (currentSegment) {
                     _activeSegmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
-                    segmentTotalDuration = currentSegment.duration;
+                    segmentTotalDuration = segmentTotalForItem(currentSegment);
                 } else {
                     _activeSegmentKey = -1;
                     segmentTotalDuration = 0;
@@ -94,7 +107,7 @@ Pilorama.Timer {
                 const segmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
                 if (_activeSegmentKey !== segmentKey) {
                     _activeSegmentKey = segmentKey;
-                    segmentTotalDuration = currentSegment.duration;
+                    segmentTotalDuration = segmentTotalForItem(currentSegment);
                 }
             }
         } else {

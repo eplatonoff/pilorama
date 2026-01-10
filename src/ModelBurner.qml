@@ -63,6 +63,7 @@ ListModel {
             throw "Item doesn't exists";
 
         item.duration = itemDurationBound(item);
+        item.total = item.duration;
     }
 
     function changeQueue(deltaSecs) {
@@ -80,16 +81,19 @@ ListModel {
             // item is filled
             if (rawValue > durationBound) {
                 last().duration = durationBound;
+                last().total = durationBound;
                 return rawValue - durationBound;
             }
 
             // item is empty
             if (rawValue <= 0) {
                 last().duration = 0;
+                last().total = 0;
                 return rawValue;
             }
 
             last().duration += secs;
+            last().total = last().duration;
             return 0;
         }
 
@@ -165,7 +169,7 @@ ListModel {
 
         const masterId = count >= masterCount ? count % masterCount : count;
 
-        append({"id": masterId,  "duration": 0, "key": _nextKey++})
+        append({"id": masterId,  "duration": 0, "total": 0, "key": _nextKey++})
     }
 
     function _createBatch() {

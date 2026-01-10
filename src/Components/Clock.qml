@@ -27,11 +27,13 @@ Item {
     }
 
     function getDuration(){
-        if(!globalTimer.splitMode) {
-          return duration
-        } else {
-          return splitDuration
+        if (!globalTimer.splitMode) {
+            return duration
         }
+        if (globalTimer.running && splitDuration > 0) {
+            return splitDuration
+        }
+        return duration
     }
 
 
