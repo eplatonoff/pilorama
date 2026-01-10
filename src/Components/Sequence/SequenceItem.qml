@@ -86,12 +86,12 @@ Rectangle {
         }
         onPressed: (mouse) => {
             const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
-            sequenceView.updateEdgeScroll(local.y)
+            sequenceView.setEdgeScrollDirection(local.y)
         }
         onPositionChanged: (mouse) => {
             if (handleDragTrigger.drag.active) {
                 const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
-                sequenceView.updateEdgeScroll(local.y)
+                sequenceView.setEdgeScrollDirection(local.y)
             }
         }
         onReleased: {
@@ -104,8 +104,6 @@ Rectangle {
         enabled: !sequence.blockEdits
         onPointChanged: updateHoverCursor(point.position.x)
         onHoveredChanged: {
-            itemControls.visible = hovered
-            itemControls.width = hovered ? 40 : 0
             if (!hovered) {
                 cursorShape = Qt.ArrowCursor
             } else {
@@ -120,10 +118,6 @@ Rectangle {
             return
         }
         if (itemControls.visible && xPos >= itemControls.x && xPos <= itemControls.x + itemControls.width) {
-            itemHover.cursorShape = Qt.PointingHandCursor
-            return
-        }
-        if (colorSelector.visible && xPos >= colorSelector.x && xPos <= colorSelector.x + colorSelector.width) {
             itemHover.cursorShape = Qt.PointingHandCursor
             return
         }
@@ -149,6 +143,12 @@ Rectangle {
 
         renderType: Text.NativeRendering
 
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.NoButton
+            propagateComposedEvents: true
+        }
 
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('lighter')
@@ -173,6 +173,12 @@ Rectangle {
         selectByMouse : !sequence.blockEdits
         renderType: Text.NativeRendering
 
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.NoButton
+            propagateComposedEvents: true
+        }
 
         horizontalAlignment: Text.AlignRight
         anchors.right: itemtimeMin.left
@@ -233,13 +239,14 @@ Rectangle {
 
     Rectangle {
         id: itemControls
-        visible: false
         color: colors.getColor("bg")
 
         height: parent.height
-        width: 0
+        width: 40
+        opacity: itemHover.hovered ? 1 : 0
+        visible: opacity > 0
 
-        Behavior on width { PropertyAnimation { duration: 100 } }
+        Behavior on opacity { NumberAnimation { duration: 100 } }
 
         anchors.right: parent.right
 

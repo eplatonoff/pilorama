@@ -40,20 +40,6 @@ Item {
             id: sequenceHover
         }
 
-        MouseArea {
-            id: sequenceHoverArea
-            anchors.fill: parent
-            hoverEnabled: true
-            acceptedButtons: Qt.NoButton
-            propagateComposedEvents: true
-        }
-
-        Timer {
-            id: scrollLinger
-            interval: 1500
-            repeat: false
-        }
-
         ListView {
             id: sequenceView
             anchors.fill: parent
@@ -70,21 +56,16 @@ Item {
                 y: sequenceView.y
                 height: sequenceView.height
                 width: implicitWidth
-                viewContainsMouse: sequenceHover.hovered
-                    || sequenceHoverArea.containsMouse
-                    || sequenceView.moving
-                    || scrollLinger.running
+                viewContainsMouse: sequenceHover.hovered || sequenceView.moving
             }
 
             property int itemWidth: width
             property int itemHeight: 38
             property bool draggingItem: false
-            property real lastMouseY: -1
             property int edgeScrollDirection: 0
             property int edgeScrollThreshold: 24
             property int edgeScrollStep: 6
-            function updateEdgeScroll(y) {
-                lastMouseY = y
+            function setEdgeScrollDirection(y) {
                 if (y < edgeScrollThreshold) {
                     edgeScrollDirection = -1
                 } else if (y > height - edgeScrollThreshold) {
@@ -95,14 +76,6 @@ Item {
             }
 
             model: masterModel
-
-            onMovingChanged: {
-                if (moving) {
-                    scrollLinger.restart()
-                }
-            }
-
-            onContentYChanged: scrollLinger.restart()
 
             Timer {
                 id: autoScrollTimer
