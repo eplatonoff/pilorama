@@ -63,7 +63,7 @@ Item {
             anchors.verticalCenterOffset: macWindowControls.glyphCenterYOffset
             width: macWindowControls.glyphBox
             height: macWindowControls.glyphBox
-            visible: area.containsMouse
+            visible: controlsHoverArea.containsMouse
 
             ShapePath {
                 strokeWidth: macWindowControls.glyphStroke
@@ -93,7 +93,7 @@ Item {
             }
         }
         MouseArea {
-            id: closeArea
+            id: closeButtonArea
             anchors.fill: parent
 
             onClicked: {
@@ -128,7 +128,7 @@ Item {
             anchors.verticalCenterOffset: macWindowControls.minimizeGlyphCenterYOffset
             width: macWindowControls.minimizeGlyphWidth
             height: macWindowControls.minimizeGlyphHeight
-            visible: area.containsMouse
+            visible: controlsHoverArea.containsMouse
 
             ShapePath {
                 strokeWidth: 0
@@ -155,7 +155,7 @@ Item {
             }
         }
         MouseArea {
-            id: minimizeArea
+            id: minimizeButtonArea
             anchors.fill: parent
 
             onClicked: {
@@ -190,7 +190,7 @@ Item {
             anchors.verticalCenterOffset: macWindowControls.glyphCenterYOffset
             width: macWindowControls.glyphBox
             height: macWindowControls.glyphBox
-            visible: area.containsMouse
+            visible: controlsHoverArea.containsMouse
 
             ShapePath {
                 strokeWidth: 0
@@ -232,7 +232,7 @@ Item {
             }
         }
         MouseArea {
-            id: maximizeArea
+            id: maximizeButtonArea
             anchors.fill: parent
 
             onClicked: {
@@ -245,7 +245,7 @@ Item {
         }
     }
     MouseArea {
-        id: area
+        id: controlsHoverArea
 
         anchors.fill: parent
         hoverEnabled: true
