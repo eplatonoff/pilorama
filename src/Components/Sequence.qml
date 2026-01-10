@@ -242,7 +242,6 @@ Item {
 
                 // Highlight the active queue item while always displaying the
                 // entire sequence during a split run.
-                visible: true
 
                 property var masterItem: masterModel.get(model.id)
                 property bool currentItem: queueItem.ListView.isCurrentItem

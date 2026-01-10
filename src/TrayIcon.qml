@@ -13,7 +13,7 @@ SystemTrayIcon {
     property string messageText: ""
     property string messageTitle: ""
     readonly property string menuItemText: checkMenuItemText()
-    readonly property string soundItemText: "Turn sound " + checkSoundItemText()
+    readonly property string soundItemText: "Turn sound " + (notifications.soundMuted ? "on" : "off")
 
 
     property real remainingTime: globalTimer.splitMode ? globalTimer.segmentRemainingTime : globalTimer.remainingTime
@@ -63,13 +63,6 @@ SystemTrayIcon {
         return "Start Sequence"
     }
 
-    function checkSoundItemText() {
-        if (notifications.soundMuted) {
-            return "on"
-        } else {
-            return "off"
-        }
-    }
     function iconURL(renderSecs = 0)
     {
         if (!globalTimer.running || renderSecs === 0 || renderSecs === Infinity || isNaN(renderSecs))
@@ -91,9 +84,9 @@ SystemTrayIcon {
     }
 
     function notificationIconURL() {
-        const color = (pomodoroQueue.infiniteMode || pomodoroQueue.count > 0) ?
-                colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) :
-                colors.getThemeColor("dark");
+        const color = ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0)
+            ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+            : colors.getThemeColor("dark");
         return "image://notification_dot_provider/" + color;
     }
 

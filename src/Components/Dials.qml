@@ -106,7 +106,7 @@ Canvas {
         }
     }
 
-    function clampToMainTurn(value, mainTurnSeconds) {
+    function ensureMinimumTurn(value, mainTurnSeconds) {
         return value <= mainTurnSeconds ? mainTurnSeconds : value
     }
 
@@ -122,8 +122,8 @@ Canvas {
 
             drawDial(ctx, dialDiameter, fakeWidth,
                      colors.getColor(splitColor),
-                     clampToMainTurn(splitVisibleStart, mainTurnSeconds),
-                     clampToMainTurn(splitVisibleEnd, mainTurnSeconds))
+                     ensureMinimumTurn(splitVisibleStart, mainTurnSeconds),
+                     ensureMinimumTurn(splitVisibleEnd, mainTurnSeconds))
         }
     }
 
