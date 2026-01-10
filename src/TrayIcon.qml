@@ -46,7 +46,7 @@ SystemTrayIcon {
     function iconURL(renderSecs = 0)
     {
         if (!globalTimer.running || renderSecs === 0 || renderSecs === Infinity || isNaN(renderSecs))
-            if (systemPalette.sysemDarkMode) {
+            if (systemPalette.systemDarkMode) {
                 return 'qrc:/assets/tray/static-night.svg';
             } else {
                 return 'qrc:/assets/tray/static-day.svg'
