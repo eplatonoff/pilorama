@@ -12,8 +12,8 @@ SystemTrayIcon {
     property string appTitle: window.title
     property string messageText: ""
     property string messageTitle: ""
-    property string menuItemText: checkMenuItemText()
-    property string soundItemText: "Turn sound " + checkSoundItemText()
+    readonly property string menuItemText: checkMenuItemText()
+    readonly property string soundItemText: "Turn sound " + checkSoundItemText()
 
 
     property real remainingTime: globalTimer.splitMode ? globalTimer.segmentRemainingTime : globalTimer.remainingTime
@@ -24,7 +24,6 @@ SystemTrayIcon {
     Component.onCompleted: {
        trayUpdateCounter = remainingTime
        globalTimer.runningChanged.connect(handleTimerState)
-       pomodoroQueue.infiniteModeChanged.connect(() => tray.menuItemText = checkMenuItemText())
     }
 
     onMessageClicked: popUp()
@@ -43,7 +42,6 @@ SystemTrayIcon {
     }
 
     function handleTimerState(running) {
-        tray.menuItemText = checkMenuItemText()
         if (running && totalDuration > 0) {
             icon.source = iconURL(Math.round((remainingTime * 3600 / totalDuration) / 10) * 10)
             trayUpdateCounter = remainingTime
@@ -72,11 +70,10 @@ SystemTrayIcon {
             return "off"
         }
     }
-
     function iconURL(renderSecs = 0)
     {
         if (!globalTimer.running || renderSecs === 0 || renderSecs === Infinity || isNaN(renderSecs))
-            if (systemPalette.sysemDarkMode) {
+            if (systemPalette.systemDarkMode) {
                 return 'qrc:/assets/tray/static-night.svg';
             } else {
                 return 'qrc:/assets/tray/static-day.svg'
@@ -167,6 +164,7 @@ SystemTrayIcon {
                 if (globalTimer.running) {
                     globalTimer.stopAndClear()
                     pomodoroQueue.infiniteMode = false
+                    notifications.stopSound()
                 } else {
                     window.clockMode = "pomodoro"
                     pomodoroQueue.infiniteMode = true

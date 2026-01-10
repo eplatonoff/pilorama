@@ -1,12 +1,16 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
+import "../utils/sound.mjs" as SoundUtils
 import "Preferences"
 
 Item {
     id: preferences
     visible: false
 
+    property var appSettings
+    property var soundSettings
     property bool splitToSequence: false
 
     property int cellHeight: 38
@@ -14,7 +18,7 @@ Item {
     property int fontSize: 14
     property int infoFontSize: 12
 
-    
+
 
         Header {
             id: prefsHeader
@@ -105,26 +109,92 @@ Item {
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
                 color: colors.getColor("dark")
-
                 font.family: localFont.name
                 font.pixelSize: fontSize
-
                 renderType: Text.NativeRendering
             }
 
-            ComboBox {
+            StyledComboBox {
                 id: colorThemeCombo
-                model: ["Light", "Dark", "System"]
-                currentIndex: {
-                    const index = colorThemeCombo.model.indexOf(appSettings.colorTheme);
-                    return index !== -1 ? index : 0;
-                }
                 anchors.left: colorThemeLabel.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                palette.buttonText: colors.getColor("dark")
-                onActivated: {
-                    appSettings.colorTheme = colorThemeCombo.currentText
+                width: 120
+                model: ["Light", "Dark", "System"]
+                currentIndex: Math.max(0, model.indexOf(appSettings.colorTheme))
+                textPixelSize: fontSize
+                onActivated: appSettings.colorTheme = currentText
+            }
+
+        }
+
+        Item {
+            id: notificationSound
+            height: preferences.cellHeight
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+
+            Text {
+                id: soundLabel
+                height: 19
+                text: qsTr("Alert Sound")
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.verticalCenter: parent.verticalCenter
+                color: colors.getColor("dark")
+                font.family: localFont.name
+                font.pixelSize: fontSize
+                renderType: Text.NativeRendering
+            }
+
+
+            PillButton {
+                id: chooseSoundButton
+                anchors.left: soundLabel.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                maxWidth: 120
+                text: soundSettings.displayName
+                tooltipElide: Text.ElideMiddle
+                tooltipText: soundSettings.displayPath
+                onPressed: {
+                    var path = String(soundSettings.soundPath);
+                    // Preselect current custom WAV if present
+                    if (path && path.startsWith("file:") && soundSettings.isWav(path)) {
+                        var folder = SoundUtils.directoryFromPath(path);
+                        if (folder !== "") {
+                            soundFileDialog.currentFolder = folder;
+                        }
+                        // Many platforms honor selectedFile preselection
+                        soundFileDialog.selectedFile = path;
+                    }
+                    soundFileDialog.open();
+                }
+            }
+
+            PillButton {
+                id: restoreDefaultSoundButton
+                anchors.left: chooseSoundButton.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                visible: soundSettings.soundPath !== soundSettings.defaultSound
+                width: 34
+                text: "↺"
+                tooltipText: qsTr("Restore default notification sound")
+                onPressed: soundSettings.restoreDefault()
+            }
+
+            FileDialog {
+                id: soundFileDialog
+                title: qsTr("Select WAV sound file")
+                nameFilters: [qsTr("WAV audio (*.wav)")]
+                onAccepted: {
+                    if (selectedFile) {
+                        soundSettings.applySelectedFile(selectedFile)
+                    }
                 }
             }
 

@@ -14,6 +14,9 @@ Rectangle {
     property real fontSize: 14
     property int dragItemIndex: index
     property bool currentItem: delegateItem.ListView.isCurrentItem
+    property int dragCursor: (handleDragTrigger.pressed || handleDragTrigger.drag.active)
+        ? Qt.ClosedHandCursor
+        : Qt.OpenHandCursor
 
 //    property bool dim: sequence.blockEdits - currentItem
     property bool splitToSequence: preferences.splitToSequence
@@ -41,7 +44,7 @@ Rectangle {
         }
     }
 
-    Drag.active: itemDragTrigger.drag.active
+    Drag.active: handleDragTrigger.drag.active
     Drag.hotSpot.x: width / 2
     Drag.hotSpot.y: height / 2
     Drag.keys: ["sequenceItems"]
@@ -79,32 +82,82 @@ Rectangle {
     }
 
     MouseArea {
-        id: itemDragTrigger
-        anchors.fill: parent
+        id: handleDragTrigger
+        anchors.fill: handler
         visible: !sequence.blockEdits
-
         hoverEnabled: true
         propagateComposedEvents: true
+        cursorShape: sequenceItem.dragCursor
 
         drag.target: sequenceItem
 
+        onPressed: {
+            sequenceView.closeOpenColorSelector()
+            itemHover.cursorShape = sequenceItem.dragCursor
+        }
         onPressAndHold: {
-            if (itemDragTrigger.drag.active) {
+            if (handleDragTrigger.drag.active) {
                 sequenceItem.dragItemIndex = index;
             }
         }
-
-        onEntered: {
-            itemControls.visible = true
-            itemControls.width = 40
+        onPositionChanged: (mouse) => {
+            if (handleDragTrigger.drag.active) {
+                const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
+                sequenceView.setEdgeScrollDirection(local.y)
+            }
         }
-
-        onExited: {
-            itemControls.visible = false
-            itemControls.width = 0
+        onReleased: {
+            sequenceView.edgeScrollDirection = 0
+            updateHoverCursor(itemHover.point.position.x)
         }
     }
 
+    HoverHandler {
+        id: itemHover
+        enabled: !sequence.blockEdits
+        onPointChanged: updateHoverCursor(point.position.x)
+        onHoveredChanged: {
+            if (!hovered) {
+                cursorShape = sequenceItem.Drag.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+            } else {
+                updateHoverCursor(point.position.x)
+            }
+        }
+    }
+
+    function updateHoverCursor(xPos) {
+        let nextCursor = Qt.ArrowCursor
+        if (handleDragTrigger.pressed || sequenceItem.Drag.active) {
+            nextCursor = sequenceItem.dragCursor
+        } else if (isInHoverRegion(handler, xPos)) {
+            nextCursor = sequenceItem.dragCursor
+        } else if (isInHoverRegion(itemControls, xPos)) {
+            nextCursor = Qt.PointingHandCursor
+        }
+        if (itemHover.cursorShape !== nextCursor) {
+            itemHover.cursorShape = nextCursor
+        }
+    }
+
+    function isInHoverRegion(regionItem, xPos) {
+        return regionItem.visible
+            && xPos >= regionItem.x
+            && xPos <= regionItem.x + regionItem.width
+    }
+
+    Component {
+        id: iBeamOverlay
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton
+            propagateComposedEvents: true
+            onPressed: (mouse) => {
+                sequenceView.closeOpenColorSelector()
+                mouse.accepted = false
+            }
+        }
+    }
 
     TextInput {
         id: itemName
@@ -124,6 +177,10 @@ Rectangle {
 
         renderType: Text.NativeRendering
 
+        Loader {
+            anchors.fill: parent
+            sourceComponent: iBeamOverlay
+        }
 
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('lighter')
@@ -150,6 +207,10 @@ Rectangle {
         selectByMouse : !sequence.blockEdits
         renderType: Text.NativeRendering
 
+        Loader {
+            anchors.fill: parent
+            sourceComponent: iBeamOverlay
+        }
 
         horizontalAlignment: Text.AlignRight
         anchors.right: itemtimeMin.left
@@ -204,18 +265,21 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: handler.right
         lineId: index
+        rowHovered: itemHover.hovered
 
     }
 
     Rectangle {
         id: itemControls
-        visible: false
         color: colors.getColor("bg")
 
         height: parent.height
-        width: 0
+        width: itemHover.hovered ? 40 : 0
+        opacity: itemHover.hovered ? 1 : 0
+        visible: opacity > 0
 
-        Behavior on width { PropertyAnimation { duration: 100 } }
+        Behavior on opacity { NumberAnimation { duration: 100 } }
+        Behavior on width { NumberAnimation { duration: 100 } }
 
         anchors.right: parent.right
 
@@ -247,5 +311,3 @@ Rectangle {
 
     }
 }
-
-

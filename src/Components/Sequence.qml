@@ -42,12 +42,17 @@ Item {
     Rectangle {
         id: sequenceSetLayout
         color: 'transparent'
+        clip: false
         anchors.bottomMargin: 0
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: sequenceFooter.top
         anchors.left: parent.left
         anchors.topMargin: 0
+
+        HoverHandler {
+            id: sequenceHover
+        }
 
         ListView {
             id: sequenceView
@@ -60,12 +65,83 @@ Item {
             footerPositioning: ListView.OverlayFooter
             currentIndex: -1
 
+            ScrollBar.vertical: TransparentScrollBar {
+                parent: sequenceSetLayout
+                x: sequenceSetLayout.width - width + 5
+                y: sequenceView.y
+                height: sequenceView.height
+                width: implicitWidth
+                viewContainsMouse: sequenceHover.hovered || sequenceView.moving
+                visible: sequenceView.contentHeight > sequenceView.height
+            }
+
             property int itemWidth: width
             property int itemHeight: 38
+            property bool isDragging: false
+            property var dragSource: null
+            property var openColorSelector: null
+            property int edgeScrollDirection: 0
+            property int edgeScrollThreshold: 24
+            property int edgeScrollStep: 6
+            function closeOpenColorSelector() {
+                if (openColorSelector) {
+                    openColorSelector.expanded = false
+                }
+            }
+            function setEdgeScrollDirection(y) {
+                if (y < edgeScrollThreshold) {
+                    edgeScrollDirection = -1
+                } else if (y > height - edgeScrollThreshold) {
+                    edgeScrollDirection = 1
+                } else {
+                    edgeScrollDirection = 0
+                }
+            }
 
             model: masterModel
 
+            Timer {
+                id: autoScrollTimer
+                interval: 16
+                repeat: true
+                running: sequenceView.isDragging
+                    && sequenceView.edgeScrollDirection !== 0
+                    && sequenceView.contentHeight > sequenceView.height
+
+                onTriggered: {
+                    const maxY = Math.max(0, sequenceView.contentHeight - sequenceView.height)
+                    if (maxY === 0) {
+                        return
+                    }
+                    const nextY = sequenceView.contentY
+                        + (sequenceView.edgeScrollDirection * sequenceView.edgeScrollStep)
+                    sequenceView.contentY = Math.max(0, Math.min(maxY, nextY))
+                }
+            }
+
             delegate: masterDelegate
+
+            TapHandler {
+                enabled: sequenceView.openColorSelector !== null
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onTapped: (eventPoint, button) => {
+                    const selector = sequenceView.openColorSelector
+                    if (!selector) {
+                        return
+                    }
+                    const local = selector.mapFromItem(
+                        sequenceView,
+                        eventPoint.position.x,
+                        eventPoint.position.y)
+                    const inside = local.x >= 0
+                        && local.x <= selector.width
+                        && local.y >= 0
+                        && local.y <= selector.height
+                    if (!inside) {
+                        selector.expanded = false
+                    }
+                }
+            }
 
             addDisplaced: Transition {
                 NumberAnimation {properties: "x, y"; duration: 100}
@@ -133,6 +209,16 @@ Item {
                 height: sequenceView.itemHeight
 
                 SequenceItem { id: sequenceItem }
+                property bool dragActive: sequenceItem.Drag.active
+                onDragActiveChanged: {
+                    if (dragActive) {
+                        sequenceView.dragSource = sequenceItem
+                        sequenceView.isDragging = true
+                    } else if (sequenceView.dragSource === sequenceItem) {
+                        sequenceView.dragSource = null
+                        sequenceView.isDragging = false
+                    }
+                }
 
                 DropArea {
                     anchors.fill: parent
