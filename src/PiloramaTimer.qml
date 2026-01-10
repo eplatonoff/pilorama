@@ -8,6 +8,7 @@ Pilorama.Timer {
     property real remainingTime: 0 // ignored in the infinite mode
     property real segmentTotalDuration: 0
     property real segmentRemainingTime: 0
+    property int _activeSegmentKey: -1
 
     property bool splitMode: pomodoroQueue.infiniteMode || preferences.splitToSequence
 
@@ -31,6 +32,10 @@ Pilorama.Timer {
         time.updateTime();
         canvas.requestPaint();
 
+        if (!running && !splitMode) {
+            segmentTotalDuration = remainingTime;
+        }
+
         if (running && remainingTime <= 0) {
             notifications.sendWithSound()
             stopAndClear()
@@ -39,14 +44,25 @@ Pilorama.Timer {
     onRunningChanged: {
         canvas.requestPaint();
         if (running) {
-            segmentTotalDuration = splitMode ? pomodoroQueue.itemDurationBound() : remainingTime;
+            if (splitMode) {
+                const currentSegment = pomodoroQueue.first();
+                if (currentSegment) {
+                    _activeSegmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
+                    segmentTotalDuration = currentSegment.duration;
+                } else {
+                    _activeSegmentKey = -1;
+                    segmentTotalDuration = 0;
+                }
+            } else {
+                segmentTotalDuration = remainingTime;
+            }
         }
     }
     onSegmentTotalDurationChanged: {
         if (segmentRemainingTime <= 0)
             return;
 
-        if (segmentRemainingTime === pomodoroQueue.itemDurationBound()) {
+        if (segmentRemainingTime === segmentTotalDuration) {
             notifications.sendFromItem(pomodoroQueue.first());
         }
     }
@@ -75,10 +91,18 @@ Pilorama.Timer {
             segmentRemainingTime = currentSegment.duration;
 
             if (splitMode) {
-                segmentTotalDuration = pomodoroQueue.itemDurationBound();
+                const segmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
+                if (_activeSegmentKey !== segmentKey) {
+                    _activeSegmentKey = segmentKey;
+                    segmentTotalDuration = currentSegment.duration;
+                }
             }
         } else {
             segmentRemainingTime = 0;
+            if (splitMode) {
+                _activeSegmentKey = -1;
+                segmentTotalDuration = 0;
+            }
         }
 
         canvas.requestPaint();

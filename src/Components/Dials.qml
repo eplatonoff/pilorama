@@ -5,6 +5,7 @@ Canvas {
 
     required property real duration
     required property real splitDuration
+    required property real splitTotalDuration
     required property bool isRunning
     required property var splitToSequence
     required property bool dragging
@@ -51,9 +52,9 @@ Canvas {
     }
 
     function drawCalibration(ctx, diameter, stroke, divisions) {
-        var clength = Math.PI * (diameter - stroke) / stroke
-        var dash = fakeDash / stroke
-        var space = clength / fakeGrades - dash
+        const clength = Math.PI * (diameter - stroke) / stroke
+        const dash = fakeDash / stroke
+        const space = clength / fakeGrades - dash
 
         ctx.beginPath()
         ctx.lineWidth = stroke
@@ -63,10 +64,10 @@ Canvas {
                 3.5 * Math.PI)
         ctx.stroke()
 
-        var diameter2 = diameter - 2 * stroke - calibrationPadding
-        var clength2 = Math.PI * (diameter2 - calibrationWidth) / calibrationWidth
-        var dash2 = calibrationDash / calibrationWidth
-        var space2 = clength2 / divisions - dash2
+        const diameter2 = diameter - 2 * stroke - calibrationPadding
+        const clength2 = Math.PI * (diameter2 - calibrationWidth) / calibrationWidth
+        const dash2 = calibrationDash / calibrationWidth
+        const space2 = clength2 / divisions - dash2
 
         ctx.beginPath()
         ctx.lineWidth = calibrationWidth
@@ -82,7 +83,7 @@ Canvas {
     }
 
     function drawMainDialTurns(ctx) {
-        for (var t = mainDialTurns; t > 0; t--) {
+        for (let t = mainDialTurns; t > 0; t--) {
             drawDial(ctx, width - (t - 1) * (mainTurnsWidth * 2 + mainTurnsPadding),
                      mainTurnsWidth, colors.getColor('light'), 0, 3600)
         }
@@ -105,40 +106,55 @@ Canvas {
         }
     }
 
-    // TODO refactor
-    function drawPomodoroDial(ctx) {
-        if (pomodoroQueue.infiniteMode) {
-            drawDial(ctx, width, fakeWidth,
-                     colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
-                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
-        } else if (splitToSequence && isRunning) {
-            drawDial(ctx, fakeDialDiameter, fakeWidth,
-                     colors.getColor(masterModel.get(pomodoroQueue.get(0).id).color), 0,
-                     splitDuration * 3600 / masterModel.get(pomodoroQueue.first().id).duration)
-        } else if (splitToSequence && dragging) {
-            var splitVisibleEnd = 0
-            var splitVisibleStart = 0
-            var prevSplit = 0
-            for (var i = 0; i <= pomodoroQueue.count - 1; i++) {
-                prevSplit = i <= 0 ? 0 : pomodoroQueue.get(i - 1).duration
-                splitVisibleStart += prevSplit
-                splitVisibleEnd += pomodoroQueue.get(i).duration
-                var splitColor = masterModel.get(pomodoroQueue.get(i).id).color
+    function clampToMainTurn(value, mainTurnSeconds) {
+        return value <= mainTurnSeconds ? mainTurnSeconds : value
+    }
 
-                drawDial(ctx, fakeDialDiameter, fakeWidth,
-                         colors.getColor(splitColor),
-                         splitVisibleStart <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleStart,
-                         splitVisibleEnd   <= mainDialTurns * 3600 ? mainDialTurns * 3600 : splitVisibleEnd)
-            }
+    function drawSplitSequenceDial(ctx, dialDiameter, mainTurnSeconds) {
+        let splitVisibleEnd = 0
+        let splitVisibleStart = 0
+        let prevSplit = 0
+        for (let i = 0; i <= pomodoroQueue.count - 1; i++) {
+            prevSplit = i <= 0 ? 0 : pomodoroQueue.get(i - 1).duration
+            splitVisibleStart += prevSplit
+            splitVisibleEnd += pomodoroQueue.get(i).duration
+            const splitColor = masterModel.get(pomodoroQueue.get(i).id).color
+
+            drawDial(ctx, dialDiameter, fakeWidth,
+                     colors.getColor(splitColor),
+                     clampToMainTurn(splitVisibleStart, mainTurnSeconds),
+                     clampToMainTurn(splitVisibleEnd, mainTurnSeconds))
+        }
+    }
+
+    function drawPomodoroDial(ctx) {
+        const mainTurnSeconds = mainDialTurns * 3600
+
+        if (pomodoroQueue.infiniteMode || (splitToSequence && isRunning)) {
+            const firstQueueItem = pomodoroQueue.get(0)
+            const firstColor = masterModel.get(firstQueueItem.id).color
+            const splitSweep = splitTotalDuration > 0
+                               ? splitDuration * 3600 / splitTotalDuration
+                               : 0
+            const dialDiameter = pomodoroQueue.infiniteMode ? width : fakeDialDiameter
+
+            drawDial(ctx, dialDiameter, fakeWidth,
+                     colors.getColor(firstColor), 0, splitSweep)
+        } else if (splitToSequence && dragging) {
+            drawSplitSequenceDial(ctx, fakeDialDiameter, mainTurnSeconds)
         } else {
+            const totalDuration = splitTotalDuration > 0 ? splitTotalDuration : duration
+            const progressSweep = dragging
+                                  ? duration - mainTurnSeconds
+                                  : (totalDuration > 0 ? duration * 3600 / totalDuration : 0)
             drawDial(ctx, fakeDialDiameter, fakeWidth,
                      colors.getColor('light'), 0,
-                     duration - (mainDialTurns * 3600))
+                     progressSweep)
         }
     }
 
     onPaint: {
-        var ctx = getContext("2d")
+        const ctx = getContext("2d")
         ctx.save()
         ctx.clearRect(0, 0, width, height)
 

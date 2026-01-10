@@ -9,12 +9,16 @@ ListModel {
 
     property bool infiniteMode: false
     property real currentDurationBound: 0
+    property int _nextKey: 0
 
     Component.onCompleted: {
         _tryToCreateBatch();
     }
 
     onCountChanged: {
+        if (count === 0) {
+            _nextKey = 0;
+        }
         _tryToCreateBatch();
     }
 
@@ -161,7 +165,7 @@ ListModel {
 
         const masterId = count >= masterCount ? count % masterCount : count;
 
-        append({"id": masterId,  "duration": 0})
+        append({"id": masterId,  "duration": 0, "key": _nextKey++})
     }
 
     function _createBatch() {

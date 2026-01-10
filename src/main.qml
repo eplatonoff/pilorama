@@ -311,6 +311,7 @@ ApplicationWindow {
                 anchors.fill: parent
                 duration: globalTimer.remainingTime
                 splitDuration: globalTimer.segmentRemainingTime
+                splitTotalDuration: globalTimer.segmentTotalDuration
                 isRunning: globalTimer.running
                 splitToSequence: appSettings.splitToSequence
                 dragging: mouseArea.dragging

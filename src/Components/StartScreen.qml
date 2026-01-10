@@ -45,6 +45,14 @@ Item {
         renderType: Text.NativeRendering
         antialiasing: true
 
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton
+            propagateComposedEvents: true
+            onPressed: (mouse) => { mouse.accepted = false }
+        }
+
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('lighter')
 
