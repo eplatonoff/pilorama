@@ -15,11 +15,18 @@ ApplicationWindow {
 
     width: 320
     height: 600
-    flags: Qt.Window
+    property bool macTitlebar: Qt.platform.os === "osx"
+    property int macTitlebarHeight: macTitlebar ? 20 : 0
+    property int macHeaderSpacing: macTitlebar ? 10 : 0
+    property int macHeaderTopOffset: macTitlebar ? 7 : 0
+    property int macHeaderTotalHeight: macTitlebar ? macTitlebarHeight + macHeaderSpacing : 0
+    property int baseWindowFlags: macTitlebar ? (Qt.Window | Qt.FramelessWindowHint) : Qt.Window
+
+    flags: baseWindowFlags
 
     property real padding: 16
 
-    minimumHeight: timerLayout.height + padding * 2 + 50
+    minimumHeight: timerLayout.height + padding * 2 + 50 + macHeaderTotalHeight
     minimumWidth: timerLayout.width + padding * 2
 
     maximumWidth: width
@@ -90,16 +97,35 @@ ApplicationWindow {
     }
 
     onAlwaysOnTopChanged: {
-        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window
+        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | baseWindowFlags : flags = baseWindowFlags
         requestActivate()
     }
 
     onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
         if(expanded === true){
-            height = padding * 2 + timerLayout.height + sequence.height
+            height = padding * 2 + macHeaderTotalHeight + timerLayout.height + sequence.height
         } else {
-            height = padding * 2 + timerLayout.height
+            height = padding * 2 + macHeaderTotalHeight + timerLayout.height
+        }
+    }
+
+    // Allow window to be dragged by any part of the window (macOS frameless)
+    MouseArea {
+        property point origin: Qt.point(0, 0)
+
+        anchors.fill: parent
+        enabled: macTitlebar
+
+        onPositionChanged: (mouse) => {
+            if (mouse.buttons & Qt.LeftButton) {
+                const delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
+                window.x += delta.x
+                window.y += delta.y
+            }
+        }
+        onPressed: (mouse) => {
+            origin = Qt.point(mouse.x, mouse.y)
         }
     }
 
@@ -180,6 +206,11 @@ ApplicationWindow {
         source: "qrc:/assets/font/pilorama.ttf"
     }
 
+    FontLoader {
+        id: awesomeFont
+        source: "qrc:/assets/font/fa-solid.otf"
+    }
+
     MasterModel {
         id: masterModel
         data: data
@@ -227,9 +258,64 @@ ApplicationWindow {
         }
     }
 
+    Item {
+        id: windowHeader
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: macTitlebarHeight
+        visible: macTitlebar
+        z: 1
+
+        Item {
+            id: headerContent
+
+            anchors.fill: parent
+            anchors.leftMargin: 16
+            anchors.rightMargin: 16
+            anchors.topMargin: 2
+            anchors.bottomMargin: 2
+
+            Image {
+                id: headerLogo
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: macHeaderTopOffset
+                height: 16
+                fillMode: Image.PreserveAspectFit
+                source: appSettings.darkMode
+                        ? "qrc:/assets/img/white-logo.svg"
+                        : "qrc:/assets/img/dark-logo.svg"
+                visible: macTitlebar
+            }
+
+            MacWindowControls {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: macHeaderTopOffset
+                visible: macTitlebar
+            }
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: headerLogo.bottom
+                anchors.topMargin: macHeaderSpacing
+                height: 0.5
+                color: colors.getColor("light")
+                visible: macTitlebar
+            }
+        }
+    }
+
     StackView {
         id: stack
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.top: windowHeader.bottom
+        anchors.topMargin: macHeaderSpacing
 
         initialItem: content
 

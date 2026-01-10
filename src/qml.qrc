@@ -3,6 +3,7 @@
         <file>assets/img/moon.svg</file>
         <file>assets/img/sun.svg</file>
         <file>assets/img/sound.svg</file>
+        <file>assets/img/dark-logo.svg</file>
         <file>assets/img/prefs.svg</file>
         <file>assets/img/nosound.svg</file>
         <file>assets/img/bell.svg</file>
@@ -14,6 +15,7 @@
         <file>assets/img/save.svg</file>
         <file>assets/img/check.svg</file>
         <file>assets/img/load.svg</file>
+        <file>assets/img/white-logo.svg</file>
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
@@ -52,7 +54,10 @@
         <file>Components/SoundSettings.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
+        <file>assets/font/fa-solid.otf</file>
         <file>assets/font/pilorama.ttf</file>
+        <file>Components/FaIcon.qml</file>
         <file>Components/Icon.qml</file>
+        <file>Components/MacWindowControls.qml</file>
     </qresource>
 </RCC>

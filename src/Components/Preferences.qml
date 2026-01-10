@@ -122,6 +122,7 @@ Item {
                 width: 120
                 model: ["Light", "Dark", "System"]
                 currentIndex: Math.max(0, model.indexOf(appSettings.colorTheme))
+                textPixelSize: fontSize
                 onActivated: appSettings.colorTheme = currentText
             }
 
