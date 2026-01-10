@@ -30,12 +30,15 @@ Rectangle {
         } else if (model.duration === 0) {
             return dimColor
         } else if (globalTimer.splitMode && globalTimer.remainingTime && globalTimer.running) {
-            const realModel = pomodoroQueue.get(model.id)
-            if (realModel && realModel.duration > 0) {
-                return color
-            } else {
-                return dimColor
+            let hasRemaining = false
+            for (let i = 0; i < pomodoroQueue.count; i++) {
+                const queueItem = pomodoroQueue.get(i)
+                if (queueItem.id === model.id && queueItem.duration > 0) {
+                    hasRemaining = true
+                    break
+                }
             }
+            return hasRemaining ? color : dimColor
         } else {
             return color
         }
