@@ -116,5 +116,6 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
+        acceptedButtons: Qt.NoButton
     }
 }
