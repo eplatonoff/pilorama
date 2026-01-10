@@ -242,11 +242,12 @@ Rectangle {
         color: colors.getColor("bg")
 
         height: parent.height
-        width: 40
+        width: itemHover.hovered ? 40 : 0
         opacity: itemHover.hovered ? 1 : 0
         visible: opacity > 0
 
         Behavior on opacity { NumberAnimation { duration: 100 } }
+        Behavior on width { NumberAnimation { duration: 100 } }
 
         anchors.right: parent.right
 
