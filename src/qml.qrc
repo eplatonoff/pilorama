@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
+        <file>assets/img/dark-logo.svg</file>
+        <file>assets/img/white-logo.svg</file>
         <file>assets/app_icons/icon.ico</file>
         <file>assets/app_icons/icon.icns</file>
         <file>assets/app_icons/trayicon.icns</file>
