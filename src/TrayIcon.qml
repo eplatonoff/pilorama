@@ -126,7 +126,7 @@ SystemTrayIcon {
             showfor = 5000
         } else {
             title = "Time ran out"
-            message = "Duration: " + globalTimer.durationBound / 60 + " min"
+            message = "Duration: " + totalDuration / 60 + " min"
             showfor = 10000
         }
 

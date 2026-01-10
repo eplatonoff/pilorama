@@ -370,6 +370,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.topMargin: 18
+            dragging: mouseArea.dragging
         }
         }
 

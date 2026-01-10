@@ -10,13 +10,14 @@ Item {
     id: sequence
 
     property bool blockEdits: globalTimer.remainingTime || globalTimer.running || pomodoroQueue.count > 0
+    property bool dragging: false
     // Display the burner queue while the timer is running or while the
     // timer dial is being dragged in the non‑infinite "split to sequence"
     // mode.  This keeps the master model visible on startup and whenever the
     // timer is idle.
     readonly property bool queueMode: !pomodoroQueue.infiniteMode &&
                                       preferences.splitToSequence &&
-                                      (globalTimer.running || mouseArea.dragging)
+                                      (globalTimer.running || dragging)
 
 
     function setCurrentItem(id){
