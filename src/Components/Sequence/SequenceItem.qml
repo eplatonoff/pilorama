@@ -113,15 +113,21 @@ Rectangle {
     }
 
     function updateHoverCursor(xPos) {
-        if (handler.visible && xPos >= handler.x && xPos <= handler.x + handler.width) {
-            itemHover.cursorShape = Qt.OpenHandCursor
-            return
+        let nextCursor = Qt.ArrowCursor
+        if (isInHoverRegion(handler, xPos)) {
+            nextCursor = Qt.OpenHandCursor
+        } else if (isInHoverRegion(itemControls, xPos)) {
+            nextCursor = Qt.PointingHandCursor
         }
-        if (itemControls.visible && xPos >= itemControls.x && xPos <= itemControls.x + itemControls.width) {
-            itemHover.cursorShape = Qt.PointingHandCursor
-            return
+        if (itemHover.cursorShape !== nextCursor) {
+            itemHover.cursorShape = nextCursor
         }
-        itemHover.cursorShape = Qt.ArrowCursor
+    }
+
+    function isInHoverRegion(regionItem, xPos) {
+        return regionItem.visible
+            && xPos >= regionItem.x
+            && xPos <= regionItem.x + regionItem.width
     }
 
 

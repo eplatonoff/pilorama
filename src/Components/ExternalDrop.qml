@@ -20,7 +20,7 @@ Item{
 
     function hasJsonFile(drag) {
         if (drag.hasUrls) {
-            for (var i = 0; i < drag.urls.length; i++) {
+            for (let i = 0; i < drag.urls.length; i++) {
                 if (isJsonUrl(drag.urls[i])) {
                     return true
                 }
@@ -34,7 +34,7 @@ Item{
 
     function firstJsonUrl(drag) {
         if (drag.hasUrls) {
-            for (var i = 0; i < drag.urls.length; i++) {
+            for (let i = 0; i < drag.urls.length; i++) {
                 if (isJsonUrl(drag.urls[i])) {
                     return drag.urls[i].toString()
                 }

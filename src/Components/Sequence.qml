@@ -61,7 +61,7 @@ Item {
 
             property int itemWidth: width
             property int itemHeight: 38
-            property bool draggingItem: false
+            property bool isDragging: false
             property int edgeScrollDirection: 0
             property int edgeScrollThreshold: 24
             property int edgeScrollStep: 6
@@ -81,7 +81,9 @@ Item {
                 id: autoScrollTimer
                 interval: 16
                 repeat: true
-                running: sequenceView.draggingItem && sequenceView.edgeScrollDirection !== 0
+                running: sequenceView.isDragging
+                    && sequenceView.edgeScrollDirection !== 0
+                    && sequenceView.contentHeight > sequenceView.height
 
                 onTriggered: {
                     const maxY = Math.max(0, sequenceView.contentHeight - sequenceView.height)
@@ -102,7 +104,7 @@ Item {
 
                 SequenceItem {id: sequenceItem }
                 property bool dragActive: sequenceItem.Drag.active
-                onDragActiveChanged: sequenceView.draggingItem = dragActive
+                onDragActiveChanged: sequenceView.isDragging = dragActive
 
                 DropArea {
                     anchors.fill: parent
