@@ -98,29 +98,21 @@ QtObject {
         "osxClose": {
             "night": "#EC6A5E",
             "day": "#EC6A5E",
-            "trayNight": "#FF5F52",
-            "trayDay": "#FF5F52",
             "regular": false
         },
         "osxMinimize": {
             "night": "#F4BF4F",
             "day": "#F4BF4F",
-            "trayNight": "#F4BF4F",
-            "trayDay": "#F4BF4F",
             "regular": false
         },
         "osxMaximize": {
             "night": "#62C654",
             "day": "#62C654",
-            "trayNight": "#62C654",
-            "trayDay": "#62C654",
             "regular": false
         },
         "osxInactive": {
             "night": "#4C4C48",
             "day": "#CCCCCA",
-            "trayNight": "#4C4C48",
-            "trayDay": "#CCCCCA",
             "regular": false
         }
     })
@@ -148,10 +140,11 @@ QtObject {
 
     function getThemeColor(color) {
         if (colorMap.hasOwnProperty(color)) {
+            const entry = colorMap[color]
             if (systemPalette.sysemDarkMode) {
-                return colorMap[color].trayNight
+                return entry.trayNight !== undefined ? entry.trayNight : entry.night
             } else {
-                return colorMap[color].trayDay
+                return entry.trayDay !== undefined ? entry.trayDay : entry.day
             }
         }
         return null
