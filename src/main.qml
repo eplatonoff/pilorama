@@ -5,6 +5,7 @@ import QtCore
 
 import "Components"
 import "Components/Sequence"
+import "Components/mac"
 
 ApplicationWindow {
     id: window
@@ -15,18 +16,14 @@ ApplicationWindow {
 
     width: 320
     height: 600
-    property bool macTitlebar: Qt.platform.os === "osx"
-    property int macTitlebarHeight: macTitlebar ? 20 : 0
-    property int macHeaderSpacing: macTitlebar ? 10 : 0
-    property int macHeaderTopOffset: macTitlebar ? 7 : 0
-    property int macHeaderTotalHeight: macTitlebar ? macTitlebarHeight + macHeaderSpacing : 0
-    property int baseWindowFlags: macTitlebar ? (Qt.Window | Qt.FramelessWindowHint) : Qt.Window
+    property bool macHeaderEnabled: Qt.platform.os === "osx"
+    property int baseWindowFlags: macHeaderEnabled ? (Qt.Window | Qt.FramelessWindowHint) : Qt.Window
 
     flags: baseWindowFlags
 
     property real padding: 16
 
-    minimumHeight: timerLayout.height + padding * 2 + 50 + macHeaderTotalHeight
+    minimumHeight: timerLayout.height + padding * 2 + 50 + windowHeader.macHeaderTotalHeight
     minimumWidth: timerLayout.width + padding * 2
 
     maximumWidth: width
@@ -104,9 +101,9 @@ ApplicationWindow {
     onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
         if(expanded === true){
-            height = padding * 2 + macHeaderTotalHeight + timerLayout.height + sequence.height
+            height = padding * 2 + windowHeader.macHeaderTotalHeight + timerLayout.height + sequence.height
         } else {
-            height = padding * 2 + macHeaderTotalHeight + timerLayout.height
+            height = padding * 2 + windowHeader.macHeaderTotalHeight + timerLayout.height
         }
     }
 
@@ -239,77 +236,17 @@ ApplicationWindow {
         }
     }
 
-    Item {
+    MacHeader {
         id: windowHeader
 
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: macTitlebarHeight
-        visible: macTitlebar
-        z: 1
 
-        Item {
-            id: headerContent
-
-            anchors.fill: parent
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
-            anchors.topMargin: 2
-            anchors.bottomMargin: 2
-
-            MouseArea {
-                id: windowDragArea
-
-                property point origin: Qt.point(0, 0)
-
-                anchors.fill: parent
-                enabled: macTitlebar
-                acceptedButtons: Qt.LeftButton
-                propagateComposedEvents: true
-
-                onPositionChanged: (mouse) => {
-                    if (mouse.buttons & Qt.LeftButton) {
-                        const delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
-                        window.x += delta.x
-                        window.y += delta.y
-                    }
-                }
-                onPressed: (mouse) => {
-                    origin = Qt.point(mouse.x, mouse.y)
-                }
-            }
-
-            Image {
-                id: headerLogo
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: macHeaderTopOffset
-                height: 16
-                fillMode: Image.PreserveAspectFit
-                source: appSettings.darkMode
-                        ? "qrc:/assets/img/white-logo.svg"
-                        : "qrc:/assets/img/dark-logo.svg"
-                visible: macTitlebar
-            }
-
-            MacWindowControls {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: macHeaderTopOffset
-                visible: macTitlebar
-            }
-
-            Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: headerLogo.bottom
-                anchors.topMargin: macHeaderSpacing
-                height: 0.5
-                color: colors.getColor("light")
-                visible: macTitlebar
-            }
-        }
+        windowRef: window
+        appSettings: appSettings
+        colors: colors
+        macHeaderEnabled: window.macHeaderEnabled
     }
 
     StackView {
@@ -318,7 +255,7 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.top: windowHeader.bottom
-        anchors.topMargin: macHeaderSpacing
+        anchors.topMargin: windowHeader.macHeaderSpacing
 
         initialItem: content
 
