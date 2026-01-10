@@ -28,7 +28,8 @@ Item {
     property color closeBorderColor: "#D14F41"
     property color minimizeBorderColor: "#D7A03E"
     property color maximizeBorderColor: "#50A73D"
-    property color inactiveBorderColor: "#AAAAAAA7"
+    // Qt color strings use #AARRGGBB (alpha first)
+    property color inactiveBorderColor: "#A7AAAAAA"
 
     property color closeGlyphColor: "#69110A"
     property color minimizeGlyphColor: "#8F591D"

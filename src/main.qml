@@ -58,16 +58,16 @@ ApplicationWindow {
     SystemPalette{
         id: systemPalette
 
-        property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+        property bool systemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
         property alias colorTheme: appSettings.colorTheme
 
         onColorThemeChanged: updateTheme()
-        onSysemDarkModeChanged: updateTheme()
+        onSystemDarkModeChanged: updateTheme()
         Component.onCompleted: updateTheme()
 
         function updateTheme(){
             if(systemPalette.colorTheme === "System"){
-                appSettings.darkMode = sysemDarkMode
+                appSettings.darkMode = systemDarkMode
             }
             else if (systemPalette.colorTheme === "Dark") {
                 appSettings.darkMode = true

@@ -141,7 +141,7 @@ QtObject {
     function getThemeColor(color) {
         if (colorMap.hasOwnProperty(color)) {
             const entry = colorMap[color]
-            if (systemPalette.sysemDarkMode) {
+            if (systemPalette.systemDarkMode) {
                 return entry.trayNight !== undefined ? entry.trayNight : entry.night
             } else {
                 return entry.trayDay !== undefined ? entry.trayDay : entry.day
