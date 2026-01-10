@@ -16,21 +16,21 @@ ScrollBar {
     hoverEnabled: true
     active: viewContainsMouse || hovered || pressed
 
-     contentItem: Rectangle {
-         id: handle
-         implicitWidth: 10
-         implicitHeight: 100
-         color: customScrollBar.handleColor
-         radius: 5
-         property int transitionDuration: customScrollBar.transitionDuration
-         opacity: (customScrollBar.active ? 1.0 : 0.0) * customScrollBar.handleOpacity
-         Behavior on opacity { NumberAnimation { duration: customScrollBar.transitionDuration } }
+    contentItem: Rectangle {
+        id: handle
+        implicitWidth: 10
+        implicitHeight: 100
+        color: customScrollBar.handleColor
+        radius: 5
+        property int transitionDuration: customScrollBar.transitionDuration
+        opacity: (customScrollBar.active ? 1.0 : 0.0) * customScrollBar.handleOpacity
+        Behavior on opacity { NumberAnimation { duration: customScrollBar.transitionDuration } }
 
-         HoverHandler {
-             cursorShape: Qt.OpenHandCursor
-         }
+        HoverHandler {
+            cursorShape: Qt.OpenHandCursor
+        }
 
-     }
+    }
 
     background: Rectangle {
         implicitWidth: 10
