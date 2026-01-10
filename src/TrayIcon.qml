@@ -16,7 +16,11 @@ SystemTrayIcon {
     readonly property string soundItemText: "Turn sound " + (notifications.soundMuted ? "on" : "off")
 
 
-    property real remainingTime: globalTimer.splitMode ? globalTimer.segmentRemainingTime : globalTimer.remainingTime
+    property real remainingTime: (globalTimer.splitMode
+        && globalTimer.running
+        && globalTimer.segmentRemainingTime > 0)
+        ? globalTimer.segmentRemainingTime
+        : globalTimer.remainingTime
     property real totalDuration: globalTimer.segmentTotalDuration
 
     property real trayUpdateCounter: 0
