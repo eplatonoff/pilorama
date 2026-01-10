@@ -84,10 +84,6 @@ Rectangle {
                 sequenceItem.dragItemIndex = index;
             }
         }
-        onPressed: (mouse) => {
-            const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
-            sequenceView.setEdgeScrollDirection(local.y)
-        }
         onPositionChanged: (mouse) => {
             if (handleDragTrigger.drag.active) {
                 const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
