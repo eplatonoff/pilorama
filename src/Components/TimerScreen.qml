@@ -15,7 +15,10 @@ Item {
 
     function getDuration(){
         if (globalTimer.splitMode) {
-            return globalTimer.segmentRemainingTime
+            if (globalTimer.running && globalTimer.segmentRemainingTime > 0) {
+                return globalTimer.segmentRemainingTime
+            }
+            return globalTimer.remainingTime
         }
         return globalTimer.remainingTime
     }
