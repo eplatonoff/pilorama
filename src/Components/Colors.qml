@@ -105,22 +105,22 @@ QtObject {
         "osxMinimize": {
             "night": "#F4BF4F",
             "day": "#F4BF4F",
-            "trayNight": "#FF5F52",
-            "trayDay": "#FF5F52",
+            "trayNight": "#F4BF4F",
+            "trayDay": "#F4BF4F",
             "regular": false
         },
         "osxMaximize": {
             "night": "#62C654",
             "day": "#62C654",
-            "trayNight": "#FF5F52",
-            "trayDay": "#FF5F52",
+            "trayNight": "#62C654",
+            "trayDay": "#62C654",
             "regular": false
         },
         "osxInactive": {
             "night": "#4C4C48",
             "day": "#CCCCCA",
-            "trayNight": "#FF5F52",
-            "trayDay": "#FF5F52",
+            "trayNight": "#4C4C48",
+            "trayDay": "#CCCCCA",
             "regular": false
         }
     })
