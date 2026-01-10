@@ -132,8 +132,8 @@ Rectangle {
                 border.width: 2
                 border.color: colors.getColor("light")
                 anchors.centerIn: parent
-                opacity: (colorItem.hoverActive || colorSelector.rowHovered) && index === 0 ? 1 : 0
-                visible: opacity > 0
+                opacity: (colorItem.hoverActive || colorSelector.rowHovered) ? 1 : 0
+                visible: index === 0
                 Behavior on opacity { NumberAnimation { duration: 120 } }
             }
 

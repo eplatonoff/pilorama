@@ -22,7 +22,6 @@ ScrollBar {
         implicitHeight: 100
         color: customScrollBar.handleColor
         radius: 5
-        property int transitionDuration: customScrollBar.transitionDuration
         opacity: (customScrollBar.active ? 1.0 : 0.0) * customScrollBar.handleOpacity
         Behavior on opacity { NumberAnimation { duration: customScrollBar.transitionDuration } }
 

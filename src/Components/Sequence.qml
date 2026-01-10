@@ -62,6 +62,7 @@ Item {
             property int itemWidth: width
             property int itemHeight: 38
             property bool isDragging: false
+            property var dragSource: null
             property int edgeScrollDirection: 0
             property int edgeScrollThreshold: 24
             property int edgeScrollStep: 6
@@ -104,7 +105,15 @@ Item {
 
                 SequenceItem {id: sequenceItem }
                 property bool dragActive: sequenceItem.Drag.active
-                onDragActiveChanged: sequenceView.isDragging = dragActive
+                onDragActiveChanged: {
+                    if (dragActive) {
+                        sequenceView.dragSource = sequenceItem
+                        sequenceView.isDragging = true
+                    } else if (sequenceView.dragSource === sequenceItem) {
+                        sequenceView.dragSource = null
+                        sequenceView.isDragging = false
+                    }
+                }
 
                 DropArea {
                     anchors.fill: parent
