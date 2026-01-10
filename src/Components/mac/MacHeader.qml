@@ -48,6 +48,8 @@ Item {
             anchors.leftMargin: -2
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: macHeaderTopOffset
+            windowRef: macHeader.windowRef
+            colors: macHeader.colors
             visible: macHeaderEnabled
         }
 

@@ -5,7 +5,11 @@ import QtQuick.Shapes
 Item {
     id: macWindowControls
 
+    required property Window windowRef
+    required property var colors
+
     property int buttonSize: 12
+    property real buttonBorderWidth: 0.5
     property int glyphBox: 7
     property real glyphStroke: 1.2
     property real glyphCenterXOffset: 0.5
@@ -21,6 +25,11 @@ Item {
     property real maximizeInset: 0.8
     property real maximizeGap: 0.8
 
+    property color closeBorderColor: "#D14F41"
+    property color minimizeBorderColor: "#D7A03E"
+    property color maximizeBorderColor: "#50A73D"
+    property color inactiveBorderColor: "#AAAAAAA7"
+
     property color closeGlyphColor: "#69110A"
     property color minimizeGlyphColor: "#8F591D"
     property color maximizeGlyphColor: "#286017"
@@ -33,9 +42,14 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        border.color: window.active ? "transparent" : "#AAAAAAA7"
-        border.width: window.active ? 0 : 0.5
-        color: window.active ? colors.getColor("osxClose") : colors.getColor("osxInactive")
+        antialiasing: true
+        border.color: macWindowControls.windowRef.active
+                      ? macWindowControls.closeBorderColor
+                      : macWindowControls.inactiveBorderColor
+        border.width: macWindowControls.buttonBorderWidth
+        color: macWindowControls.windowRef.active
+               ? macWindowControls.colors.getColor("osxClose")
+               : macWindowControls.colors.getColor("osxInactive")
         height: buttonSize
         radius: 50
         width: buttonSize
@@ -82,7 +96,7 @@ Item {
             anchors.fill: parent
 
             onClicked: {
-                window.close();
+                macWindowControls.windowRef.close();
             }
         }
     }
@@ -92,9 +106,14 @@ Item {
         anchors.left: closeButton.right
         anchors.leftMargin: 8
         anchors.verticalCenter: parent.verticalCenter
-        border.color: window.active ? "transparent" : "#AAAAAAA7"
-        border.width: window.active ? 0 : 0.5
-        color: window.active ? colors.getColor("osxMinimize") : colors.getColor("osxInactive")
+        antialiasing: true
+        border.color: macWindowControls.windowRef.active
+                      ? macWindowControls.minimizeBorderColor
+                      : macWindowControls.inactiveBorderColor
+        border.width: macWindowControls.buttonBorderWidth
+        color: macWindowControls.windowRef.active
+               ? macWindowControls.colors.getColor("osxMinimize")
+               : macWindowControls.colors.getColor("osxInactive")
         height: buttonSize
         radius: 50
         width: buttonSize
@@ -138,7 +157,7 @@ Item {
             anchors.fill: parent
 
             onClicked: {
-                window.showMinimized();
+                macWindowControls.windowRef.showMinimized();
             }
         }
     }
@@ -148,9 +167,14 @@ Item {
         anchors.left: minimizeButton.right
         anchors.leftMargin: 8
         anchors.verticalCenter: parent.verticalCenter
-        border.color: window.active ? "transparent" : "#AAAAAAA7"
-        border.width: window.active ? 0 : 0.5
-        color: window.active ? colors.getColor("osxMaximize") : colors.getColor("osxInactive")
+        antialiasing: true
+        border.color: macWindowControls.windowRef.active
+                      ? macWindowControls.maximizeBorderColor
+                      : macWindowControls.inactiveBorderColor
+        border.width: macWindowControls.buttonBorderWidth
+        color: macWindowControls.windowRef.active
+               ? macWindowControls.colors.getColor("osxMaximize")
+               : macWindowControls.colors.getColor("osxInactive")
         height: buttonSize
         radius: 50
         width: buttonSize
@@ -209,10 +233,10 @@ Item {
             anchors.fill: parent
 
             onClicked: {
-                if (window.windowState & Qt.WindowMaximized) {
-                    window.showNormal();
+                if (macWindowControls.windowRef.windowState & Qt.WindowMaximized) {
+                    macWindowControls.windowRef.showNormal();
                 } else {
-                    window.showMaximized();
+                    macWindowControls.windowRef.showMaximized();
                 }
             }
         }
