@@ -77,9 +77,7 @@ Item {
         z: 0
 
         onPressed: (mouse) => {
-            if (mouse.button === Qt.LeftButton) {
-                windowRef.startSystemMove()
-            }
+            windowRef.startSystemMove()
         }
     }
 }

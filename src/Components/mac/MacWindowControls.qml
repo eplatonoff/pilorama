@@ -93,6 +93,7 @@ Item {
             }
         }
         MouseArea {
+            id: closeArea
             anchors.fill: parent
 
             onClicked: {
@@ -154,6 +155,7 @@ Item {
             }
         }
         MouseArea {
+            id: minimizeArea
             anchors.fill: parent
 
             onClicked: {
@@ -230,6 +232,7 @@ Item {
             }
         }
         MouseArea {
+            id: maximizeArea
             anchors.fill: parent
 
             onClicked: {
