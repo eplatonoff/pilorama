@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 
 Item {
     id: macWindowControls
@@ -90,7 +91,7 @@ Item {
             color: "#6F000000"
             glyph: "\uf0de"
             size: 8
-            visible: area.containsMouse
+            visible: area.containsMouse && !(window.windowState & Qt.WindowMaximized)
         }
         FaIcon {
             id: maximizeButtonDownIcon
@@ -100,13 +101,17 @@ Item {
             color: "#6F000000"
             glyph: "\uf0dd"
             size: 8
-            visible: area.containsMouse
+            visible: area.containsMouse && (window.windowState & Qt.WindowMaximized)
         }
         MouseArea {
             anchors.fill: parent
 
             onClicked: {
-                window.showMaximized();
+                if (window.windowState & Qt.WindowMaximized) {
+                    window.showNormal();
+                } else {
+                    window.showMaximized();
+                }
             }
         }
     }
