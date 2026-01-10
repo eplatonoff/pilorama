@@ -7,6 +7,7 @@ Text {
     property int size: 24
     property string source
     property bool propagateComposedEvents: true
+    property int cursorShape: Qt.PointingHandCursor
 
     signal pressed()
     signal released()
@@ -23,7 +24,8 @@ Text {
 
     MouseArea {
        anchors.fill: parent
-       cursorShape: Qt.PointingHandCursor
+       hoverEnabled: true
+       cursorShape: parent.cursorShape
        propagateComposedEvents: parent.propagateComposedEvents
        onReleased: parent.released()
        onPressed: parent.pressed()

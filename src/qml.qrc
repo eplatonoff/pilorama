@@ -42,6 +42,7 @@
         <file>Components/Sequence/Header.qml</file>
         <file>Components/Sequence/Footer.qml</file>
         <file>Components/Sequence/ColorSelector.qml</file>
+        <file>Components/TransparentScrollBar.qml</file>
         <file>Components/ExternalDrop.qml</file>
         <file>Components/Preferences/Header.qml</file>
         <file>Components/Preferences/Checkbox.qml</file>
