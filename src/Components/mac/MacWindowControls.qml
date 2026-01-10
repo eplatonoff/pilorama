@@ -1,11 +1,29 @@
 import QtQuick
 import QtQuick.Window
-import ".."
+import QtQuick.Shapes
 
 Item {
     id: macWindowControls
 
     property int buttonSize: 12
+    property int glyphBox: 7
+    property real glyphStroke: 1.2
+    property real glyphCenterXOffset: 0.5
+    property real glyphCenterYOffset: 0.5
+    property real minimizeGlyphCenterXOffset: glyphCenterXOffset + 0.5
+    property real minimizeGlyphCenterYOffset: glyphCenterYOffset + 0.25
+
+    property real closeInset: 1.2
+    property int minimizeGlyphWidth: 9
+    property int minimizeGlyphHeight: 7
+    property real minimizeInset: 0.75
+    property real minimizeHeight: 1.0
+    property real maximizeInset: 0.8
+    property real maximizeGap: 0.8
+
+    property color closeGlyphColor: "#69110A"
+    property color minimizeGlyphColor: "#8F591D"
+    property color maximizeGlyphColor: "#286017"
 
     height: 12
     width: 52
@@ -15,22 +33,50 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        border.color: window.active ? "#E14945" : "#AAAAAAA7"
-        border.width: 0.5
+        border.color: window.active ? "transparent" : "#AAAAAAA7"
+        border.width: window.active ? 0 : 0.5
         color: window.active ? colors.getColor("osxClose") : colors.getColor("osxInactive")
         height: buttonSize
         radius: 50
         width: buttonSize
 
-        FaIcon {
+        Shape {
             id: closeButtonIcon
 
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: macWindowControls.glyphCenterXOffset
             anchors.verticalCenter: parent.verticalCenter
-            color: "#6F000000"
-            glyph: "\uf00d"
-            size: 10
+            anchors.verticalCenterOffset: macWindowControls.glyphCenterYOffset
+            width: macWindowControls.glyphBox
+            height: macWindowControls.glyphBox
             visible: area.containsMouse
+
+            ShapePath {
+                strokeWidth: macWindowControls.glyphStroke
+                strokeColor: macWindowControls.closeGlyphColor
+                capStyle: ShapePath.SquareCap
+                joinStyle: ShapePath.RoundJoin
+                fillColor: "transparent"
+                startX: macWindowControls.closeInset
+                startY: macWindowControls.closeInset
+                PathLine {
+                    x: macWindowControls.glyphBox - macWindowControls.closeInset
+                    y: macWindowControls.glyphBox - macWindowControls.closeInset
+                }
+            }
+            ShapePath {
+                strokeWidth: macWindowControls.glyphStroke
+                strokeColor: macWindowControls.closeGlyphColor
+                capStyle: ShapePath.SquareCap
+                joinStyle: ShapePath.RoundJoin
+                fillColor: "transparent"
+                startX: macWindowControls.glyphBox - macWindowControls.closeInset
+                startY: macWindowControls.closeInset
+                PathLine {
+                    x: macWindowControls.closeInset
+                    y: macWindowControls.glyphBox - macWindowControls.closeInset
+                }
+            }
         }
         MouseArea {
             anchors.fill: parent
@@ -46,22 +92,47 @@ Item {
         anchors.left: closeButton.right
         anchors.leftMargin: 8
         anchors.verticalCenter: parent.verticalCenter
-        border.color: window.active ? "#DEA236" : "#AAAAAAA7"
-        border.width: 0.5
+        border.color: window.active ? "transparent" : "#AAAAAAA7"
+        border.width: window.active ? 0 : 0.5
         color: window.active ? colors.getColor("osxMinimize") : colors.getColor("osxInactive")
         height: buttonSize
         radius: 50
         width: buttonSize
 
-        FaIcon {
+        Shape {
             id: minimizeButtonIcon
 
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: macWindowControls.minimizeGlyphCenterXOffset
             anchors.verticalCenter: parent.verticalCenter
-            color: "#6F000000"
-            glyph: "\uf068"
-            size: 10
+            anchors.verticalCenterOffset: macWindowControls.minimizeGlyphCenterYOffset
+            width: macWindowControls.minimizeGlyphWidth
+            height: macWindowControls.minimizeGlyphHeight
             visible: area.containsMouse
+
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: macWindowControls.minimizeGlyphColor
+                startX: macWindowControls.minimizeInset
+                startY: macWindowControls.minimizeGlyphHeight / 2 - macWindowControls.minimizeHeight / 2
+                PathLine {
+                    x: macWindowControls.minimizeGlyphWidth - macWindowControls.minimizeInset
+                    y: macWindowControls.minimizeGlyphHeight / 2 - macWindowControls.minimizeHeight / 2
+                }
+                PathLine {
+                    x: macWindowControls.minimizeGlyphWidth - macWindowControls.minimizeInset
+                    y: macWindowControls.minimizeGlyphHeight / 2 + macWindowControls.minimizeHeight / 2
+                }
+                PathLine {
+                    x: macWindowControls.minimizeInset
+                    y: macWindowControls.minimizeGlyphHeight / 2 + macWindowControls.minimizeHeight / 2
+                }
+                PathLine {
+                    x: macWindowControls.minimizeInset
+                    y: macWindowControls.minimizeGlyphHeight / 2 - macWindowControls.minimizeHeight / 2
+                }
+            }
         }
         MouseArea {
             anchors.fill: parent
@@ -77,32 +148,62 @@ Item {
         anchors.left: minimizeButton.right
         anchors.leftMargin: 8
         anchors.verticalCenter: parent.verticalCenter
-        border.color: window.active ? "#26AB36" : "#AAAAAAA7"
-        border.width: 0.5
+        border.color: window.active ? "transparent" : "#AAAAAAA7"
+        border.width: window.active ? 0 : 0.5
         color: window.active ? colors.getColor("osxMaximize") : colors.getColor("osxInactive")
         height: buttonSize
         radius: 50
         width: buttonSize
 
-        FaIcon {
-            id: maximizeButtonUpIcon
+        Shape {
+            id: maximizeButtonIcon
 
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: macWindowControls.glyphCenterXOffset
             anchors.verticalCenter: parent.verticalCenter
-            color: "#6F000000"
-            glyph: "\uf0de"
-            size: 8
-            visible: area.containsMouse && !(window.windowState & Qt.WindowMaximized)
-        }
-        FaIcon {
-            id: maximizeButtonDownIcon
+            anchors.verticalCenterOffset: macWindowControls.glyphCenterYOffset
+            width: macWindowControls.glyphBox
+            height: macWindowControls.glyphBox
+            visible: area.containsMouse
 
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            color: "#6F000000"
-            glyph: "\uf0dd"
-            size: 8
-            visible: area.containsMouse && (window.windowState & Qt.WindowMaximized)
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: macWindowControls.maximizeGlyphColor
+                startX: macWindowControls.maximizeInset
+                startY: macWindowControls.maximizeInset
+                PathLine {
+                    x: macWindowControls.glyphBox - macWindowControls.maximizeInset - macWindowControls.maximizeGap
+                    y: macWindowControls.maximizeInset
+                }
+                PathLine {
+                    x: macWindowControls.maximizeInset
+                    y: macWindowControls.glyphBox - macWindowControls.maximizeInset - macWindowControls.maximizeGap
+                }
+                PathLine {
+                    x: macWindowControls.maximizeInset
+                    y: macWindowControls.maximizeInset
+                }
+            }
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: macWindowControls.maximizeGlyphColor
+                startX: macWindowControls.glyphBox - macWindowControls.maximizeInset
+                startY: macWindowControls.glyphBox - macWindowControls.maximizeInset
+                PathLine {
+                    x: macWindowControls.glyphBox - macWindowControls.maximizeInset
+                    y: macWindowControls.maximizeInset + macWindowControls.maximizeGap
+                }
+                PathLine {
+                    x: macWindowControls.maximizeInset + macWindowControls.maximizeGap
+                    y: macWindowControls.glyphBox - macWindowControls.maximizeInset
+                }
+                PathLine {
+                    x: macWindowControls.glyphBox - macWindowControls.maximizeInset
+                    y: macWindowControls.glyphBox - macWindowControls.maximizeInset
+                }
+            }
         }
         MouseArea {
             anchors.fill: parent

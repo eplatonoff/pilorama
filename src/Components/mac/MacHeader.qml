@@ -45,6 +45,7 @@ Item {
 
         MacWindowControls {
             anchors.left: parent.left
+            anchors.leftMargin: -2
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: macHeaderTopOffset
             visible: macHeaderEnabled
@@ -64,8 +65,6 @@ Item {
     MouseArea {
         id: windowDragArea
 
-        property point origin: Qt.point(0, 0)
-
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -75,15 +74,10 @@ Item {
         propagateComposedEvents: true
         z: 0
 
-        onPositionChanged: (mouse) => {
-            if (mouse.buttons & Qt.LeftButton) {
-                const delta = Qt.point(mouse.x - origin.x, mouse.y - origin.y)
-                windowRef.x += delta.x
-                windowRef.y += delta.y
-            }
-        }
         onPressed: (mouse) => {
-            origin = Qt.point(mouse.x, mouse.y)
+            if (mouse.button === Qt.LeftButton) {
+                windowRef.startSystemMove()
+            }
         }
     }
 }

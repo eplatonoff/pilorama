@@ -54,9 +54,7 @@
         <file>Components/SoundSettings.qml</file>
         <file>Components/Clock.qml</file>
         <file>assets/font/Inter.otf</file>
-        <file>assets/font/fa-solid.otf</file>
         <file>assets/font/pilorama.ttf</file>
-        <file>Components/FaIcon.qml</file>
         <file>Components/Icon.qml</file>
         <file>Components/mac/MacWindowControls.qml</file>
         <file>Components/mac/MacHeader.qml</file>

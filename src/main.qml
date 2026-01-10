@@ -184,11 +184,6 @@ ApplicationWindow {
         source: "qrc:/assets/font/pilorama.ttf"
     }
 
-    FontLoader {
-        id: awesomeFont
-        source: "qrc:/assets/font/fa-solid.otf"
-    }
-
     MasterModel {
         id: masterModel
         data: data
