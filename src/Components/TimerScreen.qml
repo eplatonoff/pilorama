@@ -14,12 +14,10 @@ Item {
     }
 
     function getDuration(){
-
-        // if(!globalTimer.splitMode){
-          return globalTimer.remainingTime
-        // } else {
-          // return globalTimer.segmentRemainingTime
-        // }
+        if (globalTimer.splitMode) {
+            return globalTimer.segmentRemainingTime
+        }
+        return globalTimer.remainingTime
     }
 
     function count(duration){
