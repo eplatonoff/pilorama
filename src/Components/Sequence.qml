@@ -57,6 +57,7 @@ Item {
                 height: sequenceView.height
                 width: implicitWidth
                 viewContainsMouse: sequenceHover.hovered || sequenceView.moving
+                visible: sequenceView.contentHeight > sequenceView.height
             }
 
             property int itemWidth: width
