@@ -3,13 +3,63 @@
 #import <AppKit/AppKit.h>
 #import <UserNotifications/UserNotifications.h>
 
+static NSString *const kPiloramaScheduledNotificationId = @"pilorama.scheduled";
+static id appNapActivity = nil;
+static id notificationDelegate = nil;
+
+@interface PiloramaNotificationDelegate : NSObject <UNUserNotificationCenterDelegate>
+@end
+
+@implementation PiloramaNotificationDelegate
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+ didReceiveNotificationResponse:(UNNotificationResponse *)response
+          withCompletionHandler:(void (^)(void))completionHandler
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSApp unhide:nil];
+        [NSApp activateIgnoringOtherApps:YES];
+        for (NSWindow *window in [NSApp windows]) {
+            if ([window isVisible]) {
+                [window makeKeyAndOrderFront:nil];
+                break;
+            }
+        }
+    });
+
+    if (completionHandler)
+        completionHandler();
+}
+@end
+
 void mac_disable_app_nap(void)
 {
-   if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-   {
-      [[NSProcessInfo processInfo] beginActivityWithOptions:0x00FFFFFF reason:@"Not sleepy and don't want to nap"];
-   }
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
+    {
+        [[NSProcessInfo processInfo] beginActivityWithOptions:0x00FFFFFF reason:@"Not sleepy and don't want to nap"];
+    }
 
+}
+
+void mac_begin_app_nap_activity(void)
+{
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
+    {
+        if (appNapActivity)
+            return;
+        appNapActivity = [[NSProcessInfo processInfo] beginActivityWithOptions:0x00FFFFFF
+                                                                        reason:@"Pilorama timer running"];
+    }
+}
+
+void mac_end_app_nap_activity(void)
+{
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
+    {
+        if (!appNapActivity)
+            return;
+        [[NSProcessInfo processInfo] endActivity:appNapActivity];
+        appNapActivity = nil;
+    }
 }
 
 
@@ -24,6 +74,10 @@ void mac_show_in_dock(void) {
 void mac_request_notification_permission(void)
 {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    if (!notificationDelegate) {
+        notificationDelegate = [[PiloramaNotificationDelegate alloc] init];
+    }
+    center.delegate = notificationDelegate;
     [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound)
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
                               
@@ -102,7 +156,7 @@ void mac_schedule_notification(const char *title, const char *message,
     UNTimeIntervalNotificationTrigger *trigger =
         [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:seconds repeats:NO];
 
-    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSUUID UUID] UUIDString]
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:kPiloramaScheduledNotificationId
                                                                           content:content
                                                                           trigger:trigger];
 
@@ -111,7 +165,7 @@ void mac_schedule_notification(const char *title, const char *message,
 
 void mac_clear_scheduled_notifications(void)
 {
-    [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center removeAllPendingNotificationRequests];
+    [center removeDeliveredNotificationsWithIdentifiers:@[kPiloramaScheduledNotificationId]];
 }
-
-

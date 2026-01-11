@@ -86,10 +86,13 @@ QtObject {
 
         const first = pomodoroQueue.first()
         if (!first) {
+            const remainingSecs = Math.max(0, Math.round(globalTimer.remainingTime));
+            if (remainingSecs <= 0)
+                return
             MacOSController.scheduleNotification(
                         "Time ran out",
                         "Duration: " + globalTimer.durationBound / 60 + " min",
-                        tray.notificationIconURL(), 0)
+                        tray.notificationIconURL(), remainingSecs)
             return
         }
 

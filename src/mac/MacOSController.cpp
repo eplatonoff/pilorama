@@ -45,6 +45,8 @@ static QString prepareIconFile(const QString &iconPath, const QQmlEngine *engine
 extern void mac_show_in_dock();
 extern void mac_hide_from_dock();
 extern void mac_disable_app_nap();
+extern void mac_begin_app_nap_activity();
+extern void mac_end_app_nap_activity();
 extern void mac_request_notification_permission();
 extern void mac_send_notification(const char *title, const char *message,
                                   const char *icon);
@@ -89,6 +91,22 @@ void MacOSController::disableAppNap() {
 #ifdef __APPLE__
 #if TARGET_OS_MAC
     mac_disable_app_nap();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::beginAppNapActivity() {
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_begin_app_nap_activity();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::endAppNapActivity() {
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_end_app_nap_activity();
 #endif /* TARGET_OS_MAC */
 #endif /* __APPLE__ */
 }

@@ -10,6 +10,7 @@ Pilorama.Timer {
     property real segmentRemainingTime: 0
     property int _activeSegmentKey: -1
     property real durationBound: 0
+    property real _lastTickMs: 0
 
     property bool splitMode: pomodoroQueue.infiniteMode || preferences.splitToSequence
 
@@ -25,6 +26,7 @@ Pilorama.Timer {
         segmentTotalDuration = 0;
         _activeSegmentKey = -1;
         durationBound = 0;
+        _lastTickMs = 0;
         window.clockMode = "start";
         pomodoroQueue.clear();
         mouseArea._prevAngle = 0;
@@ -60,6 +62,8 @@ Pilorama.Timer {
     onRunningChanged: {
         canvas.requestPaint();
         if (running) {
+            MacOSController.beginAppNapActivity();
+            _lastTickMs = Date.now();
             durationBound = remainingTime;
             if (splitMode) {
                 const currentSegment = pomodoroQueue.first();
@@ -74,6 +78,8 @@ Pilorama.Timer {
                 segmentTotalDuration = remainingTime;
             }
         } else {
+            MacOSController.endAppNapActivity();
+            _lastTickMs = 0;
             notifications.clearScheduled();
         }
     }
@@ -88,10 +94,25 @@ Pilorama.Timer {
         }
     }
     onTriggered: elapsedSecs => {
+        const nowMs = Date.now();
+        let actualElapsed = elapsedSecs;
+        if (_lastTickMs > 0) {
+            actualElapsed = (nowMs - _lastTickMs) / 1000.0;
+        }
+        _lastTickMs = nowMs;
+        if (actualElapsed < 0)
+            actualElapsed = 0;
+        if (actualElapsed > timerLimit)
+            actualElapsed = timerLimit;
+        if (actualElapsed === 0) {
+            canvas.requestPaint();
+            return;
+        }
+
         if (!pomodoroQueue.infiniteMode) {
             // Keep remainingTime authoritative for finite timers, including split mode.
             // In infinite mode, remainingTime is ignored.
-            remainingTime -= elapsedSecs;
+            remainingTime -= actualElapsed;
         }
 
         if (splitMode) {
@@ -105,7 +126,7 @@ Pilorama.Timer {
             sequence.setCurrentItem();
         }
 
-        pomodoroQueue.drainTime(elapsedSecs);
+        pomodoroQueue.drainTime(actualElapsed);
 
         const currentSegment = pomodoroQueue.first();
 

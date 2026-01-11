@@ -16,6 +16,8 @@ public:
 
 public slots:
     static void disableAppNap();
+    static void beginAppNapActivity();
+    static void endAppNapActivity();
     static void showInDock();
     static void hideFromDock();
     static void requestNotificationPermission();
