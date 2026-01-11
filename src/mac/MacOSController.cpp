@@ -45,9 +45,14 @@ static QString prepareIconFile(const QString &iconPath, const QQmlEngine *engine
 extern void mac_show_in_dock();
 extern void mac_hide_from_dock();
 extern void mac_disable_app_nap();
+extern void mac_begin_app_nap_activity();
+extern void mac_end_app_nap_activity();
 extern void mac_request_notification_permission();
 extern void mac_send_notification(const char *title, const char *message,
                                   const char *icon);
+extern void mac_schedule_notification(const char *title, const char *message,
+                                      const char *icon, double seconds);
+extern void mac_clear_scheduled_notifications(void);
 #endif /* TARGET_OS_MAC */
 #endif /* __APPLE__ */
 
@@ -90,12 +95,65 @@ void MacOSController::disableAppNap() {
 #endif /* __APPLE__ */
 }
 
+void MacOSController::beginAppNapActivity() {
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_begin_app_nap_activity();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::endAppNapActivity() {
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_end_app_nap_activity();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
 void MacOSController::requestNotificationPermission()
 {
 #ifdef __APPLE__
 #if TARGET_OS_MAC
     mac_request_notification_permission();
 #endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::clearScheduledNotifications()
+{
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_clear_scheduled_notifications();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::scheduleNotification(const QString &title, const QString &message,
+                                           const QString &iconPath, int seconds) const
+{
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    if (engine_ == nullptr) {
+        qWarning() << "Engine is not set";
+        return;
+    }
+    const QString iconFile = prepareIconFile(iconPath, engine_);
+    mac_schedule_notification(title.toUtf8().constData(),
+                              message.toUtf8().constData(),
+                              iconFile.toUtf8().constData(),
+                              seconds);
+#else
+    Q_UNUSED(title)
+    Q_UNUSED(message)
+    Q_UNUSED(iconPath)
+    Q_UNUSED(seconds)
+#endif /* TARGET_OS_MAC */
+#else
+    Q_UNUSED(title)
+    Q_UNUSED(message)
+    Q_UNUSED(iconPath)
+    Q_UNUSED(seconds)
 #endif /* __APPLE__ */
 }
 
