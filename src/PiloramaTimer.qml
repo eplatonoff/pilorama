@@ -81,7 +81,8 @@ Pilorama.Timer {
     }
     onTriggered: elapsedSecs => {
         if (!pomodoroQueue.infiniteMode) {
-            // subtract the main remaining time field even in the split mode
+            // Keep remainingTime authoritative for finite timers, including split mode.
+            // In infinite mode, remainingTime is ignored.
             remainingTime -= elapsedSecs;
         }
 
