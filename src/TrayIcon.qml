@@ -12,20 +12,22 @@ SystemTrayIcon {
     property string appTitle: window.title
     property string messageText: ""
     property string messageTitle: ""
-    readonly property string menuItemText: (globalTimer.running && pomodoroQueue.infiniteMode)
-                                          ? "Reset Timer"
-                                          : "Start Sequence"
-    readonly property string soundItemText: notifications.soundMuted ? "Turn sound on" : "Turn sound off"
+    readonly property string menuItemText: checkMenuItemText()
+    readonly property string soundItemText: "Turn sound " + (notifications.soundMuted ? "on" : "off")
 
 
-    // TODO refactor
-    property real remainingTime: pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-    property real totalDuration: pomodoroQueue.infiniteMode ? pomodoroQueue.currentDurationBound : globalTimer.durationBound
+    property real remainingTime: (globalTimer.splitMode
+        && globalTimer.running
+        && globalTimer.segmentRemainingTime > 0)
+        ? globalTimer.segmentRemainingTime
+        : globalTimer.remainingTime
+    property real totalDuration: globalTimer.segmentTotalDuration
 
     property real trayUpdateCounter: 0
 
     Component.onCompleted: {
        trayUpdateCounter = remainingTime
+       globalTimer.runningChanged.connect(handleTimerState)
     }
 
     onMessageClicked: popUp()
@@ -43,6 +45,28 @@ SystemTrayIcon {
         }
     }
 
+    function handleTimerState(running) {
+        if (running && totalDuration > 0) {
+            icon.source = iconURL(Math.round((remainingTime * 3600 / totalDuration) / 10) * 10)
+            trayUpdateCounter = remainingTime
+        } else if (!running) {
+            // Restore the static idle icon once the timer stops
+            icon.source = iconURL()
+            trayUpdateCounter = remainingTime
+        }
+    }
+
+
+    function checkMenuItemText() {
+        if (globalTimer.running) {
+            if (pomodoroQueue.infiniteMode) {
+                return "Reset Timer"
+            }
+            return "Stop Sequence"
+        }
+        return "Start Sequence"
+    }
+
     function iconURL(renderSecs = 0)
     {
         if (!globalTimer.running || renderSecs === 0 || renderSecs === Infinity || isNaN(renderSecs))
@@ -52,16 +76,21 @@ SystemTrayIcon {
                 return 'qrc:/assets/tray/static-day.svg'
             }
 
-        const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");
+        let color
+        if ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0) {
+            color = colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+        } else {
+            color = colors.getThemeColor("dark")
+        }
         const placeholderColor = colors.getThemeColor("light")
 
         return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
     }
 
     function notificationIconURL() {
-        const color = pomodoroQueue.infiniteMode ?
-                colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) :
-                colors.getThemeColor("dark");
+        const color = ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0)
+            ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+            : colors.getThemeColor("dark");
         return "image://notification_dot_provider/" + color;
     }
 
@@ -94,7 +123,7 @@ SystemTrayIcon {
             showfor = 5000
         } else {
             title = "Time ran out"
-            message = "Duration: " + globalTimer.durationBound / 60 + " min"
+            message = "Duration: " + totalDuration / 60 + " min"
             showfor = 10000
         }
 
@@ -130,26 +159,16 @@ SystemTrayIcon {
             text: tray.menuItemText
             onTriggered: {
                 if (globalTimer.running) {
-
-                    pomodoroQueue.infiniteMode = false;
-                    pomodoroQueue.clear();
-
-                    mouseArea._prevAngle = 0
-                    mouseArea._totalRotatedSecs = 0
-
-                    globalTimer.duration = 0
-                    globalTimer.stop()
-
-                    window.clockMode = "start"
-
-                    notifications.stopSound();
-                    sequence.setCurrentItem(-1)
-
+                    globalTimer.stopAndClear()
+                    pomodoroQueue.infiniteMode = false
+                    notifications.stopSound()
                 } else {
                     window.clockMode = "pomodoro"
                     pomodoroQueue.infiniteMode = true
                     globalTimer.start()
-                    notifications.sendFromItem(pomodoroQueue.first())
+                    if (pomodoroQueue.count > 0) {
+                        notifications.sendFromItem(pomodoroQueue.first())
+                    }
                 }
 
             }

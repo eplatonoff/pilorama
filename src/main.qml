@@ -140,7 +140,6 @@ ApplicationWindow {
 
         property alias alwaysOnTop: window.alwaysOnTop
         property alias quitOnClose: window.quitOnClose
-        property alias showQueue: sequence.showQueue
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
@@ -310,10 +309,12 @@ ApplicationWindow {
             Dials {
                 id: canvas
                 anchors.fill: parent
-                duration: globalTimer.duration
-                splitDuration: globalTimer.splitDuration
+                duration: globalTimer.remainingTime
+                splitDuration: globalTimer.segmentRemainingTime
+                splitTotalDuration: globalTimer.segmentTotalDuration
                 isRunning: globalTimer.running
                 splitToSequence: appSettings.splitToSequence
+                dragging: mouseArea.dragging
                 pomodoroQueue: pomodoroQueue
                 masterModel: masterModel
                 colors: colors
@@ -369,6 +370,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.topMargin: 18
+            dragging: mouseArea.dragging
         }
         }
 

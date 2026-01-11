@@ -23,9 +23,13 @@ MouseArea {
 
     property real _totalRotatedSecsLimit: globalTimer.timerLimit
 
+    // Indicates that the timer dial is actively dragged. Used by the
+    // sequence view to preview the queue while the user adjusts the timer.
+    property bool dragging: false
+
     onReleased: {
         cursorShape = Qt.OpenHandCursor
-        if (globalTimer.duration > 0) {
+        if (globalTimer.remainingTime > 0) {
             globalTimer.start()
 
         }  else {
@@ -33,6 +37,7 @@ MouseArea {
             window.clockMode = "start"
             notifications.stopSound()
         }
+        dragging = false
     }
 
     onRotated: (delta) => {
@@ -42,7 +47,7 @@ MouseArea {
         this._totalRotatedSecs += deltaSecs;
 
         if (_totalRotatedSecs >= 0 && _totalRotatedSecs <= _totalRotatedSecsLimit) {
-            globalTimer.duration = _totalRotatedSecs;
+            globalTimer.remainingTime = _totalRotatedSecs;
             durationSettings.timer = _totalRotatedSecs
             pomodoroQueue.changeQueue(deltaSecs);
         } else if (_totalRotatedSecs > _totalRotatedSecsLimit) {
@@ -72,6 +77,7 @@ MouseArea {
         pomodoroQueue.count > 1 ? pomodoroQueue.restoreDuration(0) : undefined
         pomodoroQueue.infiniteMode = false
         sequence.setCurrentItem(-1)
+        dragging = true
     }
 
     onPositionChanged: (mouse) => {

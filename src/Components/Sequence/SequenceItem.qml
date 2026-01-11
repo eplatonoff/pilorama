@@ -25,10 +25,20 @@ Rectangle {
         const color = colors.getColor('dark')
         const dimColor = colors.getColor('mid')
 
-         if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.duration){
+        if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.remainingTime) {
             return dimColor
-        } else if (model.duration === 0){
+        } else if (model.duration === 0) {
             return dimColor
+        } else if (globalTimer.splitMode && globalTimer.remainingTime && globalTimer.running) {
+            let hasRemaining = false
+            for (let i = 0; i < pomodoroQueue.count; i++) {
+                const queueItem = pomodoroQueue.get(i)
+                if (queueItem.id === model.id && queueItem.duration > 0) {
+                    hasRemaining = true
+                    break
+                }
+            }
+            return hasRemaining ? color : dimColor
         } else {
             return color
         }
@@ -185,7 +195,9 @@ Rectangle {
         id: itemtime
         width: 20
         color: sequenceItem.dimmer()
-        text: Math.trunc( model.duration / 60 )
+        // Round up here as well so the displayed minutes remain stable when
+        // the timer starts and the duration drops by a few seconds.
+        text: Math.ceil(model.duration / 60)
 
         validator: IntValidator { bottom: 1; top: globalTimer.timerLimit / 60}
         inputMethodHints: Qt.ImhDigitsOnly
