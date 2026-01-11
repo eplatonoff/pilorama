@@ -14,11 +14,13 @@ Item {
     }
 
     function getDuration(){
-        if(!pomodoroQueue.infiniteMode){
-          return globalTimer.duration
-        } else {
-          return globalTimer.splitDuration
+        if (globalTimer.splitMode) {
+            if (globalTimer.running && globalTimer.segmentRemainingTime > 0) {
+                return globalTimer.segmentRemainingTime
+            }
+            return globalTimer.remainingTime
         }
+        return globalTimer.remainingTime
     }
 
     function count(duration){
@@ -207,14 +209,8 @@ Item {
         function reset() {
             notifications.clearScheduled()
             pomodoroQueue.infiniteMode = false;
-            pomodoroQueue.clear();
-            mouseArea._prevAngle = 0
-            mouseArea._totalRotatedSecs = 0
-            globalTimer.duration = 0
-            globalTimer.stop()
-            window.clockMode = "start"
+            globalTimer.stopAndClear()
             notifications.stopSound();
-            sequence.setCurrentItem(-1)
         }
 
     }

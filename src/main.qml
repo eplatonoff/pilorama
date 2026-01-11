@@ -5,6 +5,7 @@ import QtCore
 
 import "Components"
 import "Components/Sequence"
+import "Components/mac"
 
 ApplicationWindow {
     id: window
@@ -15,11 +16,14 @@ ApplicationWindow {
 
     width: 320
     height: 600
-    flags: Qt.Window
+    property bool macHeaderEnabled: Qt.platform.os === "osx"
+    property int baseWindowFlags: macHeaderEnabled ? (Qt.Window | Qt.FramelessWindowHint) : Qt.Window
+
+    flags: baseWindowFlags
 
     property real padding: 16
 
-    minimumHeight: timerLayout.height + padding * 2 + 50
+    minimumHeight: timerLayout.height + padding * 2 + 50 + windowHeader.macHeaderTotalHeight
     minimumWidth: timerLayout.width + padding * 2
 
     maximumWidth: width
@@ -54,16 +58,16 @@ ApplicationWindow {
     SystemPalette{
         id: systemPalette
 
-        property bool sysemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+        property bool systemDarkMode: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
         property alias colorTheme: appSettings.colorTheme
 
         onColorThemeChanged: updateTheme()
-        onSysemDarkModeChanged: updateTheme()
+        onSystemDarkModeChanged: updateTheme()
         Component.onCompleted: updateTheme()
 
         function updateTheme(){
             if(systemPalette.colorTheme === "System"){
-                appSettings.darkMode = sysemDarkMode
+                appSettings.darkMode = systemDarkMode
             }
             else if (systemPalette.colorTheme === "Dark") {
                 appSettings.darkMode = true
@@ -90,16 +94,16 @@ ApplicationWindow {
     }
 
     onAlwaysOnTopChanged: {
-        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | Qt.Window : flags = Qt.Window
+        alwaysOnTop ? flags = Qt.WindowStaysOnTopHint | baseWindowFlags : flags = baseWindowFlags
         requestActivate()
     }
 
     onClockModeChanged: { canvas.requestPaint() }
     onExpandedChanged: {
         if(expanded === true){
-            height = padding * 2 + timerLayout.height + sequence.height
+            height = padding * 2 + windowHeader.macHeaderTotalHeight + timerLayout.height + sequence.height
         } else {
-            height = padding * 2 + timerLayout.height
+            height = padding * 2 + windowHeader.macHeaderTotalHeight + timerLayout.height
         }
     }
 
@@ -124,7 +128,9 @@ ApplicationWindow {
         property bool showPauseUI: true
         property bool showOnSegmentStart: false
 
-        property alias soundMuted: notifications.soundMuted
+        property url defaultSound: "qrc:assets/sound/drum_roll.wav"
+        property bool soundMuted: false
+        property url soundPath: defaultSound
         property alias splitToSequence: preferences.splitToSequence
 
         property alias windowX: window.x
@@ -134,11 +140,16 @@ ApplicationWindow {
 
         property alias alwaysOnTop: window.alwaysOnTop
         property alias quitOnClose: window.quitOnClose
-        property alias showQueue: sequence.showQueue
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
         onShowInDockChanged: { updateDockVisibility(); }
+    }
+
+    SoundSettings {
+        id: soundSettings
+        settings: appSettings
+        defaultSound: appSettings.defaultSound
     }
 
     Settings {
@@ -189,6 +200,8 @@ ApplicationWindow {
 
     NotificationSystem {
         id: notifications
+        settings: appSettings
+        soundSettings: soundSettings
     }
 
     PiloramaTimer {
@@ -217,9 +230,26 @@ ApplicationWindow {
         }
     }
 
+    MacHeader {
+        id: windowHeader
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+        windowRef: window
+        appSettings: appSettings
+        colors: colors
+        macHeaderEnabled: window.macHeaderEnabled
+    }
+
     StackView {
         id: stack
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.top: windowHeader.bottom
+        anchors.topMargin: windowHeader.macHeaderSpacing
 
         initialItem: content
 
@@ -279,10 +309,12 @@ ApplicationWindow {
             Dials {
                 id: canvas
                 anchors.fill: parent
-                duration: globalTimer.duration
-                splitDuration: globalTimer.splitDuration
+                duration: globalTimer.remainingTime
+                splitDuration: globalTimer.segmentRemainingTime
+                splitTotalDuration: globalTimer.segmentTotalDuration
                 isRunning: globalTimer.running
                 splitToSequence: appSettings.splitToSequence
+                dragging: mouseArea.dragging
                 pomodoroQueue: pomodoroQueue
                 masterModel: masterModel
                 colors: colors
@@ -338,14 +370,15 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.topMargin: 18
+            dragging: mouseArea.dragging
         }
         }
 
                 Preferences {
                 id: preferences
+                appSettings: appSettings
+                soundSettings: soundSettings
         }
     }
 
 }
-
-

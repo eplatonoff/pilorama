@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Pilorama VERSION 4.2.0 LANGUAGES CXX)
+project(Pilorama VERSION 5.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -71,7 +71,7 @@ if(APPLE)
         )
     endif()
 
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0")
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
             MACOSX_BUNDLE TRUE

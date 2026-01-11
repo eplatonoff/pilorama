@@ -1,21 +1,38 @@
 import QtQuick
 import QtMultimedia
 
-
 QtObject {
     id: notifications
 
-    property bool soundMuted: false
+    property var settings
+    property var soundSettings
+    readonly property bool soundMuted: settings ? settings.soundMuted : false
 
-    property MediaDevices mediaDevices: MediaDevices {
-        id: mediaDevices
+    // Default and effective sound paths
+    property url effectiveSoundPath: soundSettings.effectiveSoundPath
+    property url currentSoundSource: effectiveSoundPath
+    property bool pendingPlay: false
+
+    onEffectiveSoundPathChanged: {
+        currentSoundSource = effectiveSoundPath;
     }
 
-    property SoundEffect sound: SoundEffect {
-        id: soundNotification
+    // QtObject has no default property; SoundEffect must be declared as a property.
+    property SoundEffect soundNotification: SoundEffect {
         muted: notifications.soundMuted
-        audioDevice: mediaDevices.defaultAudioOutput
-        source: "qrc:assets/sound/drum_roll.wav"
+        // Let Qt choose the default audio device to avoid null connections
+        source: notifications.currentSoundSource
+        onStatusChanged: function(status) {
+            var currentSource = Qt.resolvedUrl(String(source));
+            var defaultSource = Qt.resolvedUrl(String(soundSettings.defaultSound));
+            if (status === SoundEffect.Error && currentSource !== defaultSource) {
+                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", soundSettings.defaultSound);
+                notifications.currentSoundSource = soundSettings.defaultSound;
+            } else if (status === SoundEffect.Ready && notifications.pendingPlay) {
+                notifications.pendingPlay = false;
+                soundNotification.play();
+            }
+        }
     }
 
     onSoundMutedChanged: {
@@ -24,15 +41,26 @@ QtObject {
     }
 
     function toggleSoundNotifications() {
-        soundMuted = !soundMuted;
+        if (settings) {
+            settings.soundMuted = !settings.soundMuted;
+        }
     }
 
     function stopSound() {
+        pendingPlay = false;
         soundNotification.stop();
     }
 
+    function playNotificationSound() {
+        pendingPlay = true;
+        if (soundNotification.status === SoundEffect.Ready) {
+            pendingPlay = false;
+            soundNotification.play();
+        }
+    }
+
     function sendWithSound(name) {
-        soundNotification.play();
+        playNotificationSound();
         tray.send(name)
     }
 

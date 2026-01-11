@@ -12,89 +12,90 @@ SystemTrayIcon {
     property string appTitle: window.title
     property string messageText: ""
     property string messageTitle: ""
-    property string menuItemText: checkMenuItemText()
-    property string soundItemText: "Turn sound " + checkSoundItemText()
+    readonly property string menuItemText: checkMenuItemText()
+    readonly property string soundItemText: "Turn sound " + (notifications.soundMuted ? "on" : "off")
 
 
-    property real dialTime: 0
-    property real runningTime: 0
+    property real remainingTime: (globalTimer.splitMode
+        && globalTimer.running
+        && globalTimer.segmentRemainingTime > 0)
+        ? globalTimer.segmentRemainingTime
+        : globalTimer.remainingTime
+    property real totalDuration: globalTimer.segmentTotalDuration
+
+    property real trayUpdateCounter: 0
+
+    Component.onCompleted: {
+       trayUpdateCounter = remainingTime
+       globalTimer.runningChanged.connect(handleTimerState)
+    }
 
     onMessageClicked: popUp()
     onActivated: (reason) => {
         if(reason === SystemTrayIcon.DoubleClick){ popUp(); !menu.visible}
     }
 
+    onRemainingTimeChanged: {
+        const diff = Math.abs(remainingTime - trayUpdateCounter);
+        if (diff >= computeUpdateInterval()) {
+            icon.source = iconURL(
+                Math.round((remainingTime * 3600 / totalDuration) / 10) * 10
+            )
+            trayUpdateCounter = remainingTime
+        }
+    }
+
+    function handleTimerState(running) {
+        if (running && totalDuration > 0) {
+            icon.source = iconURL(Math.round((remainingTime * 3600 / totalDuration) / 10) * 10)
+            trayUpdateCounter = remainingTime
+        } else if (!running) {
+            // Restore the static idle icon once the timer stops
+            icon.source = iconURL()
+            trayUpdateCounter = remainingTime
+        }
+    }
+
+
     function checkMenuItemText() {
-        if (globalTimer.running && pomodoroQueue.infiniteMode) {
-            return "Reset Timer"
-        } else {
-            return "Start Sequence"
+        if (globalTimer.running) {
+            if (pomodoroQueue.infiniteMode) {
+                return "Reset Timer"
+            }
+            return "Stop Sequence"
         }
+        return "Start Sequence"
     }
 
-    function checkSoundItemText() {
-        if (notifications.soundMuted) {
-            return "on"
-        } else {
-            return "off"
-        }
-    }
-
-    function iconDialMin() {
-        var precision = 120
-        var y = Math.abs(dialTime) + precision / 2;
-        y = y - y % precision;
-        return y / 60
-    }
-
-    function messageIcon() {
-        if (systemPalette.sysemDarkMode) {
-            return 'qrc:/assets/tray/static-night.svg';
-        } else {
-            return 'qrc:/assets/tray/static-day.svg'
-        }
-    }
-
-    function iconURL()
+    function iconURL(renderSecs = 0)
     {
-        if (!globalTimer.running)
-            if (systemPalette.sysemDarkMode) {
+        if (!globalTimer.running || renderSecs === 0 || renderSecs === Infinity || isNaN(renderSecs))
+            if (systemPalette.systemDarkMode) {
                 return 'qrc:/assets/tray/static-night.svg';
             } else {
                 return 'qrc:/assets/tray/static-day.svg'
             }
 
-        const color = pomodoroQueue.infiniteMode ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) : colors.getThemeColor("dark");
+        let color
+        if ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0) {
+            color = colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+        } else {
+            color = colors.getThemeColor("dark")
+        }
         const placeholderColor = colors.getThemeColor("light")
-
-        const renderSecs = Math.round(dialTime / 10) * 10;
 
         return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
     }
 
     function notificationIconURL() {
-        const color = pomodoroQueue.infiniteMode ?
-                colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color) :
-                colors.getThemeColor("dark");
+        const color = ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0)
+            ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+            : colors.getThemeColor("dark");
         return "image://notification_dot_provider/" + color;
     }
 
-    function setDialTime() {
-        var t
-        if(!pomodoroQueue.infiniteMode) {
-            t = globalTimer.duration * 3600 / globalTimer.durationBound
-            dialTime = globalTimer.duration ? t : 0;
-        } else {
-            t = pomodoroQueue.first().duration * 3600 / masterModel.get(pomodoroQueue.first().id).duration
-            dialTime = pomodoroQueue.first() ? t : 0;
-        }
-
-    }
-
-    function setTime() {
-        runningTime = pomodoroQueue.infiniteMode ? globalTimer.splitDuration : globalTimer.duration
-        setDialTime()
-        updateTime()
+    function computeUpdateInterval() {
+        return totalDuration <= 120 ? 2 : (totalDuration <= 600 ? 5 : 10);
     }
 
     function pad(value) {
@@ -103,10 +104,10 @@ SystemTrayIcon {
     }
 
     function updateTime() {
-        let h = Math.trunc(runningTime / 3600)
+        let h = Math.trunc(remainingTime / 3600)
         let hour = h > 0 ? h + ":" : ""
-        let min = pad(Math.trunc(runningTime / 60) - Math.trunc(runningTime / 3600) * 60)
-        let sec = pad(Math.trunc(runningTime % 60))
+        let min = pad(Math.trunc(remainingTime / 60) - h * 60)
+        let sec = pad(Math.trunc(remainingTime % 60))
         return "Time left: " + hour + min + ":" + sec
     }
 
@@ -122,7 +123,7 @@ SystemTrayIcon {
             showfor = 5000
         } else {
             title = "Time ran out"
-            message = "Duration: " + globalTimer.durationBound / 60 + " min"
+            message = "Duration: " + totalDuration / 60 + " min"
             showfor = 10000
         }
 
@@ -158,26 +159,16 @@ SystemTrayIcon {
             text: tray.menuItemText
             onTriggered: {
                 if (globalTimer.running) {
-
-                    pomodoroQueue.infiniteMode = false;
-                    pomodoroQueue.clear();
-
-                    mouseArea._prevAngle = 0
-                    mouseArea._totalRotatedSecs = 0
-
-                    globalTimer.duration = 0
-                    globalTimer.stop()
-
-                    window.clockMode = "start"
-
-                    notifications.stopSound();
-                    sequence.setCurrentItem(-1)
-
+                    globalTimer.stopAndClear()
+                    pomodoroQueue.infiniteMode = false
+                    notifications.stopSound()
                 } else {
                     window.clockMode = "pomodoro"
                     pomodoroQueue.infiniteMode = true
                     globalTimer.start()
-                    notifications.sendFromItem(pomodoroQueue.first())
+                    if (pomodoroQueue.count > 0) {
+                        notifications.sendFromItem(pomodoroQueue.first())
+                    }
                 }
 
             }

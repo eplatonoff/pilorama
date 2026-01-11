@@ -7,31 +7,31 @@ ListModel {
 
     property QtObject durationSettings: null
 
-    property int totalPomodoros: 0
     property bool infiniteMode: false
+    property real currentDurationBound: 0
+    property int _nextKey: 0
 
     Component.onCompleted: {
         _tryToCreateBatch();
     }
 
     onCountChanged: {
-
-        if (count === 0)
-            totalPomodoros = 0;
-
+        if (count === 0) {
+            _nextKey = 0;
+        }
         _tryToCreateBatch();
     }
 
     onInfiniteModeChanged: {
         clear();
         _tryToCreateBatch();
-
     }
 
     function _tryToCreateBatch() {
         if (infiniteMode && count === 0) {
             _createBatch();
         }
+      currentDurationBound = itemDurationBound();
     }
 
     function first() {
@@ -63,6 +63,7 @@ ListModel {
             throw "Item doesn't exists";
 
         item.duration = itemDurationBound(item);
+        item.total = item.duration;
     }
 
     function changeQueue(deltaSecs) {
@@ -80,16 +81,19 @@ ListModel {
             // item is filled
             if (rawValue > durationBound) {
                 last().duration = durationBound;
+                last().total = durationBound;
                 return rawValue - durationBound;
             }
 
             // item is empty
             if (rawValue <= 0) {
                 last().duration = 0;
+                last().total = 0;
                 return rawValue;
             }
 
             last().duration += secs;
+            last().total = last().duration;
             return 0;
         }
 
@@ -145,8 +149,15 @@ ListModel {
         return itemDurationBound(last());
     }
 
-    function itemDurationBound(item) {
-        return masterModel.get(item.id).duration
+    function itemDurationBound(item = null) {
+        if (!item) {
+            if (count > 0)
+                item = first();
+            else
+                return 0;
+        }
+
+        return masterModel.get(item.id).duration;
     }
 
     function _createNext()
@@ -158,7 +169,7 @@ ListModel {
 
         const masterId = count >= masterCount ? count % masterCount : count;
 
-        append({"id": masterId,  "duration": 0})
+        append({"id": masterId,  "duration": 0, "total": 0, "key": _nextKey++})
     }
 
     function _createBatch() {

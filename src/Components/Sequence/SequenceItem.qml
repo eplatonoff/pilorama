@@ -14,6 +14,9 @@ Rectangle {
     property real fontSize: 14
     property int dragItemIndex: index
     property bool currentItem: delegateItem.ListView.isCurrentItem
+    property int dragCursor: (handleDragTrigger.pressed || handleDragTrigger.drag.active)
+        ? Qt.ClosedHandCursor
+        : Qt.OpenHandCursor
 
 //    property bool dim: sequence.blockEdits - currentItem
     property bool splitToSequence: preferences.splitToSequence
@@ -22,16 +25,26 @@ Rectangle {
         const color = colors.getColor('dark')
         const dimColor = colors.getColor('mid')
 
-         if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.duration){
+        if (!pomodoroQueue.infiniteMode && !splitToSequence && globalTimer.remainingTime) {
             return dimColor
-        } else if (model.duration === 0){
+        } else if (model.duration === 0) {
             return dimColor
+        } else if (globalTimer.splitMode && globalTimer.remainingTime && globalTimer.running) {
+            let hasRemaining = false
+            for (let i = 0; i < pomodoroQueue.count; i++) {
+                const queueItem = pomodoroQueue.get(i)
+                if (queueItem.id === model.id && queueItem.duration > 0) {
+                    hasRemaining = true
+                    break
+                }
+            }
+            return hasRemaining ? color : dimColor
         } else {
             return color
         }
     }
 
-    Drag.active: itemDragTrigger.drag.active
+    Drag.active: handleDragTrigger.drag.active
     Drag.hotSpot.x: width / 2
     Drag.hotSpot.y: height / 2
     Drag.keys: ["sequenceItems"]
@@ -69,32 +82,82 @@ Rectangle {
     }
 
     MouseArea {
-        id: itemDragTrigger
-        anchors.fill: parent
+        id: handleDragTrigger
+        anchors.fill: handler
         visible: !sequence.blockEdits
-
         hoverEnabled: true
         propagateComposedEvents: true
+        cursorShape: sequenceItem.dragCursor
 
         drag.target: sequenceItem
 
+        onPressed: {
+            sequenceView.closeOpenColorSelector()
+            itemHover.cursorShape = sequenceItem.dragCursor
+        }
         onPressAndHold: {
-            if (itemDragTrigger.drag.active) {
+            if (handleDragTrigger.drag.active) {
                 sequenceItem.dragItemIndex = index;
             }
         }
-
-        onEntered: {
-            itemControls.visible = true
-            itemControls.width = 40
+        onPositionChanged: (mouse) => {
+            if (handleDragTrigger.drag.active) {
+                const local = handleDragTrigger.mapToItem(sequenceView, mouse.x, mouse.y)
+                sequenceView.setEdgeScrollDirection(local.y)
+            }
         }
-
-        onExited: {
-            itemControls.visible = false
-            itemControls.width = 0
+        onReleased: {
+            sequenceView.edgeScrollDirection = 0
+            updateHoverCursor(itemHover.point.position.x)
         }
     }
 
+    HoverHandler {
+        id: itemHover
+        enabled: !sequence.blockEdits
+        onPointChanged: updateHoverCursor(point.position.x)
+        onHoveredChanged: {
+            if (!hovered) {
+                cursorShape = sequenceItem.Drag.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+            } else {
+                updateHoverCursor(point.position.x)
+            }
+        }
+    }
+
+    function updateHoverCursor(xPos) {
+        let nextCursor = Qt.ArrowCursor
+        if (handleDragTrigger.pressed || sequenceItem.Drag.active) {
+            nextCursor = sequenceItem.dragCursor
+        } else if (isInHoverRegion(handler, xPos)) {
+            nextCursor = sequenceItem.dragCursor
+        } else if (isInHoverRegion(itemControls, xPos)) {
+            nextCursor = Qt.PointingHandCursor
+        }
+        if (itemHover.cursorShape !== nextCursor) {
+            itemHover.cursorShape = nextCursor
+        }
+    }
+
+    function isInHoverRegion(regionItem, xPos) {
+        return regionItem.visible
+            && xPos >= regionItem.x
+            && xPos <= regionItem.x + regionItem.width
+    }
+
+    Component {
+        id: iBeamOverlay
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton
+            propagateComposedEvents: true
+            onPressed: (mouse) => {
+                sequenceView.closeOpenColorSelector()
+                mouse.accepted = false
+            }
+        }
+    }
 
     TextInput {
         id: itemName
@@ -114,6 +177,10 @@ Rectangle {
 
         renderType: Text.NativeRendering
 
+        Loader {
+            anchors.fill: parent
+            sourceComponent: iBeamOverlay
+        }
 
         selectedTextColor : colors.getColor('dark')
         selectionColor : colors.getColor('lighter')
@@ -128,7 +195,9 @@ Rectangle {
         id: itemtime
         width: 20
         color: sequenceItem.dimmer()
-        text: Math.trunc( model.duration / 60 )
+        // Round up here as well so the displayed minutes remain stable when
+        // the timer starts and the duration drops by a few seconds.
+        text: Math.ceil(model.duration / 60)
 
         validator: IntValidator { bottom: 1; top: globalTimer.timerLimit / 60}
         inputMethodHints: Qt.ImhDigitsOnly
@@ -138,6 +207,10 @@ Rectangle {
         selectByMouse : !sequence.blockEdits
         renderType: Text.NativeRendering
 
+        Loader {
+            anchors.fill: parent
+            sourceComponent: iBeamOverlay
+        }
 
         horizontalAlignment: Text.AlignRight
         anchors.right: itemtimeMin.left
@@ -192,18 +265,21 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: handler.right
         lineId: index
+        rowHovered: itemHover.hovered
 
     }
 
     Rectangle {
         id: itemControls
-        visible: false
         color: colors.getColor("bg")
 
         height: parent.height
-        width: 0
+        width: itemHover.hovered ? 40 : 0
+        opacity: itemHover.hovered ? 1 : 0
+        visible: opacity > 0
 
-        Behavior on width { PropertyAnimation { duration: 100 } }
+        Behavior on opacity { NumberAnimation { duration: 100 } }
+        Behavior on width { NumberAnimation { duration: 100 } }
 
         anchors.right: parent.right
 
@@ -235,5 +311,3 @@ Rectangle {
 
     }
 }
-
-

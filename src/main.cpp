@@ -3,18 +3,16 @@
 #include "notificationdotprovider.h"
 #include "mac/MacOSController.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QTimer>
 #include <QDebug>
-#include <QSystemTrayIcon>
-#include <QPixmap>
-#include <QApplication>
 #include <QQmlContext>
 
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_QUICK_CONTROLS_STYLE", "Basic");
     MacOSController macOSController;
 
     QApplication app(argc, argv);

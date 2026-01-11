@@ -3,70 +3,130 @@ import QtQuick
 import Pilorama 1.0 as Pilorama
 
 Pilorama.Timer {
+    id: globalTimer
 
-    triggeredOnStart: true
-
-    property real duration: 0
+    property real remainingTime: 0 // ignored in the infinite mode
+    property real segmentTotalDuration: 0
+    property real segmentRemainingTime: 0
+    property int _activeSegmentKey: -1
     property real durationBound: 0
-    property real splitDuration: 0
+
+    property bool splitMode: pomodoroQueue.infiniteMode || preferences.splitToSequence
 
     property real timerLimit: 6 * 3600
 
-    onDurationChanged: {
+    interval: 1000
+    triggeredOnStart: true
+
+    function stopAndClear() {
+        stop();
+        remainingTime = 0;
+        segmentRemainingTime = 0;
+        segmentTotalDuration = 0;
+        _activeSegmentKey = -1;
+        durationBound = 0;
+        window.clockMode = "start";
+        pomodoroQueue.clear();
+        mouseArea._prevAngle = 0;
+        mouseArea._totalRotatedSecs = 0;
+        sequence.setCurrentItem(-1);
+        notifications.clearScheduled();
+    }
+
+    function segmentTotalForItem(item) {
+        if (!item) {
+            return 0;
+        }
+        if (item.total !== undefined) {
+            return item.total;
+        }
+        return item.duration;
+    }
+
+    onRemainingTimeChanged: {
         window.checkClockMode();
         time.updateTime();
         canvas.requestPaint();
+
+        if (!running && !splitMode) {
+            segmentTotalDuration = remainingTime;
+        }
+
+        if (running && remainingTime <= 0) {
+            notifications.sendWithSound();
+            stopAndClear();
+        }
     }
-
-    interval: 1000
-
     onRunningChanged: {
         canvas.requestPaint();
-        if ( running ) {
-            durationBound = duration;
+        if (running) {
+            durationBound = remainingTime;
+            if (splitMode) {
+                const currentSegment = pomodoroQueue.first();
+                if (currentSegment) {
+                    _activeSegmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
+                    segmentTotalDuration = segmentTotalForItem(currentSegment);
+                } else {
+                    _activeSegmentKey = -1;
+                    segmentTotalDuration = 0;
+                }
+            } else {
+                segmentTotalDuration = remainingTime;
+            }
+        } else {
+            notifications.clearScheduled();
         }
     }
+    onSegmentTotalDurationChanged: {
+        if (segmentRemainingTime <= 0)
+            return;
 
-    onTriggered: (elapsedSecs) => {
+        if (segmentRemainingTime === segmentTotalDuration) {
+            notifications.sendFromItem(pomodoroQueue.first());
+            if (splitMode)
+                notifications.scheduleNextSegment();
+        }
+    }
+    onTriggered: elapsedSecs => {
         if (!pomodoroQueue.infiniteMode) {
-            if (duration >= 1){
-                duration -= elapsedSecs;
-
-            } else {
-                notifications.sendWithSound();
-                notifications.clearScheduled();
-                window.clockMode = "start";
-                pomodoroQueue.clear();
-                mouseArea._prevAngle = 0
-                mouseArea._totalRotatedSecs = 0
-                sequence.setCurrentItem(-1)
-                stop();
-            }
+            // Keep remainingTime authoritative for finite timers, including split mode.
+            // In infinite mode, remainingTime is ignored.
+            remainingTime -= elapsedSecs;
         }
 
-        if(pomodoroQueue.infiniteMode || preferences.splitToSequence) {
-            sequence.setCurrentItem(pomodoroQueue.first().id)
-        } else { sequence.setCurrentItem() }
+        if (splitMode) {
+            const activeItem = pomodoroQueue.first();
+            if (activeItem) {
+                sequence.setCurrentItem(activeItem.id);
+            } else {
+                sequence.setCurrentItem();
+            }
+        } else {
+            sequence.setCurrentItem();
+        }
 
         pomodoroQueue.drainTime(elapsedSecs);
 
-        const first = pomodoroQueue.first();
+        const currentSegment = pomodoroQueue.first();
 
-        if (first) {
-            splitDuration = first.duration;
+        if (currentSegment) {
+            segmentRemainingTime = currentSegment.duration;
 
-            const notificationsEnabled = pomodoroQueue.infiniteMode || preferences.splitToSequence;
-
-            if (notificationsEnabled)
-                if (splitDuration === pomodoroQueue.itemDurationBound(first)) {
-                    notifications.sendFromItem(first);
-                    notifications.scheduleNextSegment();
+            if (splitMode) {
+                const segmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
+                if (_activeSegmentKey !== segmentKey) {
+                    _activeSegmentKey = segmentKey;
+                    segmentTotalDuration = segmentTotalForItem(currentSegment);
                 }
+            }
+        } else {
+            segmentRemainingTime = 0;
+            if (splitMode) {
+                _activeSegmentKey = -1;
+                segmentTotalDuration = 0;
+            }
+        }
 
-        } else
-            splitDuration = 0;
-
-        tray.setTime()
         canvas.requestPaint();
     }
 }
