@@ -69,4 +69,39 @@ QtObject {
         if (appSettings.showOnSegmentStart)
             tray.popUp()
     }
+
+    function clearScheduled() {
+        if (Qt.platform.os === "osx")
+            MacOSController.clearScheduledNotifications()
+    }
+
+    function scheduleNextSegment() {
+        if (Qt.platform.os !== "osx")
+            return
+
+        clearScheduled()
+
+        if (!globalTimer.running)
+            return
+
+        const first = pomodoroQueue.first()
+        if (!first) {
+            const remainingSecs = Math.max(0, Math.round(globalTimer.remainingTime));
+            if (remainingSecs <= 0)
+                return
+            MacOSController.scheduleNotification(
+                        "Time ran out",
+                        "Duration: " + globalTimer.durationBound / 60 + " min",
+                        tray.notificationIconURL(), remainingSecs)
+            return
+        }
+
+        const secs = first.duration
+        const endTime = clock.getTimeAfter(secs).clock
+        const message = "Duration: " + masterModel.get(first.id).duration / 60 +
+                " min.  Ends at " + endTime
+        MacOSController.scheduleNotification(first.name + " started",
+                                             message,
+                                             tray.notificationIconURL(), secs)
+    }
 }

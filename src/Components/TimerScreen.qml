@@ -197,14 +197,17 @@ Item {
         onToggleClicked: {
             if (globalTimer.running) {
                 globalTimer.stop()
+                notifications.clearScheduled()
             } else {
                 globalTimer.triggeredOnStart = false
                 globalTimer.start()
                 globalTimer.triggeredOnStart = true
+                notifications.scheduleNextSegment()
             }
         }
 
         function reset() {
+            notifications.clearScheduled()
             pomodoroQueue.infiniteMode = false;
             globalTimer.stopAndClear()
             notifications.stopSound();
