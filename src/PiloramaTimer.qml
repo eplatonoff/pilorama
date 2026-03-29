@@ -45,6 +45,12 @@ Pilorama.Timer {
         return item.duration;
     }
 
+    function segmentKeyForItem(item) {
+        if (!item)
+            return -1;
+        return item.key !== undefined ? item.key : item.id;
+    }
+
     onRemainingTimeChanged: {
         window.checkClockMode();
         time.updateTime();
@@ -68,29 +74,23 @@ Pilorama.Timer {
             if (splitMode) {
                 const currentSegment = pomodoroQueue.first();
                 if (currentSegment) {
-                    _activeSegmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
+                    _activeSegmentKey = segmentKeyForItem(currentSegment);
+                    segmentRemainingTime = currentSegment.duration;
                     segmentTotalDuration = segmentTotalForItem(currentSegment);
                 } else {
                     _activeSegmentKey = -1;
+                    segmentRemainingTime = 0;
                     segmentTotalDuration = 0;
                 }
             } else {
+                segmentRemainingTime = remainingTime;
                 segmentTotalDuration = remainingTime;
             }
+            notifications.scheduleNextSegment();
         } else {
             MacOSController.endAppNapActivity();
             _lastTickMs = 0;
             notifications.clearScheduled();
-        }
-    }
-    onSegmentTotalDurationChanged: {
-        if (segmentRemainingTime <= 0)
-            return;
-
-        if (segmentRemainingTime === segmentTotalDuration) {
-            notifications.sendFromItem(pomodoroQueue.first());
-            if (splitMode)
-                notifications.scheduleNextSegment();
         }
     }
     onTriggered: elapsedSecs => {
@@ -131,13 +131,16 @@ Pilorama.Timer {
         const currentSegment = pomodoroQueue.first();
 
         if (currentSegment) {
+            const segmentKey = segmentKeyForItem(currentSegment);
+            const segmentChanged = splitMode && _activeSegmentKey !== segmentKey;
             segmentRemainingTime = currentSegment.duration;
 
             if (splitMode) {
-                const segmentKey = currentSegment.key !== undefined ? currentSegment.key : currentSegment.id;
-                if (_activeSegmentKey !== segmentKey) {
+                if (segmentChanged) {
                     _activeSegmentKey = segmentKey;
                     segmentTotalDuration = segmentTotalForItem(currentSegment);
+                    notifications.sendFromItem(currentSegment);
+                    notifications.scheduleNextSegment();
                 }
             }
         } else {

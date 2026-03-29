@@ -202,6 +202,12 @@ ApplicationWindow {
         id: notifications
         settings: appSettings
         soundSettings: soundSettings
+        trayRef: tray
+        masterModelRef: masterModel
+        timerRef: globalTimer
+        queueRef: pomodoroQueue
+        clockRef: clock
+        macOSControllerRef: MacOSController
     }
 
     PiloramaTimer {
@@ -330,6 +336,14 @@ ApplicationWindow {
 
             TimerScreen {
                 id: digitalClock
+                windowRef: window
+                timerRef: globalTimer
+                clockRef: clock
+                colorsRef: colors
+                fontRef: localFont
+                queueRef: pomodoroQueue
+                notificationsRef: notifications
+                settingsRef: appSettings
             }
 
             Icon {

@@ -44,7 +44,6 @@ static QString prepareIconFile(const QString &iconPath, const QQmlEngine *engine
 #if TARGET_OS_MAC
 extern void mac_show_in_dock();
 extern void mac_hide_from_dock();
-extern void mac_disable_app_nap();
 extern void mac_begin_app_nap_activity();
 extern void mac_end_app_nap_activity();
 extern void mac_request_notification_permission();
@@ -87,14 +86,6 @@ void MacOSController::hideFromDock()
 #endif /* __APPLE__ */
 }
 
-void MacOSController::disableAppNap() {
-#ifdef __APPLE__
-#if TARGET_OS_MAC
-    mac_disable_app_nap();
-#endif /* TARGET_OS_MAC */
-#endif /* __APPLE__ */
-}
-
 void MacOSController::beginAppNapActivity() {
 #ifdef __APPLE__
 #if TARGET_OS_MAC
@@ -130,7 +121,7 @@ void MacOSController::clearScheduledNotifications()
 }
 
 void MacOSController::scheduleNotification(const QString &title, const QString &message,
-                                           const QString &iconPath, int seconds) const
+                                           const QString &iconPath, double seconds) const
 {
 #ifdef __APPLE__
 #if TARGET_OS_MAC

@@ -6,6 +6,12 @@ QtObject {
 
     property var settings
     property var soundSettings
+    property var trayRef
+    property var masterModelRef
+    property var timerRef
+    property var queueRef
+    property var clockRef
+    property var macOSControllerRef
     readonly property bool soundMuted: settings ? settings.soundMuted : false
 
     // Default and effective sound paths
@@ -22,15 +28,16 @@ QtObject {
         muted: notifications.soundMuted
         // Let Qt choose the default audio device to avoid null connections
         source: notifications.currentSoundSource
-        onStatusChanged: function(status) {
+        onStatusChanged: {
+            const status = notifications.soundNotification.status
             var currentSource = Qt.resolvedUrl(String(source));
-            var defaultSource = Qt.resolvedUrl(String(soundSettings.defaultSound));
+            var defaultSource = Qt.resolvedUrl(String(notifications.soundSettings.defaultSound));
             if (status === SoundEffect.Error && currentSource !== defaultSource) {
-                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", soundSettings.defaultSound);
-                notifications.currentSoundSource = soundSettings.defaultSound;
+                console.warn("SoundEffect: unsupported audio format:", source, "- will use fallback", notifications.soundSettings.defaultSound);
+                notifications.currentSoundSource = notifications.soundSettings.defaultSound;
             } else if (status === SoundEffect.Ready && notifications.pendingPlay) {
                 notifications.pendingPlay = false;
-                soundNotification.play();
+                notifications.soundNotification.play();
             }
         }
     }
@@ -61,18 +68,18 @@ QtObject {
 
     function sendWithSound(name) {
         playNotificationSound();
-        tray.send(name)
+        trayRef.send(name)
     }
 
     function sendFromItem(item) {
-        sendWithSound(masterModel.get(item.id).name)
-        if (appSettings.showOnSegmentStart)
-            tray.popUp()
+        sendWithSound(masterModelRef.get(item.id).name)
+        if (settings.showOnSegmentStart)
+            trayRef.popUp()
     }
 
     function clearScheduled() {
         if (Qt.platform.os === "osx")
-            MacOSController.clearScheduledNotifications()
+            macOSControllerRef.clearScheduledNotifications()
     }
 
     function scheduleNextSegment() {
@@ -81,27 +88,29 @@ QtObject {
 
         clearScheduled()
 
-        if (!globalTimer.running)
+        if (!timerRef.running)
             return
 
-        const first = pomodoroQueue.first()
+        const first = queueRef.first()
         if (!first) {
-            const remainingSecs = Math.max(0, Math.round(globalTimer.remainingTime));
+            const remainingSecs = Math.max(0, timerRef.remainingTime)
             if (remainingSecs <= 0)
                 return
-            MacOSController.scheduleNotification(
+            macOSControllerRef.scheduleNotification(
                         "Time ran out",
-                        "Duration: " + globalTimer.durationBound / 60 + " min",
-                        tray.notificationIconURL(), remainingSecs)
+                        "Duration: " + timerRef.durationBound / 60 + " min",
+                        trayRef.notificationIconURL(), remainingSecs)
             return
         }
 
-        const secs = first.duration
-        const endTime = clock.getTimeAfter(secs).clock
-        const message = "Duration: " + masterModel.get(first.id).duration / 60 +
+        const secs = Math.max(0, first.duration)
+        if (secs <= 0)
+            return
+        const endTime = clockRef.getTimeAfter(secs).clock
+        const message = "Duration: " + masterModelRef.get(first.id).duration / 60 +
                 " min.  Ends at " + endTime
-        MacOSController.scheduleNotification(first.name + " started",
-                                             message,
-                                             tray.notificationIconURL(), secs)
+        macOSControllerRef.scheduleNotification(first.name + " started",
+                                                message,
+                                                trayRef.notificationIconURL(), secs)
     }
 }

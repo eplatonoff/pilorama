@@ -31,13 +31,39 @@ static id notificationDelegate = nil;
 }
 @end
 
-void mac_disable_app_nap(void)
+static UNMutableNotificationContent *pilorama_notification_content(const char *title,
+                                                                   const char *message,
+                                                                   const char *icon)
 {
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-    {
-        [[NSProcessInfo processInfo] beginActivityWithOptions:0x00FFFFFF reason:@"Not sleepy and don't want to nap"];
+    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    content.title = [NSString stringWithUTF8String:title];
+    content.body = [NSString stringWithUTF8String:message];
+
+    if (icon && strlen(icon) > 0) {
+        NSString *iconPath = [NSString stringWithUTF8String:icon];
+        NSURL *url = nil;
+        if ([iconPath hasPrefix:@"file://"]) {
+            url = [NSURL URLWithString:iconPath];
+        } else if ([iconPath hasPrefix:@"/"]) {
+            url = [NSURL fileURLWithPath:iconPath];
+        } else {
+            url = [NSURL URLWithString:iconPath];
+        }
+
+        if (url && [url isFileURL]) {
+            NSError *attachError = nil;
+            UNNotificationAttachment *attachment =
+                [UNNotificationAttachment attachmentWithIdentifier:@"icon"
+                                                             URL:url
+                                                         options:nil
+                                                           error:&attachError];
+            if (!attachError && attachment) {
+                content.attachments = @[ attachment ];
+            }
+        }
     }
 
+    return content;
 }
 
 void mac_begin_app_nap_activity(void)
@@ -87,33 +113,7 @@ void mac_request_notification_permission(void)
 void mac_send_notification(const char *title, const char *message,
                            const char *icon)
 {
-    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-    content.title = [NSString stringWithUTF8String:title];
-    content.body = [NSString stringWithUTF8String:message];
-
-    if (icon && strlen(icon) > 0) {
-        NSString *iconPath = [NSString stringWithUTF8String:icon];
-        NSURL *url = nil;
-        if ([iconPath hasPrefix:@"file://"]) {
-            url = [NSURL URLWithString:iconPath];
-        } else if ([iconPath hasPrefix:@"/"]) {
-            url = [NSURL fileURLWithPath:iconPath];
-        } else {
-            url = [NSURL URLWithString:iconPath];
-        }
-
-        if (url && [url isFileURL]) {
-            NSError *attachError = nil;
-            UNNotificationAttachment *attachment =
-                [UNNotificationAttachment attachmentWithIdentifier:@"icon"
-                                                             URL:url
-                                                         options:nil
-                                                           error:&attachError];
-            if (!attachError && attachment) {
-                content.attachments = @[ attachment ];
-            }
-        }
-    }
+    UNMutableNotificationContent *content = pilorama_notification_content(title, message, icon);
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSUUID UUID] UUIDString]
                                                                           content:content
@@ -125,33 +125,7 @@ void mac_send_notification(const char *title, const char *message,
 void mac_schedule_notification(const char *title, const char *message,
                                const char *icon, double seconds)
 {
-    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-    content.title = [NSString stringWithUTF8String:title];
-    content.body = [NSString stringWithUTF8String:message];
-
-    if (icon && strlen(icon) > 0) {
-        NSString *iconPath = [NSString stringWithUTF8String:icon];
-        NSURL *url = nil;
-        if ([iconPath hasPrefix:@"file://"]) {
-            url = [NSURL URLWithString:iconPath];
-        } else if ([iconPath hasPrefix:@"/"]) {
-            url = [NSURL fileURLWithPath:iconPath];
-        } else {
-            url = [NSURL URLWithString:iconPath];
-        }
-
-        if (url && [url isFileURL]) {
-            NSError *attachError = nil;
-            UNNotificationAttachment *attachment =
-                [UNNotificationAttachment attachmentWithIdentifier:@"icon"
-                                                             URL:url
-                                                         options:nil
-                                                           error:&attachError];
-            if (!attachError && attachment) {
-                content.attachments = @[ attachment ];
-            }
-        }
-    }
+    UNMutableNotificationContent *content = pilorama_notification_content(title, message, icon);
 
     UNTimeIntervalNotificationTrigger *trigger =
         [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:seconds repeats:NO];
@@ -166,6 +140,6 @@ void mac_schedule_notification(const char *title, const char *message,
 void mac_clear_scheduled_notifications(void)
 {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-    [center removeAllPendingNotificationRequests];
+    [center removePendingNotificationRequestsWithIdentifiers:@[kPiloramaScheduledNotificationId]];
     [center removeDeliveredNotificationsWithIdentifiers:@[kPiloramaScheduledNotificationId]];
 }

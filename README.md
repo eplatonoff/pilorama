@@ -9,6 +9,7 @@
 - Simple countdown timer
 - Infinite time boxing timer
 - System notifications
+  On macOS, the app schedules the next segment or completion notification while the timer is running, clears scheduled alerts when the timer stops or resets, and reopens Pilorama when you click the notification.
 - Dynamic tray icon and menu
 - JSON Presets
 - Night mode

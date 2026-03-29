@@ -15,7 +15,6 @@ public:
     void setEngine(QQmlEngine *engine);
 
 public slots:
-    static void disableAppNap();
     static void beginAppNapActivity();
     static void endAppNapActivity();
     static void showInDock();
@@ -25,7 +24,7 @@ public slots:
     static void clearScheduledNotifications();
 
     void scheduleNotification(const QString &title, const QString &message,
-                              const QString &iconPath, int seconds) const;
+                              const QString &iconPath, double seconds) const;
 
     void showNotification(const QString &title, const QString &message,
                           const QString &iconPath) const;
