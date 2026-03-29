@@ -13,6 +13,14 @@ QtObject {
     property var clockRef
     property var macOSControllerRef
     readonly property bool soundMuted: settings ? settings.soundMuted : false
+    readonly property real scheduledNotificationGraceMs: 1500
+    property real scheduledNotificationAtMs: -1
+    property string scheduledBoundaryKind: ""
+    property int scheduledBoundaryKey: -1
+    property int pendingBoundaryRequestId: -1
+    property real pendingBoundaryAtMs: -1
+    property string pendingBoundaryKind: ""
+    property int pendingBoundaryKey: -1
 
     // Default and effective sound paths
     property url effectiveSoundPath: soundSettings.effectiveSoundPath
@@ -38,6 +46,18 @@ QtObject {
             } else if (status === SoundEffect.Ready && notifications.pendingPlay) {
                 notifications.pendingPlay = false;
                 notifications.soundNotification.play();
+            }
+        }
+    }
+
+    property Connections scheduleResolutionConnections: Connections {
+        target: notifications.macOSControllerRef
+
+        function onNotificationScheduleResolved(requestId, success) {
+            if (success) {
+                notifications.confirmScheduledBoundary(requestId)
+            } else {
+                notifications.clearPendingBoundary(requestId)
             }
         }
     }
@@ -78,6 +98,10 @@ QtObject {
     }
 
     function clearScheduled() {
+        scheduledNotificationAtMs = -1
+        scheduledBoundaryKind = ""
+        scheduledBoundaryKey = -1
+        clearPendingBoundary()
         if (Qt.platform.os === "osx")
             macOSControllerRef.clearScheduledNotifications()
     }
@@ -86,11 +110,124 @@ QtObject {
         return item ? masterModelRef.get(item.id) : null
     }
 
+    function queuedDuration(item) {
+        if (!item)
+            return 0
+        if (item.total !== undefined)
+            return item.total
+        return item.duration
+    }
+
+    function timerSplitMode() {
+        if (timerRef && timerRef.splitMode !== undefined)
+            return timerRef.splitMode
+        if (queueRef && queueRef.infiniteMode !== undefined)
+            return queueRef.infiniteMode
+        return false
+    }
+
+    function rememberScheduledBoundary(kind, seconds, key = -1) {
+        scheduledBoundaryKind = kind
+        scheduledBoundaryKey = key
+        scheduledNotificationAtMs = Date.now() + seconds * 1000
+    }
+
+    function rememberPendingBoundary(requestId, kind, seconds, key = -1) {
+        pendingBoundaryRequestId = requestId
+        pendingBoundaryKind = kind
+        pendingBoundaryKey = key
+        pendingBoundaryAtMs = Date.now() + seconds * 1000
+    }
+
+    function clearPendingBoundary(requestId = -1) {
+        if (requestId >= 0 && requestId !== pendingBoundaryRequestId)
+            return
+        pendingBoundaryRequestId = -1
+        pendingBoundaryAtMs = -1
+        pendingBoundaryKind = ""
+        pendingBoundaryKey = -1
+    }
+
+    function confirmScheduledBoundary(requestId) {
+        if (requestId !== pendingBoundaryRequestId)
+            return
+        scheduledBoundaryKind = pendingBoundaryKind
+        scheduledBoundaryKey = pendingBoundaryKey
+        scheduledNotificationAtMs = pendingBoundaryAtMs
+        clearPendingBoundary()
+    }
+
+    function scheduleMacBoundary(kind, seconds, title, message, key = -1) {
+        const requestId = macOSControllerRef.scheduleNotification(title,
+                                                                  message,
+                                                                  trayRef.notificationIconURL(),
+                                                                  seconds)
+        if (requestId > 0)
+            rememberPendingBoundary(requestId, kind, seconds, key)
+    }
+
+    function shouldSuppressCatchUpCompletion(nowMs) {
+        return shouldSuppressCatchUpBoundary("completion", -1, nowMs)
+    }
+
+    function shouldSuppressCatchUpSegment(item, nowMs) {
+        return shouldSuppressCatchUpBoundary("segment",
+                                            item && item.key !== undefined ? item.key : -1,
+                                            nowMs)
+    }
+
+    function shouldSuppressCatchUpBoundary(kind, key, nowMs) {
+        if (Qt.platform.os !== "osx")
+            return false
+        if (scheduledBoundaryKind !== kind)
+            return false
+        if (scheduledBoundaryKey !== key)
+            return false
+        if (scheduledNotificationAtMs < 0 || nowMs <= 0)
+            return false
+        return nowMs - scheduledNotificationAtMs >= scheduledNotificationGraceMs
+    }
+
+    function scheduledCompletionDuration(item) {
+        if (item)
+            return queuedDuration(item)
+        if (timerRef && timerRef.segmentTotalDuration !== undefined
+                && timerRef.segmentTotalDuration > 0) {
+            return timerRef.segmentTotalDuration
+        }
+        if (timerRef && timerRef.durationBound !== undefined)
+            return timerRef.durationBound
+        if (timerRef && timerRef.remainingTime !== undefined)
+            return timerRef.remainingTime
+        return 0
+    }
+
+    function nextScheduledItem() {
+        if (!timerSplitMode())
+            return null
+        if (queueRef.count > 1)
+            return queueRef.get(1)
+        if (!queueRef.infiniteMode)
+            return null
+
+        const nextCycleItem = masterModelRef.get(0)
+        if (!nextCycleItem || nextCycleItem.id === undefined)
+            return null
+
+        // Infinite mode rebuilds a fresh batch once the queue drains, resetting keys.
+        return {
+            "id": nextCycleItem.id,
+            "duration": nextCycleItem.duration,
+            "total": nextCycleItem.duration,
+            "key": 0
+        }
+    }
+
     function scheduleNextSegment() {
+        clearScheduled()
+
         if (Qt.platform.os !== "osx")
             return
-
-        clearScheduled()
 
         if (!timerRef.running)
             return
@@ -100,10 +237,11 @@ QtObject {
             const remainingSecs = Math.max(0, timerRef.remainingTime)
             if (remainingSecs <= 0)
                 return
-            macOSControllerRef.scheduleNotification(
-                        "Time ran out",
-                        "Duration: " + timerRef.durationBound / 60 + " min",
-                        trayRef.notificationIconURL(), remainingSecs)
+            const completionDuration = scheduledCompletionDuration(null)
+            scheduleMacBoundary("completion",
+                                remainingSecs,
+                                "Time ran out",
+                                "Duration: " + completionDuration / 60 + " min")
             return
         }
 
@@ -111,20 +249,25 @@ QtObject {
         if (secs <= 0)
             return
 
-        const next = queueRef.count > 1 ? queueRef.get(1) : null
+        const next = nextScheduledItem()
         if (!next) {
-            macOSControllerRef.scheduleNotification(
-                        "Time ran out",
-                        "Duration: " + timerRef.durationBound / 60 + " min",
-                        trayRef.notificationIconURL(), secs)
+            const completionSecs = timerSplitMode() ? secs : Math.max(0, timerRef.remainingTime)
+            const completionDuration = scheduledCompletionDuration(timerSplitMode() ? first : null)
+            scheduleMacBoundary("completion",
+                                completionSecs,
+                                "Time ran out",
+                                "Duration: " + completionDuration / 60 + " min")
             return
         }
 
         const nextItem = queueItemDetails(next)
-        const endTime = clockRef.getTimeAfter(secs + nextItem.duration).clock
-        const message = "Duration: " + nextItem.duration / 60 + " min.  Ends at " + endTime
-        macOSControllerRef.scheduleNotification(nextItem.name + " started",
-                                                message,
-                                                trayRef.notificationIconURL(), secs)
+        const nextDuration = queuedDuration(next)
+        const endTime = clockRef.getTimeAfter(secs + nextDuration).clock
+        const message = "Duration: " + nextDuration / 60 + " min.  Ends at " + endTime
+        scheduleMacBoundary("segment",
+                            secs,
+                            nextItem.name + " started",
+                            message,
+                            next.key !== undefined ? next.key : -1)
     }
 }

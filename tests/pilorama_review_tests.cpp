@@ -1,9 +1,11 @@
 #include <QtTest>
 
 #include <QDateTime>
+#include <QFile>
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include <QRegularExpression>
 
 #include "piloramatimer.h"
 #include "mac/MacOSController.h"
@@ -54,6 +56,11 @@ public:
         lastItem = item.toMap();
     }
     Q_INVOKABLE void sendWithSound(const QVariant & = QVariant()) {}
+    Q_INVOKABLE bool shouldSuppressCatchUpCompletion(double = 0.0) const { return false; }
+    Q_INVOKABLE bool shouldSuppressCatchUpSegment(const QVariant &, double = 0.0) const
+    {
+        return false;
+    }
     Q_INVOKABLE void stopSound() {}
 };
 
@@ -215,19 +222,34 @@ public:
     QString scheduledMessage;
     QString scheduledIconPath;
     double scheduledSeconds = -1.0;
+    bool scheduleNotificationResult = true;
+    int nextRequestId = 1;
+    int lastRequestId = 0;
 
     Q_INVOKABLE void beginAppNapActivity() { ++beginCalls; }
     Q_INVOKABLE void endAppNapActivity() { ++endCalls; }
     Q_INVOKABLE void clearScheduledNotifications() { ++clearScheduledCalls; }
-    Q_INVOKABLE void scheduleNotification(const QString &title, const QString &message,
-                                          const QString &iconPath, double seconds)
+    Q_INVOKABLE int scheduleNotification(const QString &title, const QString &message,
+                                         const QString &iconPath, double seconds)
     {
         ++scheduleNotificationCalls;
         scheduledTitle = title;
         scheduledMessage = message;
         scheduledIconPath = iconPath;
         scheduledSeconds = seconds;
+        if (!scheduleNotificationResult)
+            return 0;
+        lastRequestId = nextRequestId++;
+        return lastRequestId;
     }
+
+    Q_INVOKABLE void resolveNotification(int requestId, bool success)
+    {
+        emit notificationScheduleResolved(requestId, success);
+    }
+
+signals:
+    void notificationScheduleResolved(int requestId, bool success);
 };
 
 class MockNotificationSettings final : public QObject
@@ -321,12 +343,16 @@ class MockTimerState final : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool running MEMBER running CONSTANT)
+    Q_PROPERTY(bool splitMode MEMBER splitMode CONSTANT)
     Q_PROPERTY(double remainingTime MEMBER remainingTime CONSTANT)
+    Q_PROPERTY(double segmentTotalDuration MEMBER segmentTotalDuration CONSTANT)
     Q_PROPERTY(double durationBound MEMBER durationBound CONSTANT)
 
 public:
     bool running = false;
+    bool splitMode = false;
     double remainingTime = 0.0;
+    double segmentTotalDuration = 0.0;
     double durationBound = 0.0;
 };
 
@@ -357,6 +383,25 @@ struct NotificationFixture {
     std::unique_ptr<QObject> notificationSystem;
 };
 
+struct IntegratedNotificationTimerFixture {
+    QQmlEngine engine;
+    MockNotificationSettings settings;
+    MockSoundSettings soundSettings;
+    MockTray tray;
+    MockMasterModel masterModel;
+    MockQueue queue;
+    MockPreferences preferences;
+    MockWindow window;
+    MockMouseArea mouseArea;
+    MockSequence sequence;
+    MockCanvas canvas;
+    MockTime time;
+    MockClock clock;
+    MockMacOSController macOSController;
+    std::unique_ptr<QObject> notificationSystem;
+    std::unique_ptr<QObject> timer;
+};
+
 QString timerQmlPath()
 {
     return QStringLiteral(PILORAMA_SOURCE_DIR "/PiloramaTimer.qml");
@@ -367,20 +412,59 @@ QString notificationSystemQmlPath()
     return QStringLiteral(PILORAMA_SOURCE_DIR "/NotificationSystem.qml");
 }
 
-std::unique_ptr<QObject> createTimer(TimerFixture &fixture)
+QString clockQmlDirPath()
 {
-    auto *context = fixture.engine.rootContext();
-    context->setContextProperty(QStringLiteral("notifications"), &fixture.notifications);
-    context->setContextProperty(QStringLiteral("pomodoroQueue"), &fixture.queue);
-    context->setContextProperty(QStringLiteral("preferences"), &fixture.preferences);
-    context->setContextProperty(QStringLiteral("window"), &fixture.window);
-    context->setContextProperty(QStringLiteral("mouseArea"), &fixture.mouseArea);
-    context->setContextProperty(QStringLiteral("sequence"), &fixture.sequence);
-    context->setContextProperty(QStringLiteral("canvas"), &fixture.canvas);
-    context->setContextProperty(QStringLiteral("time"), &fixture.time);
-    context->setContextProperty(QStringLiteral("MacOSController"), &fixture.macOSController);
+    return QStringLiteral(PILORAMA_SOURCE_DIR "/Components/");
+}
 
-    QQmlComponent component(&fixture.engine, QUrl::fromLocalFile(timerQmlPath()));
+QString installerPath()
+{
+    return QStringLiteral(PILORAMA_SOURCE_DIR "/../wndws.iss");
+}
+
+std::unique_ptr<QObject> createInlineClock(QQmlEngine &engine, const QString &qmlSource)
+{
+    QQmlComponent component(&engine);
+    component.setData(qmlSource.toUtf8(),
+                      QUrl::fromLocalFile(clockQmlDirPath() + QStringLiteral("ClockTest.qml")));
+    if (component.isError()) {
+        QStringList errors;
+        const auto errorList = component.errors();
+        for (const QQmlError &error : errorList)
+            errors << error.toString();
+        qFatal("%s", qPrintable(errors.join('\n')));
+    }
+
+    QObject *object = component.create(engine.rootContext());
+    if (!object) {
+        QStringList errors;
+        const auto errorList = component.errors();
+        for (const QQmlError &error : errorList)
+            errors << error.toString();
+        qFatal("%s", qPrintable(errors.join('\n')));
+    }
+
+    return std::unique_ptr<QObject>(object);
+}
+
+std::unique_ptr<QObject> createTimer(QQmlEngine &engine, QObject *notificationsObject,
+                                     QObject *queueObject, QObject *preferencesObject,
+                                     QObject *windowObject, QObject *mouseAreaObject,
+                                     QObject *sequenceObject, QObject *canvasObject,
+                                     QObject *timeObject, QObject *macOSControllerObject)
+{
+    auto *context = engine.rootContext();
+    context->setContextProperty(QStringLiteral("notifications"), notificationsObject);
+    context->setContextProperty(QStringLiteral("pomodoroQueue"), queueObject);
+    context->setContextProperty(QStringLiteral("preferences"), preferencesObject);
+    context->setContextProperty(QStringLiteral("window"), windowObject);
+    context->setContextProperty(QStringLiteral("mouseArea"), mouseAreaObject);
+    context->setContextProperty(QStringLiteral("sequence"), sequenceObject);
+    context->setContextProperty(QStringLiteral("canvas"), canvasObject);
+    context->setContextProperty(QStringLiteral("time"), timeObject);
+    context->setContextProperty(QStringLiteral("MacOSController"), macOSControllerObject);
+
+    QQmlComponent component(&engine, QUrl::fromLocalFile(timerQmlPath()));
     if (component.isError()) {
         QStringList errors;
         const auto errorList = component.errors();
@@ -390,15 +474,15 @@ std::unique_ptr<QObject> createTimer(TimerFixture &fixture)
     }
 
     const QVariantMap initialProperties{
-        {QStringLiteral("notificationsRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.notifications))},
-        {QStringLiteral("queueRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.queue))},
-        {QStringLiteral("preferencesRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.preferences))},
-        {QStringLiteral("windowRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.window))},
-        {QStringLiteral("mouseAreaRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.mouseArea))},
-        {QStringLiteral("sequenceRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.sequence))},
-        {QStringLiteral("canvasRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.canvas))},
-        {QStringLiteral("timeRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.time))},
-        {QStringLiteral("macOSControllerRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.macOSController))},
+        {QStringLiteral("notificationsRef"), QVariant::fromValue(notificationsObject)},
+        {QStringLiteral("queueRef"), QVariant::fromValue(queueObject)},
+        {QStringLiteral("preferencesRef"), QVariant::fromValue(preferencesObject)},
+        {QStringLiteral("windowRef"), QVariant::fromValue(windowObject)},
+        {QStringLiteral("mouseAreaRef"), QVariant::fromValue(mouseAreaObject)},
+        {QStringLiteral("sequenceRef"), QVariant::fromValue(sequenceObject)},
+        {QStringLiteral("canvasRef"), QVariant::fromValue(canvasObject)},
+        {QStringLiteral("timeRef"), QVariant::fromValue(timeObject)},
+        {QStringLiteral("macOSControllerRef"), QVariant::fromValue(macOSControllerObject)},
     };
 
     QObject *object = component.createWithInitialProperties(initialProperties, context);
@@ -413,9 +497,28 @@ std::unique_ptr<QObject> createTimer(TimerFixture &fixture)
     return std::unique_ptr<QObject>(object);
 }
 
-std::unique_ptr<QObject> createNotificationSystem(NotificationFixture &fixture)
+std::unique_ptr<QObject> createTimer(TimerFixture &fixture)
 {
-    QQmlComponent component(&fixture.engine, QUrl::fromLocalFile(notificationSystemQmlPath()));
+    return createTimer(fixture.engine, &fixture.notifications, &fixture.queue, &fixture.preferences,
+                       &fixture.window, &fixture.mouseArea, &fixture.sequence, &fixture.canvas,
+                       &fixture.time, &fixture.macOSController);
+}
+
+std::unique_ptr<QObject> createTimer(IntegratedNotificationTimerFixture &fixture)
+{
+    return createTimer(fixture.engine, nullptr, &fixture.queue, &fixture.preferences,
+                       &fixture.window, &fixture.mouseArea, &fixture.sequence, &fixture.canvas,
+                       &fixture.time, &fixture.macOSController);
+}
+
+std::unique_ptr<QObject> createNotificationSystem(QQmlEngine &engine, QObject *settingsObject,
+                                                  QObject *soundSettingsObject,
+                                                  QObject *trayObject, QObject *masterModelObject,
+                                                  QObject *timerObject, QObject *queueObject,
+                                                  QObject *clockObject,
+                                                  QObject *macOSControllerObject)
+{
+    QQmlComponent component(&engine, QUrl::fromLocalFile(notificationSystemQmlPath()));
     if (component.isError()) {
         QStringList errors;
         const auto errorList = component.errors();
@@ -425,17 +528,17 @@ std::unique_ptr<QObject> createNotificationSystem(NotificationFixture &fixture)
     }
 
     const QVariantMap initialProperties{
-        {QStringLiteral("settings"), QVariant::fromValue(static_cast<QObject *>(&fixture.settings))},
-        {QStringLiteral("soundSettings"), QVariant::fromValue(static_cast<QObject *>(&fixture.soundSettings))},
-        {QStringLiteral("trayRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.tray))},
-        {QStringLiteral("masterModelRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.masterModel))},
-        {QStringLiteral("timerRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.timer))},
-        {QStringLiteral("queueRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.queue))},
-        {QStringLiteral("clockRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.clock))},
-        {QStringLiteral("macOSControllerRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.macOSController))},
+        {QStringLiteral("settings"), QVariant::fromValue(settingsObject)},
+        {QStringLiteral("soundSettings"), QVariant::fromValue(soundSettingsObject)},
+        {QStringLiteral("trayRef"), QVariant::fromValue(trayObject)},
+        {QStringLiteral("masterModelRef"), QVariant::fromValue(masterModelObject)},
+        {QStringLiteral("timerRef"), QVariant::fromValue(timerObject)},
+        {QStringLiteral("queueRef"), QVariant::fromValue(queueObject)},
+        {QStringLiteral("clockRef"), QVariant::fromValue(clockObject)},
+        {QStringLiteral("macOSControllerRef"), QVariant::fromValue(macOSControllerObject)},
     };
 
-    QObject *object = component.createWithInitialProperties(initialProperties, fixture.engine.rootContext());
+    QObject *object = component.createWithInitialProperties(initialProperties, engine.rootContext());
     if (!object) {
         QStringList errors;
         const auto errorList = component.errors();
@@ -445,6 +548,20 @@ std::unique_ptr<QObject> createNotificationSystem(NotificationFixture &fixture)
     }
 
     return std::unique_ptr<QObject>(object);
+}
+
+std::unique_ptr<QObject> createNotificationSystem(NotificationFixture &fixture)
+{
+    return createNotificationSystem(fixture.engine, &fixture.settings, &fixture.soundSettings,
+                                    &fixture.tray, &fixture.masterModel, &fixture.timer,
+                                    &fixture.queue, &fixture.clock, &fixture.macOSController);
+}
+
+std::unique_ptr<QObject> createNotificationSystem(IntegratedNotificationTimerFixture &fixture)
+{
+    return createNotificationSystem(fixture.engine, &fixture.settings, &fixture.soundSettings,
+                                    &fixture.tray, &fixture.masterModel, fixture.timer.get(),
+                                    &fixture.queue, &fixture.clock, &fixture.macOSController);
 }
 
 } // namespace
@@ -474,6 +591,86 @@ private slots:
         QCOMPARE(fixture.notifications.scheduleCalls, 1);
 
         QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
+    }
+
+    void triggeredOnStartConsumesImmediateFirstSecond()
+    {
+        TimerFixture fixture;
+        fixture.timer = createTimer(fixture);
+        fixture.timer->setProperty("remainingTime", 10.0);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+
+        const double remainingTime = fixture.timer->property("remainingTime").toDouble();
+        QVERIFY2(remainingTime < 10.0, "start() should consume the initial triggeredOnStart tick");
+        QVERIFY(remainingTime <= 9.0);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
+    }
+
+    void clockGetTimeAfterUsesSingleSnapshotAcrossRollover()
+    {
+        QQmlEngine engine;
+        auto clock = createInlineClock(engine, QStringLiteral(R"(
+import QtQuick
+import "."
+
+Clock {
+    property int callCount: 0
+
+    function getTime() {
+        callCount += 1
+        if (callCount === 1)
+            return { "h": 12, "min": 59, "sec": 59, "clock": "12:59" }
+        return { "h": 13, "min": 0, "sec": 0, "clock": "13:00" }
+    }
+}
+)"));
+
+        QVariant returned;
+        QVERIFY(QMetaObject::invokeMethod(clock.get(),
+                                          "getTimeAfter",
+                                          Q_RETURN_ARG(QVariant, returned),
+                                          Q_ARG(QVariant, QVariant(60.0))));
+        const QVariantMap time = returned.toMap();
+        QCOMPARE(time.value(QStringLiteral("clock")).toString(), QStringLiteral("13:00"));
+        QCOMPARE(time.value(QStringLiteral("h")).toInt(), 13);
+        QCOMPARE(time.value(QStringLiteral("min")).toInt(), 0);
+        QCOMPARE(time.value(QStringLiteral("sec")).toInt(), 59);
+    }
+
+    void clockGetNotificationTimeUsesSingleSnapshotAcrossRollover()
+    {
+        QQmlEngine engine;
+        auto clock = createInlineClock(engine, QStringLiteral(R"(
+import QtQuick
+import "."
+
+Clock {
+    property int callCount: 0
+
+    function getTime() {
+        callCount += 1
+        if (callCount === 1)
+            return { "h": 12, "min": 59, "sec": 59, "clock": "12:59" }
+        return { "h": 13, "min": 0, "sec": 0, "clock": "13:00" }
+    }
+
+    function getDuration() {
+        return 60
+    }
+}
+)"));
+
+        QVariant returned;
+        QVERIFY(QMetaObject::invokeMethod(clock.get(),
+                                          "getNotificationTime",
+                                          Q_RETURN_ARG(QVariant, returned)));
+        const QVariantMap time = returned.toMap();
+        QCOMPARE(time.value(QStringLiteral("clock")).toString(), QStringLiteral("13:00"));
+        QCOMPARE(time.value(QStringLiteral("h")).toInt(), 13);
+        QCOMPARE(time.value(QStringLiteral("min")).toInt(), 0);
+        QCOMPARE(time.value(QStringLiteral("sec")).toInt(), 59);
     }
 
     void splitSegmentRolloverSchedulesNextSegment()
@@ -518,6 +715,230 @@ private slots:
         QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
     }
 
+    void macOsCatchUpCompletionDoesNotRepeatScheduledNotification()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 120.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+        fixture.notificationSystem->setProperty("scheduledNotificationAtMs",
+                                                QDateTime::currentMSecsSinceEpoch() - 2000.0);
+        fixture.timer->setProperty("_lastTickMs",
+                                   QDateTime::currentMSecsSinceEpoch() - 121000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 121)));
+
+        QCOMPARE(fixture.tray.sendCalls, 0);
+        QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
+    }
+
+    void macOsCatchUpCompletionFallsBackWhenSchedulingFails()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.macOSController.scheduleNotificationResult = false;
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 120.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        QVariant suppressed = true;
+        const double futureNowMs = QDateTime::currentMSecsSinceEpoch() + 122000.0;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+        QVERIFY(!suppressed.toBool());
+    }
+
+    void macOsCatchUpCompletionWaitsForAsyncScheduleConfirmation()
+    {
+        NotificationFixture fixture;
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 120.0;
+        fixture.timer.segmentTotalDuration = 120.0;
+        fixture.timer.durationBound = 120.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        QVariant suppressed = true;
+        const double futureNowMs = QDateTime::currentMSecsSinceEpoch() + 122000.0;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+        QVERIFY(!suppressed.toBool());
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+
+        suppressed = false;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+        QVERIFY(suppressed.toBool());
+    }
+
+    void macOsCatchUpCompletionFallsBackWhenAsyncSchedulingFails()
+    {
+        NotificationFixture fixture;
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 120.0;
+        fixture.timer.segmentTotalDuration = 120.0;
+        fixture.timer.durationBound = 120.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, false);
+        QCoreApplication::processEvents();
+
+        QVariant suppressed = true;
+        const double futureNowMs = QDateTime::currentMSecsSinceEpoch() + 122000.0;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+        QVERIFY(!suppressed.toBool());
+    }
+
+    void macOsTriggeredOnStartSchedulesCompletionAfterInitialTick()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.queue.setItems({
+            Segment{0, 10.0, 10.0, 10},
+        });
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 10.0);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 9.0);
+    }
+
+    void macOsCatchUpSegmentBoundaryDoesNotRepeatScheduledNotification()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.preferences.splitToSequence = true;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 60.0),
+            masterItem(1, QStringLiteral("Break"), 30.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 60.0, 60.0, 10},
+            Segment{1, 30.0, 30.0, 11},
+        });
+
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 90.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+        fixture.notificationSystem->setProperty("scheduledNotificationAtMs",
+                                                QDateTime::currentMSecsSinceEpoch() - 2000.0);
+        fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 65000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 65)));
+
+        QCOMPARE(fixture.tray.sendCalls, 0);
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 25.0);
+    }
+
+    void macOsTriggeredOnStartSchedulesSplitBoundaryAfterInitialTick()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.preferences.splitToSequence = true;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 60.0),
+            masterItem(1, QStringLiteral("Break"), 30.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 60.0, 60.0, 10},
+            Segment{1, 30.0, 30.0, 11},
+        });
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 90.0);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 59.0);
+    }
+
+    void cmakeDoesNotRequireQtTestOutsideBuildTesting()
+    {
+        QFile cmakeFile(QStringLiteral(PILORAMA_SOURCE_DIR "/CMakeLists.txt"));
+        QVERIFY(cmakeFile.open(QIODevice::ReadOnly | QIODevice::Text));
+        const QString cmakeContents = QString::fromUtf8(cmakeFile.readAll());
+
+        const QRegularExpression findPackageRe(
+            QStringLiteral(R"(find_package\(Qt6 REQUIRED COMPONENTS([\s\S]*?)\))"));
+        const QRegularExpressionMatch findPackageMatch = findPackageRe.match(cmakeContents);
+
+        QVERIFY(findPackageMatch.hasMatch());
+        QVERIFY2(!QRegularExpression(QStringLiteral(R"(\bTest\b)"))
+                      .match(findPackageMatch.captured(1))
+                      .hasMatch(),
+                 "Qt6 Test should only be required when BUILD_TESTING is enabled");
+    }
+
+    void windowsInstallerVersionMatchesProjectVersion()
+    {
+        QFile cmakeFile(QStringLiteral(PILORAMA_SOURCE_DIR "/CMakeLists.txt"));
+        QVERIFY(cmakeFile.open(QIODevice::ReadOnly | QIODevice::Text));
+        const QString cmakeContents = QString::fromUtf8(cmakeFile.readAll());
+
+        QFile installerFile(installerPath());
+        QVERIFY(installerFile.open(QIODevice::ReadOnly | QIODevice::Text));
+        const QString installerContents = QString::fromUtf8(installerFile.readAll());
+
+        const QRegularExpression projectVersionRe(
+            QStringLiteral(R"(project\s*\(\s*Pilorama\s+VERSION\s+([0-9.]+))"));
+        const QRegularExpression installerVersionRe(
+            QStringLiteral("#define\\s+MyAppVersion\\s+\"([0-9.]+)\""));
+
+        const QRegularExpressionMatch projectMatch = projectVersionRe.match(cmakeContents);
+        const QRegularExpressionMatch installerMatch = installerVersionRe.match(installerContents);
+
+        QVERIFY(projectMatch.hasMatch());
+        QVERIFY(installerMatch.hasMatch());
+        QCOMPARE(installerMatch.captured(1), projectMatch.captured(1));
+    }
+
     void scheduledNotificationUsesNextSegmentDetails()
     {
         NotificationFixture fixture;
@@ -530,6 +951,7 @@ private slots:
             Segment{1, 120.0, 120.0, 11},
         });
         fixture.timer.running = true;
+        fixture.timer.splitMode = true;
         fixture.timer.remainingTime = 420.0;
         fixture.timer.durationBound = 420.0;
         fixture.notificationSystem = createNotificationSystem(fixture);
@@ -545,6 +967,61 @@ private slots:
         QCOMPARE(fixture.clock.lastTimeAfterSecs, 420.0);
     }
 
+    void infiniteModeFinalSegmentSchedulesNextCycleStart()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+            masterItem(1, QStringLiteral("Break"), 120.0),
+        });
+        fixture.queue.infiniteMode = true;
+        fixture.queue.setItems({
+            Segment{1, 120.0, 120.0, 17},
+        });
+        fixture.timer.running = true;
+        fixture.timer.splitMode = true;
+        fixture.timer.remainingTime = 120.0;
+        fixture.timer.segmentTotalDuration = 120.0;
+        fixture.timer.durationBound = 420.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Focus started"));
+        QCOMPARE(fixture.macOSController.scheduledMessage,
+                 QStringLiteral("Duration: 5 min.  Ends at t+420"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 120.0);
+        QCOMPARE(fixture.clock.lastTimeAfterSecs, 420.0);
+    }
+
+    void scheduledNotificationUsesQueuedDurationForTrimmedSegment()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 1500.0),
+            masterItem(1, QStringLiteral("Break"), 600.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 1500.0, 1500.0, 10},
+            Segment{1, 300.0, 300.0, 11},
+        });
+        fixture.timer.running = true;
+        fixture.timer.splitMode = true;
+        fixture.timer.remainingTime = 1800.0;
+        fixture.timer.durationBound = 1800.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+        QCOMPARE(fixture.macOSController.scheduledMessage,
+                 QStringLiteral("Duration: 5 min.  Ends at t+1800"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 1500.0);
+        QCOMPARE(fixture.clock.lastTimeAfterSecs, 1800.0);
+    }
+
     void scheduledNotificationUsesCompletionDetailsForFinalSegment()
     {
         NotificationFixture fixture;
@@ -556,6 +1033,7 @@ private slots:
         });
         fixture.timer.running = true;
         fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
         fixture.timer.durationBound = 300.0;
         fixture.notificationSystem = createNotificationSystem(fixture);
 
@@ -567,6 +1045,57 @@ private slots:
         QCOMPARE(fixture.macOSController.scheduledIconPath, QStringLiteral("icon://notification"));
         QCOMPARE(fixture.macOSController.scheduledSeconds, 300.0);
         QCOMPARE(fixture.clock.lastTimeAfterSecs, -1.0);
+    }
+
+    void finiteNonSplitMultiSegmentSchedulesOverallCompletion()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+            masterItem(1, QStringLiteral("Break"), 120.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+            Segment{1, 120.0, 120.0, 11},
+        });
+        fixture.timer.running = true;
+        fixture.timer.splitMode = false;
+        fixture.timer.remainingTime = 420.0;
+        fixture.timer.segmentTotalDuration = 420.0;
+        fixture.timer.durationBound = 420.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledMessage, QStringLiteral("Duration: 7 min"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 420.0);
+        QCOMPARE(fixture.clock.lastTimeAfterSecs, -1.0);
+    }
+
+    void scheduledCompletionUsesCurrentSegmentDurationForSplitFinalSegment()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 1500.0),
+            masterItem(1, QStringLiteral("Break"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{1, 300.0, 300.0, 11},
+        });
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 1800.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledMessage, QStringLiteral("Duration: 5 min"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 300.0);
     }
 
     void macOsScheduleNotificationSlotAcceptsFractionalSeconds()

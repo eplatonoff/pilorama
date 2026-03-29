@@ -21,6 +21,8 @@ Pilorama.Timer {
     property int _activeSegmentKey: -1
     property real durationBound: 0
     property real _lastTickMs: 0
+    property real _currentTickNowMs: 0
+    property bool _pendingStartBoundarySchedule: false
 
     property bool splitMode: (globalTimer.queueRef ? globalTimer.queueRef.infiniteMode : false)
                              || (globalTimer.preferencesRef
@@ -39,6 +41,7 @@ Pilorama.Timer {
         globalTimer._activeSegmentKey = -1;
         globalTimer.durationBound = 0;
         globalTimer._lastTickMs = 0;
+        globalTimer._pendingStartBoundarySchedule = false;
         globalTimer.windowRef.clockMode = "start";
         globalTimer.queueRef.clear();
         globalTimer.mouseAreaRef._prevAngle = 0;
@@ -73,7 +76,10 @@ Pilorama.Timer {
         }
 
         if (globalTimer.running && globalTimer.remainingTime <= 0) {
-            globalTimer.notificationsRef.sendWithSound();
+            if (!globalTimer.notificationsRef.shouldSuppressCatchUpCompletion(
+                        globalTimer._currentTickNowMs)) {
+                globalTimer.notificationsRef.sendWithSound();
+            }
             stopAndClear();
         }
     }
@@ -98,24 +104,32 @@ Pilorama.Timer {
                 globalTimer.segmentRemainingTime = globalTimer.remainingTime;
                 globalTimer.segmentTotalDuration = globalTimer.remainingTime;
             }
-            globalTimer.notificationsRef.scheduleNextSegment();
+            globalTimer._pendingStartBoundarySchedule = globalTimer.triggeredOnStart;
+            if (!globalTimer._pendingStartBoundarySchedule) {
+                globalTimer.notificationsRef.scheduleNextSegment();
+            }
         } else {
             globalTimer.macOSControllerRef.endAppNapActivity();
             globalTimer._lastTickMs = 0;
+            globalTimer._pendingStartBoundarySchedule = false;
             globalTimer.notificationsRef.clearScheduled();
         }
     }
     onTriggered: elapsedSecs => {
         const nowMs = Date.now();
+        globalTimer._currentTickNowMs = nowMs;
+        let didScheduleBoundary = false;
         let actualElapsed = elapsedSecs;
         if (globalTimer._lastTickMs > 0) {
-            actualElapsed = (nowMs - globalTimer._lastTickMs) / 1000.0;
+            const wallClockElapsed = (nowMs - globalTimer._lastTickMs) / 1000.0;
+            actualElapsed = Math.max(actualElapsed, wallClockElapsed);
         }
         globalTimer._lastTickMs = nowMs;
         if (actualElapsed < 0)
             actualElapsed = 0;
         if (actualElapsed === 0) {
             globalTimer.canvasRef.requestPaint();
+            globalTimer._currentTickNowMs = 0;
             return;
         }
 
@@ -150,8 +164,12 @@ Pilorama.Timer {
                 if (segmentChanged) {
                     globalTimer._activeSegmentKey = segmentKey;
                     globalTimer.segmentTotalDuration = segmentTotalForItem(currentSegment);
-                    globalTimer.notificationsRef.sendFromItem(currentSegment);
+                    if (!globalTimer.notificationsRef.shouldSuppressCatchUpSegment(
+                                currentSegment, nowMs)) {
+                        globalTimer.notificationsRef.sendFromItem(currentSegment);
+                    }
                     globalTimer.notificationsRef.scheduleNextSegment();
+                    didScheduleBoundary = true;
                 }
             }
         } else {
@@ -162,6 +180,14 @@ Pilorama.Timer {
             }
         }
 
+        if (globalTimer._pendingStartBoundarySchedule) {
+            globalTimer._pendingStartBoundarySchedule = false;
+            if (globalTimer.running && !didScheduleBoundary) {
+                globalTimer.notificationsRef.scheduleNextSegment();
+            }
+        }
+
         globalTimer.canvasRef.requestPaint();
+        globalTimer._currentTickNowMs = 0;
     }
 }

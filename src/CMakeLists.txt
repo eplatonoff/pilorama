@@ -13,7 +13,6 @@ find_package(Qt6 REQUIRED COMPONENTS
         Core
         Quick
         Qml
-        Test
         Widgets
         Svg
         Xml
@@ -105,6 +104,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 include(CTest)
 
 if(BUILD_TESTING)
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+
     set(TEST_SOURCES
             ../tests/pilorama_review_tests.cpp
             piloramatimer.cpp

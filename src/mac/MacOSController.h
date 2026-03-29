@@ -22,15 +22,20 @@ public slots:
     static void requestNotificationPermission();
 
     static void clearScheduledNotifications();
+    static void clearStaleScheduledNotifications();
 
-    void scheduleNotification(const QString &title, const QString &message,
-                              const QString &iconPath, double seconds) const;
+    int scheduleNotification(const QString &title, const QString &message,
+                             const QString &iconPath, double seconds);
 
     void showNotification(const QString &title, const QString &message,
                           const QString &iconPath) const;
 
+signals:
+    void notificationScheduleResolved(int requestId, bool success);
+
 private:
     QQmlEngine *engine_ = nullptr;
+    int nextScheduleRequestId_ = 0;
 };
 
 #endif //PILORAMA_MACOSCONTROLLER_H

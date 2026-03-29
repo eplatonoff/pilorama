@@ -50,8 +50,8 @@ Item {
     }
 
     function getNotificationTime() {
-
-        let _t = getTime().h * 3600 + getTime().min * 60 + getTime().sec
+        const now = getTime()
+        let _t = now.h * 3600 + now.min * 60 + now.sec
         let t = _t + getDuration()
 
         t = t >= 86400 ? t % 86400 : t
@@ -66,7 +66,8 @@ Item {
     }
 
     function getTimeAfter(secs) {
-        let _t = getTime().h * 3600 + getTime().min * 60 + getTime().sec
+        const now = getTime()
+        let _t = now.h * 3600 + now.min * 60 + now.sec
         let t = _t + secs
 
         t = t >= 86400 ? t % 86400 : t

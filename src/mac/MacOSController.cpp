@@ -1,10 +1,14 @@
 #include "MacOSController.h"
 
+#include <QMetaObject>
+#include <QPointer>
 #include <QPixmap>
 #include <QQmlEngine>
 #include <QQuickImageProvider>
 #include <QDir>
 #include <QUrl>
+
+#include <memory>
 
 
 static QString prepareIconFile(const QString &iconPath, const QQmlEngine *engine)
@@ -49,11 +53,37 @@ extern void mac_end_app_nap_activity();
 extern void mac_request_notification_permission();
 extern void mac_send_notification(const char *title, const char *message,
                                   const char *icon);
-extern void mac_schedule_notification(const char *title, const char *message,
-                                      const char *icon, double seconds);
+extern bool mac_schedule_notification(const char *title, const char *message,
+                                      const char *icon, double seconds,
+                                      void (*completionCallback)(void *context, bool success),
+                                      void *context);
 extern void mac_clear_scheduled_notifications(void);
+extern void mac_clear_stale_scheduled_notifications(void);
 #endif /* TARGET_OS_MAC */
 #endif /* __APPLE__ */
+
+namespace {
+
+struct ScheduleNotificationContext {
+    QPointer<MacOSController> controller;
+    int requestId = 0;
+};
+
+void handleScheduleNotificationResolved(void *rawContext, bool success)
+{
+    std::unique_ptr<ScheduleNotificationContext> context(
+        static_cast<ScheduleNotificationContext *>(rawContext));
+    if (!context->controller)
+        return;
+
+    QMetaObject::invokeMethod(context->controller.data(),
+                              "notificationScheduleResolved",
+                              Qt::QueuedConnection,
+                              Q_ARG(int, context->requestId),
+                              Q_ARG(bool, success));
+}
+
+} // namespace
 
 MacOSController::MacOSController(QObject *parent) : QObject(parent)
 {
@@ -120,31 +150,55 @@ void MacOSController::clearScheduledNotifications()
 #endif /* __APPLE__ */
 }
 
-void MacOSController::scheduleNotification(const QString &title, const QString &message,
-                                           const QString &iconPath, double seconds) const
+void MacOSController::clearStaleScheduledNotifications()
+{
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_clear_stale_scheduled_notifications();
+#endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+int MacOSController::scheduleNotification(const QString &title, const QString &message,
+                                          const QString &iconPath, double seconds)
 {
 #ifdef __APPLE__
 #if TARGET_OS_MAC
     if (engine_ == nullptr) {
         qWarning() << "Engine is not set";
-        return;
+        return 0;
     }
+
+    const int requestId = ++nextScheduleRequestId_;
     const QString iconFile = prepareIconFile(iconPath, engine_);
-    mac_schedule_notification(title.toUtf8().constData(),
-                              message.toUtf8().constData(),
-                              iconFile.toUtf8().constData(),
-                              seconds);
+    auto context = std::make_unique<ScheduleNotificationContext>();
+    context->controller = this;
+    context->requestId = requestId;
+
+    if (!mac_schedule_notification(title.toUtf8().constData(),
+                                   message.toUtf8().constData(),
+                                   iconFile.toUtf8().constData(),
+                                   seconds,
+                                   handleScheduleNotificationResolved,
+                                   context.get())) {
+        return 0;
+    }
+
+    context.release();
+    return requestId;
 #else
     Q_UNUSED(title)
     Q_UNUSED(message)
     Q_UNUSED(iconPath)
     Q_UNUSED(seconds)
+    return 0;
 #endif /* TARGET_OS_MAC */
 #else
     Q_UNUSED(title)
     Q_UNUSED(message)
     Q_UNUSED(iconPath)
     Q_UNUSED(seconds)
+    return 0;
 #endif /* __APPLE__ */
 }
 

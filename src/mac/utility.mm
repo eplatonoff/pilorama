@@ -1,14 +1,66 @@
 #include <QGuiApplication>
+#include <QDebug>
 #include <QWindow>
+
+#include <atomic>
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSProcessInfo.h>
 #import <AppKit/AppKit.h>
 #import <UserNotifications/UserNotifications.h>
 
-static NSString *const kPiloramaScheduledNotificationId = @"pilorama.scheduled";
+static NSString *const kPiloramaScheduledNotificationIdPrefix = @"pilorama.scheduled";
 static id appNapActivity = nil;
 static id notificationDelegate = nil;
+static std::atomic<int> piloramaNotificationAuthorizationStatus{
+    static_cast<int>(UNAuthorizationStatusNotDetermined)
+};
+static std::atomic<unsigned long long> piloramaNextScheduledNotificationToken{0};
+static std::atomic<unsigned long long> piloramaCurrentScheduledNotificationToken{0};
+using PiloramaScheduleNotificationCallback = void (*)(void *context, bool success);
+
+static NSString *pilorama_scheduled_notification_identifier(unsigned long long token)
+{
+    if (token == 0)
+        return nil;
+
+    return [NSString stringWithFormat:@"%@.%llu", kPiloramaScheduledNotificationIdPrefix, token];
+}
+
+static void pilorama_remove_pending_notification(NSString *identifier)
+{
+    if (!identifier || identifier.length == 0)
+        return;
+
+    [[UNUserNotificationCenter currentNotificationCenter]
+        removePendingNotificationRequestsWithIdentifiers:@[ identifier ]];
+}
+
+static bool pilorama_is_scheduled_notification_identifier(NSString *identifier)
+{
+    return identifier && [identifier hasPrefix:kPiloramaScheduledNotificationIdPrefix];
+}
+
+static void pilorama_remove_all_pending_scheduled_notifications(void)
+{
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center getPendingNotificationRequestsWithCompletionHandler:^(
+         NSArray<UNNotificationRequest *> *requests) {
+        NSString *currentIdentifier = pilorama_scheduled_notification_identifier(
+            piloramaCurrentScheduledNotificationToken.load(std::memory_order_relaxed));
+        NSMutableArray<NSString *> *identifiers = [NSMutableArray array];
+        for (UNNotificationRequest *request in requests) {
+            if (!pilorama_is_scheduled_notification_identifier(request.identifier))
+                continue;
+            if (currentIdentifier && [request.identifier isEqualToString:currentIdentifier])
+                continue;
+            [identifiers addObject:request.identifier];
+        }
+        if (identifiers.count > 0) {
+            [center removePendingNotificationRequestsWithIdentifiers:[identifiers copy]];
+        }
+    }];
+}
 
 static void pilorama_reopen_window(void)
 {
@@ -82,6 +134,28 @@ static UNMutableNotificationContent *pilorama_notification_content(const char *t
     return content;
 }
 
+static UNAuthorizationStatus pilorama_cached_notification_authorization_status(void)
+{
+    return static_cast<UNAuthorizationStatus>(
+        piloramaNotificationAuthorizationStatus.load(std::memory_order_relaxed));
+}
+
+static void pilorama_store_notification_authorization_status(UNAuthorizationStatus status)
+{
+    piloramaNotificationAuthorizationStatus.store(static_cast<int>(status),
+                                                  std::memory_order_relaxed);
+}
+
+static void pilorama_refresh_notification_authorization_status(void)
+{
+    [[UNUserNotificationCenter currentNotificationCenter]
+        getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *settings) {
+            if (settings) {
+                pilorama_store_notification_authorization_status(settings.authorizationStatus);
+            }
+        }];
+}
+
 void mac_begin_app_nap_activity(void)
 {
     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
@@ -120,9 +194,17 @@ void mac_request_notification_permission(void)
         notificationDelegate = [[PiloramaNotificationDelegate alloc] init];
     }
     center.delegate = notificationDelegate;
+    pilorama_refresh_notification_authorization_status();
     [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound)
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                              
+                              if (granted) {
+                                  pilorama_store_notification_authorization_status(
+                                      UNAuthorizationStatusAuthorized);
+                              } else if (!error) {
+                                  pilorama_store_notification_authorization_status(
+                                      UNAuthorizationStatusDenied);
+                              }
+                              pilorama_refresh_notification_authorization_status();
                           }];
 }
 
@@ -138,24 +220,63 @@ void mac_send_notification(const char *title, const char *message,
     [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:nil];
 }
 
-void mac_schedule_notification(const char *title, const char *message,
-                               const char *icon, double seconds)
+bool mac_schedule_notification(const char *title, const char *message,
+                               const char *icon, double seconds,
+                               PiloramaScheduleNotificationCallback completionCallback,
+                               void *context)
 {
+    const UNAuthorizationStatus cachedStatus = pilorama_cached_notification_authorization_status();
+    if (cachedStatus == UNAuthorizationStatusDenied) {
+        qWarning() << "macOS notifications are not authorized; skipping scheduled notification";
+        pilorama_refresh_notification_authorization_status();
+        return false;
+    }
+
     UNMutableNotificationContent *content = pilorama_notification_content(title, message, icon);
+    const unsigned long long token =
+        piloramaNextScheduledNotificationToken.fetch_add(1, std::memory_order_relaxed) + 1;
+    piloramaCurrentScheduledNotificationToken.store(token, std::memory_order_relaxed);
+    NSString *identifier = pilorama_scheduled_notification_identifier(token);
 
     UNTimeIntervalNotificationTrigger *trigger =
         [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:seconds repeats:NO];
 
-    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:kPiloramaScheduledNotificationId
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier
                                                                           content:content
                                                                           trigger:trigger];
 
-    [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:nil];
+    pilorama_refresh_notification_authorization_status();
+    [[UNUserNotificationCenter currentNotificationCenter]
+        addNotificationRequest:request
+         withCompletionHandler:^(NSError * _Nullable error) {
+             const bool isCurrentRequest =
+                 piloramaCurrentScheduledNotificationToken.load(std::memory_order_relaxed) == token;
+             if (error) {
+                 qWarning() << "Failed to schedule macOS notification:"
+                            << error.localizedDescription.UTF8String;
+                 pilorama_refresh_notification_authorization_status();
+                 unsigned long long expectedToken = token;
+                 piloramaCurrentScheduledNotificationToken.compare_exchange_strong(
+                     expectedToken, 0, std::memory_order_relaxed);
+             } else if (!isCurrentRequest) {
+                 pilorama_remove_pending_notification(identifier);
+             }
+             if (completionCallback) {
+                 completionCallback(context, error == nil && isCurrentRequest);
+             }
+         }];
+
+    return true;
 }
 
 void mac_clear_scheduled_notifications(void)
 {
-    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-    [center removePendingNotificationRequestsWithIdentifiers:@[kPiloramaScheduledNotificationId]];
-    [center removeDeliveredNotificationsWithIdentifiers:@[kPiloramaScheduledNotificationId]];
+    const unsigned long long token =
+        piloramaCurrentScheduledNotificationToken.exchange(0, std::memory_order_relaxed);
+    pilorama_remove_pending_notification(pilorama_scheduled_notification_identifier(token));
+}
+
+void mac_clear_stale_scheduled_notifications(void)
+{
+    pilorama_remove_all_pending_scheduled_notifications();
 }

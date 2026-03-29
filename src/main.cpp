@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     engine.addImageProvider("tray_icon_provider", new TrayImageProvider());
     engine.addImageProvider("notification_dot_provider", new NotificationDotProvider());
     macOSController.setEngine(&engine);
-    MacOSController::clearScheduledNotifications();
+    MacOSController::clearStaleScheduledNotifications();
     QObject::connect(&app, &QCoreApplication::aboutToQuit, []() {
         MacOSController::endAppNapActivity();
         MacOSController::clearScheduledNotifications();
