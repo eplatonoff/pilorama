@@ -68,6 +68,41 @@ Pilorama.Timer {
         return item.key !== undefined ? item.key : item.id;
     }
 
+    function refreshSplitState() {
+        if (globalTimer.splitMode) {
+            const currentSegment = globalTimer.queueRef.first();
+            if (currentSegment) {
+                globalTimer._activeSegmentKey = globalTimer.segmentKeyForItem(currentSegment);
+                globalTimer.segmentRemainingTime = currentSegment.duration;
+                globalTimer.segmentTotalDuration = globalTimer.segmentTotalForItem(currentSegment);
+            } else {
+                globalTimer._activeSegmentKey = -1;
+                globalTimer.segmentRemainingTime = 0;
+                globalTimer.segmentTotalDuration = 0;
+            }
+        } else {
+            globalTimer._activeSegmentKey = -1;
+            globalTimer.segmentRemainingTime = globalTimer.remainingTime;
+            globalTimer.segmentTotalDuration = globalTimer.remainingTime;
+        }
+    }
+
+    function handleLiveSplitPreferenceChange() {
+        if (!globalTimer.running)
+            return;
+        globalTimer.refreshSplitState();
+        globalTimer.notificationsRef.scheduleNextSegment();
+        globalTimer.canvasRef.requestPaint();
+    }
+
+    property Connections splitPreferenceConnections: Connections {
+        target: globalTimer.preferencesRef
+
+        function onSplitToSequenceChanged() {
+            globalTimer.handleLiveSplitPreferenceChange()
+        }
+    }
+
     onRemainingTimeChanged: {
         globalTimer.windowRef.checkClockMode();
         globalTimer.timeRef.updateTime();
@@ -92,21 +127,7 @@ Pilorama.Timer {
             globalTimer.macOSControllerRef.beginAppNapActivity();
             globalTimer._lastTickMs = Date.now();
             globalTimer.durationBound = globalTimer.remainingTime;
-            if (globalTimer.splitMode) {
-                const currentSegment = globalTimer.queueRef.first();
-                if (currentSegment) {
-                    globalTimer._activeSegmentKey = segmentKeyForItem(currentSegment);
-                    globalTimer.segmentRemainingTime = currentSegment.duration;
-                    globalTimer.segmentTotalDuration = segmentTotalForItem(currentSegment);
-                } else {
-                    globalTimer._activeSegmentKey = -1;
-                    globalTimer.segmentRemainingTime = 0;
-                    globalTimer.segmentTotalDuration = 0;
-                }
-            } else {
-                globalTimer.segmentRemainingTime = globalTimer.remainingTime;
-                globalTimer.segmentTotalDuration = globalTimer.remainingTime;
-            }
+            globalTimer.refreshSplitState();
             globalTimer._pendingStartBoundarySchedule = globalTimer.triggeredOnStart;
             if (!globalTimer._pendingStartBoundarySchedule) {
                 globalTimer.notificationsRef.scheduleNextSegment();

@@ -64,6 +64,12 @@ QtObject {
     onSoundMutedChanged: {
         if (soundMuted)
             stopSound();
+        if (Qt.platform.os === "osx"
+                && timerRef
+                && timerRef.running
+                && (pendingBoundaryRequestId > 0 || scheduledNotificationAtMs >= 0)) {
+            scheduleNextSegment()
+        }
     }
 
     function toggleSoundNotifications() {

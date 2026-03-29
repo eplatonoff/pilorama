@@ -143,10 +143,27 @@ private:
 class MockPreferences final : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool splitToSequence MEMBER splitToSequence CONSTANT)
+    Q_PROPERTY(bool splitToSequence READ splitToSequence WRITE setSplitToSequence NOTIFY splitToSequenceChanged)
 
 public:
-    bool splitToSequence = false;
+    bool splitToSequence() const
+    {
+        return splitToSequence_;
+    }
+
+    void setSplitToSequence(bool splitToSequence)
+    {
+        if (splitToSequence_ == splitToSequence)
+            return;
+        splitToSequence_ = splitToSequence;
+        emit splitToSequenceChanged();
+    }
+
+signals:
+    void splitToSequenceChanged();
+
+private:
+    bool splitToSequence_ = false;
 };
 
 class MockWindow final : public QObject
@@ -262,12 +279,43 @@ signals:
 class MockNotificationSettings final : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool soundMuted MEMBER soundMuted CONSTANT)
-    Q_PROPERTY(bool showOnSegmentStart MEMBER showOnSegmentStart CONSTANT)
+    Q_PROPERTY(bool soundMuted READ soundMuted WRITE setSoundMuted NOTIFY soundMutedChanged)
+    Q_PROPERTY(bool showOnSegmentStart READ showOnSegmentStart WRITE setShowOnSegmentStart NOTIFY showOnSegmentStartChanged)
 
 public:
-    bool soundMuted = false;
-    bool showOnSegmentStart = false;
+    bool soundMuted() const
+    {
+        return soundMuted_;
+    }
+
+    void setSoundMuted(bool soundMuted)
+    {
+        if (soundMuted_ == soundMuted)
+            return;
+        soundMuted_ = soundMuted;
+        emit soundMutedChanged();
+    }
+
+    bool showOnSegmentStart() const
+    {
+        return showOnSegmentStart_;
+    }
+
+    void setShowOnSegmentStart(bool showOnSegmentStart)
+    {
+        if (showOnSegmentStart_ == showOnSegmentStart)
+            return;
+        showOnSegmentStart_ = showOnSegmentStart;
+        emit showOnSegmentStartChanged();
+    }
+
+signals:
+    void soundMutedChanged();
+    void showOnSegmentStartChanged();
+
+private:
+    bool soundMuted_ = false;
+    bool showOnSegmentStart_ = false;
 };
 
 class MockSoundSettings final : public QObject
@@ -683,7 +731,7 @@ Clock {
     void splitSegmentRolloverSchedulesNextSegment()
     {
         TimerFixture fixture;
-        fixture.preferences.splitToSequence = true;
+        fixture.preferences.setSplitToSequence(true);
         fixture.queue.setItems({
             Segment{0, 1.0, 1.0, 10},
             Segment{1, 5.0, 5.0, 11},
@@ -900,7 +948,7 @@ Clock {
     void macOsCatchUpSegmentBoundaryDoesNotRepeatScheduledNotification()
     {
         IntegratedNotificationTimerFixture fixture;
-        fixture.preferences.splitToSequence = true;
+        fixture.preferences.setSplitToSequence(true);
         fixture.masterModel.setItems({
             masterItem(0, QStringLiteral("Focus"), 60.0),
             masterItem(1, QStringLiteral("Break"), 30.0),
@@ -937,7 +985,7 @@ Clock {
     void macOsOnTimeSegmentBoundaryDoesNotDuplicateScheduledNotification()
     {
         IntegratedNotificationTimerFixture fixture;
-        fixture.preferences.splitToSequence = true;
+        fixture.preferences.setSplitToSequence(true);
         fixture.masterModel.setItems({
             masterItem(0, QStringLiteral("Focus"), 60.0),
             masterItem(1, QStringLiteral("Break"), 30.0),
@@ -974,8 +1022,8 @@ Clock {
     void macOsOrdinaryOnTimeSegmentBoundaryKeepsPopupWithoutDuplicateNotification()
     {
         IntegratedNotificationTimerFixture fixture;
-        fixture.preferences.splitToSequence = true;
-        fixture.settings.showOnSegmentStart = true;
+        fixture.preferences.setSplitToSequence(true);
+        fixture.settings.setShowOnSegmentStart(true);
         fixture.masterModel.setItems({
             masterItem(0, QStringLiteral("Focus"), 1.0),
             masterItem(1, QStringLiteral("Break"), 30.0),
@@ -1011,7 +1059,7 @@ Clock {
     void macOsTriggeredOnStartSchedulesSplitBoundaryAfterInitialTick()
     {
         IntegratedNotificationTimerFixture fixture;
-        fixture.preferences.splitToSequence = true;
+        fixture.preferences.setSplitToSequence(true);
         fixture.masterModel.setItems({
             masterItem(0, QStringLiteral("Focus"), 60.0),
             masterItem(1, QStringLiteral("Break"), 30.0),
@@ -1031,6 +1079,73 @@ Clock {
         QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
         QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
         QCOMPARE(fixture.macOSController.scheduledSeconds, 59.0);
+    }
+
+    void enablingSplitModeWhileRunningReschedulesMacBoundary()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 60.0),
+            masterItem(1, QStringLiteral("Break"), 30.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 60.0, 60.0, 10},
+            Segment{1, 30.0, 30.0, 11},
+        });
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 90.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 90.0);
+
+        fixture.preferences.setSplitToSequence(true);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 60.0);
+        QCOMPARE(fixture.timer->property("segmentRemainingTime").toDouble(), 60.0);
+        QCOMPARE(fixture.timer->property("segmentTotalDuration").toDouble(), 60.0);
+    }
+
+    void disablingSplitModeWhileRunningReschedulesMacBoundary()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.preferences.setSplitToSequence(true);
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 60.0),
+            masterItem(1, QStringLiteral("Break"), 30.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 60.0, 60.0, 10},
+            Segment{1, 30.0, 30.0, 11},
+        });
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 90.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 60.0);
+
+        fixture.preferences.setSplitToSequence(false);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 90.0);
+        QCOMPARE(fixture.timer->property("segmentTotalDuration").toDouble(), 90.0);
+        QCOMPARE(fixture.timer->property("_activeSegmentKey").toInt(), -1);
     }
 
     void cmakeDoesNotRequireQtTestOutsideBuildTesting()
@@ -1264,7 +1379,7 @@ Clock {
         fixture.queue.setItems({
             Segment{0, 300.0, 300.0, 10},
         });
-        fixture.settings.soundMuted = false;
+        fixture.settings.setSoundMuted(false);
         fixture.timer.running = true;
         fixture.timer.remainingTime = 300.0;
         fixture.timer.segmentTotalDuration = 300.0;
@@ -1277,6 +1392,60 @@ Clock {
         QVERIFY(fixture.macOSController.scheduledPlaySound);
     }
 
+    void mutingSoundWhileRunningReschedulesMacBoundary()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+        });
+        fixture.settings.setSoundMuted(false);
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 300.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QVERIFY(fixture.macOSController.scheduledPlaySound);
+
+        fixture.settings.setSoundMuted(true);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        QVERIFY(!fixture.macOSController.scheduledPlaySound);
+    }
+
+    void unmutingSoundWhileRunningReschedulesMacBoundary()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+        });
+        fixture.settings.setSoundMuted(true);
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 300.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QVERIFY(!fixture.macOSController.scheduledPlaySound);
+
+        fixture.settings.setSoundMuted(false);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        QVERIFY(fixture.macOSController.scheduledPlaySound);
+    }
+
     void scheduleNextSegmentRespectsMutedSoundPreference()
     {
         NotificationFixture fixture;
@@ -1286,7 +1455,7 @@ Clock {
         fixture.queue.setItems({
             Segment{0, 300.0, 300.0, 10},
         });
-        fixture.settings.soundMuted = true;
+        fixture.settings.setSoundMuted(true);
         fixture.timer.running = true;
         fixture.timer.remainingTime = 300.0;
         fixture.timer.segmentTotalDuration = 300.0;
