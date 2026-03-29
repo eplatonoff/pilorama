@@ -82,6 +82,10 @@ QtObject {
             macOSControllerRef.clearScheduledNotifications()
     }
 
+    function queueItemDetails(item) {
+        return item ? masterModelRef.get(item.id) : null
+    }
+
     function scheduleNextSegment() {
         if (Qt.platform.os !== "osx")
             return
@@ -106,10 +110,20 @@ QtObject {
         const secs = Math.max(0, first.duration)
         if (secs <= 0)
             return
-        const endTime = clockRef.getTimeAfter(secs).clock
-        const message = "Duration: " + masterModelRef.get(first.id).duration / 60 +
-                " min.  Ends at " + endTime
-        macOSControllerRef.scheduleNotification(first.name + " started",
+
+        const next = queueRef.count > 1 ? queueRef.get(1) : null
+        if (!next) {
+            macOSControllerRef.scheduleNotification(
+                        "Time ran out",
+                        "Duration: " + timerRef.durationBound / 60 + " min",
+                        trayRef.notificationIconURL(), secs)
+            return
+        }
+
+        const nextItem = queueItemDetails(next)
+        const endTime = clockRef.getTimeAfter(secs + nextItem.duration).clock
+        const message = "Duration: " + nextItem.duration / 60 + " min.  Ends at " + endTime
+        macOSControllerRef.scheduleNotification(nextItem.name + " started",
                                                 message,
                                                 trayRef.notificationIconURL(), secs)
     }

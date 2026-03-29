@@ -46,6 +46,10 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PiloramaTimer>("Pilorama", 1, 0, "Timer");
 
+    engine.setInitialProperties({
+        {QStringLiteral("macOSControllerRef"),
+         QVariant::fromValue(static_cast<QObject *>(&macOSController))},
+    });
     engine.rootContext()->setContextProperty("MacOSController", &macOSController);
 
 	qputenv("QML_XHR_ALLOW_FILE_WRITE", QByteArray("1"));

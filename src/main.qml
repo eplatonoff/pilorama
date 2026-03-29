@@ -4,12 +4,12 @@ import QtQuick.Controls
 import QtCore
 
 import "Components"
-import "Components/Sequence"
 import "Components/mac"
 
 ApplicationWindow {
     id: window
     visible: true
+    required property var macOSControllerRef
 
     x: 100
     y: 100
@@ -46,10 +46,10 @@ ApplicationWindow {
 
     function updateDockVisibility() {
         if (appSettings.showInDock) {
-            MacOSController.showInDock()
+            macOSControllerRef.showInDock()
         }
         else {
-            MacOSController.hideFromDock()
+            macOSControllerRef.hideFromDock()
             window.raise()
             window.show()
         }
@@ -84,7 +84,7 @@ ApplicationWindow {
             if (Qt.platform.os === "osx") {
                 window.hide();
                 if (appSettings.showInDock) {
-                    MacOSController.hideFromDock()
+                    macOSControllerRef.hideFromDock()
                 }
             }
             else {
@@ -143,7 +143,7 @@ ApplicationWindow {
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
-        onShowInDockChanged: { updateDockVisibility(); }
+        onShowInDockChanged: { window.updateDockVisibility(); }
     }
 
     SoundSettings {
@@ -207,7 +207,7 @@ ApplicationWindow {
         timerRef: globalTimer
         queueRef: pomodoroQueue
         clockRef: clock
-        macOSControllerRef: MacOSController
+        macOSControllerRef: window.macOSControllerRef
     }
 
     PiloramaTimer {
@@ -216,6 +216,7 @@ ApplicationWindow {
 
     Clock {
         id: clock
+        timerRef: globalTimer
     }
 
     FileDialogue {
