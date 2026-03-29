@@ -25,7 +25,7 @@ public slots:
     static void clearStaleScheduledNotifications();
 
     int scheduleNotification(const QString &title, const QString &message,
-                             const QString &iconPath, double seconds);
+                             const QString &iconPath, double seconds, bool playSound);
 
     void showNotification(const QString &title, const QString &message,
                           const QString &iconPath) const;

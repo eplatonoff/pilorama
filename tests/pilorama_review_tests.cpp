@@ -222,6 +222,7 @@ public:
     QString scheduledMessage;
     QString scheduledIconPath;
     double scheduledSeconds = -1.0;
+    bool scheduledPlaySound = false;
     bool scheduleNotificationResult = true;
     int nextRequestId = 1;
     int lastRequestId = 0;
@@ -230,13 +231,15 @@ public:
     Q_INVOKABLE void endAppNapActivity() { ++endCalls; }
     Q_INVOKABLE void clearScheduledNotifications() { ++clearScheduledCalls; }
     Q_INVOKABLE int scheduleNotification(const QString &title, const QString &message,
-                                         const QString &iconPath, double seconds)
+                                         const QString &iconPath, double seconds,
+                                         bool playSound)
     {
         ++scheduleNotificationCalls;
         scheduledTitle = title;
         scheduledMessage = message;
         scheduledIconPath = iconPath;
         scheduledSeconds = seconds;
+        scheduledPlaySound = playSound;
         if (!scheduleNotificationResult)
             return 0;
         lastRequestId = nextRequestId++;
@@ -1173,6 +1176,7 @@ Clock {
                     QByteArrayLiteral("QString"),
                     QByteArrayLiteral("QString"),
                     QByteArrayLiteral("double"),
+                    QByteArrayLiteral("bool"),
                 }) {
                 found = true;
                 break;
@@ -1180,6 +1184,50 @@ Clock {
         }
 
         QVERIFY(found);
+    }
+
+    void scheduleNextSegmentForwardsEnabledSoundPreference()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+        });
+        fixture.settings.soundMuted = false;
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 300.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QVERIFY(fixture.macOSController.scheduledPlaySound);
+    }
+
+    void scheduleNextSegmentRespectsMutedSoundPreference()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+        });
+        fixture.settings.soundMuted = true;
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 300.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QVERIFY(!fixture.macOSController.scheduledPlaySound);
     }
 };
 

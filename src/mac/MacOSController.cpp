@@ -56,7 +56,7 @@ extern void mac_send_notification(const char *title, const char *message,
 extern bool mac_schedule_notification(const char *title, const char *message,
                                       const char *icon, double seconds,
                                       void (*completionCallback)(void *context, bool success),
-                                      void *context);
+                                      void *context, bool playSound);
 extern void mac_clear_scheduled_notifications(void);
 extern void mac_clear_stale_scheduled_notifications(void);
 #endif /* TARGET_OS_MAC */
@@ -160,7 +160,8 @@ void MacOSController::clearStaleScheduledNotifications()
 }
 
 int MacOSController::scheduleNotification(const QString &title, const QString &message,
-                                          const QString &iconPath, double seconds)
+                                          const QString &iconPath, double seconds,
+                                          bool playSound)
 {
 #ifdef __APPLE__
 #if TARGET_OS_MAC
@@ -180,7 +181,8 @@ int MacOSController::scheduleNotification(const QString &title, const QString &m
                                    iconFile.toUtf8().constData(),
                                    seconds,
                                    handleScheduleNotificationResolved,
-                                   context.get())) {
+                                   context.get(),
+                                   playSound)) {
         return 0;
     }
 
@@ -191,6 +193,7 @@ int MacOSController::scheduleNotification(const QString &title, const QString &m
     Q_UNUSED(message)
     Q_UNUSED(iconPath)
     Q_UNUSED(seconds)
+    Q_UNUSED(playSound)
     return 0;
 #endif /* TARGET_OS_MAC */
 #else
@@ -198,6 +201,7 @@ int MacOSController::scheduleNotification(const QString &title, const QString &m
     Q_UNUSED(message)
     Q_UNUSED(iconPath)
     Q_UNUSED(seconds)
+    Q_UNUSED(playSound)
     return 0;
 #endif /* __APPLE__ */
 }

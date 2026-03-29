@@ -14,7 +14,7 @@
 bool mac_schedule_notification(const char *title, const char *message,
                                const char *icon, double seconds,
                                void (*completionCallback)(void *context, bool success),
-                               void *context);
+                               void *context, bool playSound = false);
 void mac_clear_scheduled_notifications(void);
 void mac_clear_stale_scheduled_notifications(void);
 
@@ -31,6 +31,7 @@ void mac_clear_stale_scheduled_notifications(void);
 @property(nonatomic, strong) NSMutableArray<NSString *> *pendingIdentifiers;
 @property(nonatomic, strong) NSMutableArray *completionHandlers;
 @property(nonatomic, strong) NSMutableArray *pendingRequestsCompletionHandlers;
+@property(nonatomic) BOOL lastRequestHasSound;
 + (instancetype)sharedCenter;
 + (id)stubCurrentNotificationCenter;
 - (void)reset;
@@ -69,6 +70,7 @@ void mac_clear_stale_scheduled_notifications(void);
     self.pendingIdentifiers = [NSMutableArray array];
     self.completionHandlers = [NSMutableArray array];
     self.pendingRequestsCompletionHandlers = [NSMutableArray array];
+    self.lastRequestHasSound = NO;
 }
 
 - (void)getNotificationSettingsWithCompletionHandler:(void (^)(UNNotificationSettings *settings))completionHandler
@@ -81,6 +83,7 @@ void mac_clear_stale_scheduled_notifications(void);
          withCompletionHandler:(void (^)(NSError *error))completionHandler
 {
     ++self.addRequestCalls;
+    self.lastRequestHasSound = request.content.sound != nil;
     [self.addedIdentifiers addObject:request.identifier ?: @""];
     [self.pendingIdentifiers addObject:request.identifier ?: @""];
     [self.completionHandlers addObject:completionHandler ? [completionHandler copy] : [NSNull null]];
@@ -170,6 +173,28 @@ void mac_clear_stale_scheduled_notifications(void);
 }
 @end
 
+@interface PiloramaTestNotificationContent : NSObject
+@property(nonatomic, strong) UNNotificationSound *sound;
+@end
+
+@implementation PiloramaTestNotificationContent
+@end
+
+@interface PiloramaTestNotificationRequest : NSObject
+@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, strong) PiloramaTestNotificationContent *content;
+@end
+
+@implementation PiloramaTestNotificationRequest
+@end
+
+@interface PiloramaTestNotification : NSObject
+@property(nonatomic, strong) PiloramaTestNotificationRequest *request;
+@end
+
+@implementation PiloramaTestNotification
+@end
+
 namespace {
 
 struct ScopedMethodExchange {
@@ -201,6 +226,18 @@ void storeScheduleCallbackResult(void *context, bool success)
     auto *result = static_cast<ScheduleCallbackResult *>(context);
     result->called = true;
     result->success = success;
+}
+
+UNNotificationPresentationOptions pilorama_visual_presentation_options()
+{
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000
+    if (@available(macOS 11.0, *))
+        return UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+#endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return UNNotificationPresentationOptionAlert;
+#pragma clang diagnostic pop
 }
 
 } // namespace
@@ -236,6 +273,60 @@ private slots:
                  "scheduleNotification should return immediately instead of blocking the GUI thread");
         QCOMPARE(center.addRequestCalls, 1);
         QCOMPARE(center.settingsCalls, 1);
+    }
+
+    void scheduledNotificationsCanRequestSystemSound()
+    {
+        Method currentMethod = class_getClassMethod([UNUserNotificationCenter class],
+                                                    @selector(currentNotificationCenter));
+        Method stubMethod = class_getClassMethod([PiloramaTestNotificationCenter class],
+                                                 @selector(stubCurrentNotificationCenter));
+        QVERIFY(currentMethod != nullptr);
+        QVERIFY(stubMethod != nullptr);
+
+        PiloramaTestNotificationCenter *center = [PiloramaTestNotificationCenter sharedCenter];
+        [center reset];
+
+        const ScopedMethodExchange exchange(currentMethod, stubMethod);
+        const bool scheduled = mac_schedule_notification("Title", "Body", "", 60.0, nullptr,
+                                                         nullptr, true);
+
+        QVERIFY(scheduled);
+        QCOMPARE(center.addRequestCalls, 1);
+        QVERIFY2(center.lastRequestHasSound,
+                 "scheduled notifications should set content.sound when sound is enabled");
+    }
+
+    void foregroundDelegateRequestsPresentationForAppNotifications()
+    {
+        PiloramaNotificationDelegate *delegate = [PiloramaNotificationDelegate new];
+        SEL selector = @selector(userNotificationCenter:willPresentNotification:withCompletionHandler:);
+        QVERIFY2([delegate respondsToSelector:selector],
+                 "foreground notifications need willPresentNotification to stay visible");
+
+        PiloramaTestNotificationContent *content = [PiloramaTestNotificationContent new];
+        content.sound = [UNNotificationSound defaultSound];
+        PiloramaTestNotificationRequest *request = [PiloramaTestNotificationRequest new];
+        request.identifier = @"pilorama.scheduled.1";
+        request.content = content;
+        PiloramaTestNotification *notification = [PiloramaTestNotification new];
+        notification.request = request;
+
+        __block UNNotificationPresentationOptions receivedOptions = 0;
+        using WillPresentImp = void (*)(id, SEL, UNUserNotificationCenter *, UNNotification *,
+                                        void (^)(UNNotificationPresentationOptions));
+        auto *imp = reinterpret_cast<WillPresentImp>([delegate methodForSelector:selector]);
+        QVERIFY(imp != nullptr);
+
+        imp(delegate, selector, nil, reinterpret_cast<UNNotification *>(notification),
+            ^(UNNotificationPresentationOptions options) {
+                receivedOptions = options;
+            });
+
+        QVERIFY2((receivedOptions & pilorama_visual_presentation_options()) != 0,
+                 "foreground timer notifications should request visible presentation");
+        QVERIFY2((receivedOptions & UNNotificationPresentationOptionSound) != 0,
+                 "foreground scheduled notifications with sound should request sound presentation");
     }
 
     void clearScheduledNotificationsLeavesDeliveredAlertsIntact()

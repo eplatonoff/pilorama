@@ -160,7 +160,8 @@ QtObject {
         const requestId = macOSControllerRef.scheduleNotification(title,
                                                                   message,
                                                                   trayRef.notificationIconURL(),
-                                                                  seconds)
+                                                                  seconds,
+                                                                  !soundMuted)
         if (requestId > 0)
             rememberPendingBoundary(requestId, kind, seconds, key)
     }

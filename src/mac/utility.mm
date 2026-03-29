@@ -85,6 +85,37 @@ static void pilorama_reopen_window(void)
 
 @implementation PiloramaNotificationDelegate
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+    Q_UNUSED(center);
+    Q_UNUSED(notification);
+
+    UNNotificationPresentationOptions options = 0;
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000
+    if (@available(macOS 11.0, *)) {
+        options = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        options = UNNotificationPresentationOptionAlert;
+#pragma clang diagnostic pop
+    }
+#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    options = UNNotificationPresentationOptionAlert;
+#pragma clang diagnostic pop
+#endif
+
+    if (notification.request.content.sound != nil)
+        options |= UNNotificationPresentationOptionSound;
+
+    if (completionHandler)
+        completionHandler(options);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
  didReceiveNotificationResponse:(UNNotificationResponse *)response
           withCompletionHandler:(void (^)(void))completionHandler
 {
@@ -101,11 +132,14 @@ static void pilorama_reopen_window(void)
 
 static UNMutableNotificationContent *pilorama_notification_content(const char *title,
                                                                    const char *message,
-                                                                   const char *icon)
+                                                                   const char *icon,
+                                                                   bool playSound = false)
 {
     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
     content.title = [NSString stringWithUTF8String:title];
     content.body = [NSString stringWithUTF8String:message];
+    if (playSound)
+        content.sound = [UNNotificationSound defaultSound];
 
     if (icon && strlen(icon) > 0) {
         NSString *iconPath = [NSString stringWithUTF8String:icon];
@@ -211,7 +245,8 @@ void mac_request_notification_permission(void)
 void mac_send_notification(const char *title, const char *message,
                            const char *icon)
 {
-    UNMutableNotificationContent *content = pilorama_notification_content(title, message, icon);
+    UNMutableNotificationContent *content =
+        pilorama_notification_content(title, message, icon, false);
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[[NSUUID UUID] UUIDString]
                                                                           content:content
@@ -223,7 +258,7 @@ void mac_send_notification(const char *title, const char *message,
 bool mac_schedule_notification(const char *title, const char *message,
                                const char *icon, double seconds,
                                PiloramaScheduleNotificationCallback completionCallback,
-                               void *context)
+                               void *context, bool playSound)
 {
     const UNAuthorizationStatus cachedStatus = pilorama_cached_notification_authorization_status();
     if (cachedStatus == UNAuthorizationStatusDenied) {
@@ -232,7 +267,8 @@ bool mac_schedule_notification(const char *title, const char *message,
         return false;
     }
 
-    UNMutableNotificationContent *content = pilorama_notification_content(title, message, icon);
+    UNMutableNotificationContent *content =
+        pilorama_notification_content(title, message, icon, playSound);
     const unsigned long long token =
         piloramaNextScheduledNotificationToken.fetch_add(1, std::memory_order_relaxed) + 1;
     piloramaCurrentScheduledNotificationToken.store(token, std::memory_order_relaxed);
