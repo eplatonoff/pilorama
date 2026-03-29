@@ -166,17 +166,20 @@ QtObject {
             rememberPendingBoundary(requestId, kind, seconds, key)
     }
 
-    function shouldSuppressCatchUpCompletion(nowMs) {
-        return shouldSuppressCatchUpBoundary("completion", -1, nowMs)
+    function shouldSuppressCatchUpCompletion(nowMs, isCatchUp = true) {
+        return shouldSuppressCatchUpBoundary("completion", -1, nowMs, isCatchUp)
     }
 
-    function shouldSuppressCatchUpSegment(item, nowMs) {
+    function shouldSuppressCatchUpSegment(item, nowMs, isCatchUp = true) {
         return shouldSuppressCatchUpBoundary("segment",
                                             item && item.key !== undefined ? item.key : -1,
-                                            nowMs)
+                                            nowMs,
+                                            isCatchUp)
     }
 
-    function shouldSuppressCatchUpBoundary(kind, key, nowMs) {
+    function shouldSuppressCatchUpBoundary(kind, key, nowMs, isCatchUp = true) {
+        if (!isCatchUp)
+            return false
         if (Qt.platform.os !== "osx")
             return false
         if (scheduledBoundaryKind !== kind)

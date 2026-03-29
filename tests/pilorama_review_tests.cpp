@@ -56,8 +56,12 @@ public:
         lastItem = item.toMap();
     }
     Q_INVOKABLE void sendWithSound(const QVariant & = QVariant()) {}
-    Q_INVOKABLE bool shouldSuppressCatchUpCompletion(double = 0.0) const { return false; }
-    Q_INVOKABLE bool shouldSuppressCatchUpSegment(const QVariant &, double = 0.0) const
+    Q_INVOKABLE bool shouldSuppressCatchUpCompletion(double = 0.0, bool = true) const
+    {
+        return false;
+    }
+    Q_INVOKABLE bool shouldSuppressCatchUpSegment(const QVariant &, double = 0.0,
+                                                  bool = true) const
     {
         return false;
     }
@@ -768,6 +772,31 @@ Clock {
         QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
     }
 
+    void macOsOrdinaryOnTimeCompletionStillUsesLocalFallbackAlert()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 1.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+        fixture.notificationSystem->setProperty("scheduledNotificationAtMs",
+                                                QDateTime::currentMSecsSinceEpoch() - 100.0);
+        fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 1000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 1)));
+
+        QCOMPARE(fixture.tray.sendCalls, 1);
+        QCOMPARE(fixture.tray.lastName, QString());
+        QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
+    }
+
     void macOsCatchUpCompletionFallsBackWhenSchedulingFails()
     {
         IntegratedNotificationTimerFixture fixture;
@@ -787,7 +816,8 @@ Clock {
         QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
                                           "shouldSuppressCatchUpCompletion",
                                           Q_RETURN_ARG(QVariant, suppressed),
-                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
         QVERIFY(!suppressed.toBool());
     }
 
@@ -808,7 +838,8 @@ Clock {
         QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
                                           "shouldSuppressCatchUpCompletion",
                                           Q_RETURN_ARG(QVariant, suppressed),
-                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
         QVERIFY(!suppressed.toBool());
 
         fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
@@ -818,7 +849,8 @@ Clock {
         QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
                                           "shouldSuppressCatchUpCompletion",
                                           Q_RETURN_ARG(QVariant, suppressed),
-                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
         QVERIFY(suppressed.toBool());
     }
 
@@ -842,7 +874,8 @@ Clock {
         QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
                                           "shouldSuppressCatchUpCompletion",
                                           Q_RETURN_ARG(QVariant, suppressed),
-                                          Q_ARG(QVariant, QVariant(futureNowMs))));
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
         QVERIFY(!suppressed.toBool());
     }
 
@@ -937,6 +970,44 @@ Clock {
         QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
         QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
         QCOMPARE(fixture.macOSController.scheduledSeconds, 30.0);
+    }
+
+    void macOsOrdinaryOnTimeSegmentBoundaryKeepsPopupSideEffect()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.preferences.splitToSequence = true;
+        fixture.settings.showOnSegmentStart = true;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 1.0),
+            masterItem(1, QStringLiteral("Break"), 30.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 1.0, 1.0, 10},
+            Segment{1, 30.0, 30.0, 11},
+        });
+
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 31.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+        fixture.notificationSystem->setProperty("scheduledNotificationAtMs",
+                                                QDateTime::currentMSecsSinceEpoch() - 100.0);
+        fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 1000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 1)));
+
+        QCOMPARE(fixture.tray.sendCalls, 1);
+        QCOMPARE(fixture.tray.lastName, QStringLiteral("Break"));
+        QCOMPARE(fixture.tray.popUpCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
     }
 
     void macOsTriggeredOnStartSchedulesSplitBoundaryAfterInitialTick()

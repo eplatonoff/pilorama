@@ -22,6 +22,7 @@ Pilorama.Timer {
     property real durationBound: 0
     property real _lastTickMs: 0
     property real _currentTickNowMs: 0
+    property bool _currentTickIsCatchUp: false
     property bool _pendingStartBoundarySchedule: false
 
     property bool splitMode: (globalTimer.queueRef ? globalTimer.queueRef.infiniteMode : false)
@@ -41,6 +42,7 @@ Pilorama.Timer {
         globalTimer._activeSegmentKey = -1;
         globalTimer.durationBound = 0;
         globalTimer._lastTickMs = 0;
+        globalTimer._currentTickIsCatchUp = false;
         globalTimer._pendingStartBoundarySchedule = false;
         globalTimer.windowRef.clockMode = "start";
         globalTimer.queueRef.clear();
@@ -77,7 +79,8 @@ Pilorama.Timer {
 
         if (globalTimer.running && globalTimer.remainingTime <= 0) {
             if (!globalTimer.notificationsRef.shouldSuppressCatchUpCompletion(
-                        globalTimer._currentTickNowMs)) {
+                        globalTimer._currentTickNowMs,
+                        globalTimer._currentTickIsCatchUp)) {
                 globalTimer.notificationsRef.sendWithSound();
             }
             stopAndClear();
@@ -111,6 +114,7 @@ Pilorama.Timer {
         } else {
             globalTimer.macOSControllerRef.endAppNapActivity();
             globalTimer._lastTickMs = 0;
+            globalTimer._currentTickIsCatchUp = false;
             globalTimer._pendingStartBoundarySchedule = false;
             globalTimer.notificationsRef.clearScheduled();
         }
@@ -127,8 +131,10 @@ Pilorama.Timer {
         globalTimer._lastTickMs = nowMs;
         if (actualElapsed < 0)
             actualElapsed = 0;
+        globalTimer._currentTickIsCatchUp = elapsedSecs > globalTimer.interval / 1000;
         if (actualElapsed === 0) {
             globalTimer.canvasRef.requestPaint();
+            globalTimer._currentTickIsCatchUp = false;
             globalTimer._currentTickNowMs = 0;
             return;
         }
@@ -165,7 +171,9 @@ Pilorama.Timer {
                     globalTimer._activeSegmentKey = segmentKey;
                     globalTimer.segmentTotalDuration = segmentTotalForItem(currentSegment);
                     if (!globalTimer.notificationsRef.shouldSuppressCatchUpSegment(
-                                currentSegment, nowMs)) {
+                                currentSegment,
+                                nowMs,
+                                globalTimer._currentTickIsCatchUp)) {
                         globalTimer.notificationsRef.sendFromItem(currentSegment);
                     }
                     globalTimer.notificationsRef.scheduleNextSegment();
@@ -188,6 +196,7 @@ Pilorama.Timer {
         }
 
         globalTimer.canvasRef.requestPaint();
+        globalTimer._currentTickIsCatchUp = false;
         globalTimer._currentTickNowMs = 0;
     }
 }
