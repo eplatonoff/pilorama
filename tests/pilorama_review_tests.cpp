@@ -389,7 +389,19 @@ std::unique_ptr<QObject> createTimer(TimerFixture &fixture)
         qFatal("%s", qPrintable(errors.join('\n')));
     }
 
-    QObject *object = component.create(context);
+    const QVariantMap initialProperties{
+        {QStringLiteral("notificationsRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.notifications))},
+        {QStringLiteral("queueRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.queue))},
+        {QStringLiteral("preferencesRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.preferences))},
+        {QStringLiteral("windowRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.window))},
+        {QStringLiteral("mouseAreaRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.mouseArea))},
+        {QStringLiteral("sequenceRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.sequence))},
+        {QStringLiteral("canvasRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.canvas))},
+        {QStringLiteral("timeRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.time))},
+        {QStringLiteral("macOSControllerRef"), QVariant::fromValue(static_cast<QObject *>(&fixture.macOSController))},
+    };
+
+    QObject *object = component.createWithInitialProperties(initialProperties, context);
     if (!object) {
         QStringList errors;
         const auto errorList = component.errors();
@@ -437,6 +449,10 @@ std::unique_ptr<QObject> createNotificationSystem(NotificationFixture &fixture)
 
 } // namespace
 
+#ifdef __APPLE__
+std::unique_ptr<QObject> createMacOsReviewMacOSTests();
+#endif
+
 class PiloramaReviewTests final : public QObject
 {
     Q_OBJECT
@@ -480,6 +496,24 @@ private slots:
         QCOMPARE(fixture.notifications.sendFromItemCalls, 1);
         QCOMPARE(fixture.notifications.lastItem.value(QStringLiteral("id")).toInt(), 1);
         QCOMPARE(fixture.notifications.scheduleCalls, 2);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
+    }
+
+    void longSleepCatchUpUsesFullElapsedWallClockTime()
+    {
+        TimerFixture fixture;
+        fixture.timer = createTimer(fixture);
+        fixture.timer->setProperty("remainingTime", 36000.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        fixture.timer->setProperty("_lastTickMs",
+                                   QDateTime::currentMSecsSinceEpoch() - 25200.0 * 1000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 1)));
+
+        const double remainingTime = fixture.timer->property("remainingTime").toDouble();
+        QVERIFY(qAbs(remainingTime - 10800.0) < 2.0);
 
         QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
     }
@@ -561,8 +595,14 @@ private slots:
 int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
+    int status = 0;
     PiloramaReviewTests tests;
-    return QTest::qExec(&tests, argc, argv);
+    status |= QTest::qExec(&tests, argc, argv);
+#ifdef __APPLE__
+    std::unique_ptr<QObject> macOsTests = createMacOsReviewMacOSTests();
+    status |= QTest::qExec(macOsTests.get(), argc, argv);
+#endif
+    return status;
 }
 
 #include "pilorama_review_tests.moc"

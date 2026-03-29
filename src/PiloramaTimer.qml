@@ -5,6 +5,16 @@ import Pilorama 1.0 as Pilorama
 Pilorama.Timer {
     id: globalTimer
 
+    property var notificationsRef
+    property var queueRef
+    property var preferencesRef
+    property var windowRef
+    property var mouseAreaRef
+    property var sequenceRef
+    property var canvasRef
+    property var timeRef
+    property var macOSControllerRef
+
     property real remainingTime: 0 // ignored in the infinite mode
     property real segmentTotalDuration: 0
     property real segmentRemainingTime: 0
@@ -12,7 +22,9 @@ Pilorama.Timer {
     property real durationBound: 0
     property real _lastTickMs: 0
 
-    property bool splitMode: pomodoroQueue.infiniteMode || preferences.splitToSequence
+    property bool splitMode: (globalTimer.queueRef ? globalTimer.queueRef.infiniteMode : false)
+                             || (globalTimer.preferencesRef
+                                 ? globalTimer.preferencesRef.splitToSequence : false)
 
     property real timerLimit: 6 * 3600
 
@@ -20,19 +32,19 @@ Pilorama.Timer {
     triggeredOnStart: true
 
     function stopAndClear() {
-        stop();
-        remainingTime = 0;
-        segmentRemainingTime = 0;
-        segmentTotalDuration = 0;
-        _activeSegmentKey = -1;
-        durationBound = 0;
-        _lastTickMs = 0;
-        window.clockMode = "start";
-        pomodoroQueue.clear();
-        mouseArea._prevAngle = 0;
-        mouseArea._totalRotatedSecs = 0;
-        sequence.setCurrentItem(-1);
-        notifications.clearScheduled();
+        globalTimer.stop();
+        globalTimer.remainingTime = 0;
+        globalTimer.segmentRemainingTime = 0;
+        globalTimer.segmentTotalDuration = 0;
+        globalTimer._activeSegmentKey = -1;
+        globalTimer.durationBound = 0;
+        globalTimer._lastTickMs = 0;
+        globalTimer.windowRef.clockMode = "start";
+        globalTimer.queueRef.clear();
+        globalTimer.mouseAreaRef._prevAngle = 0;
+        globalTimer.mouseAreaRef._totalRotatedSecs = 0;
+        globalTimer.sequenceRef.setCurrentItem(-1);
+        globalTimer.notificationsRef.clearScheduled();
     }
 
     function segmentTotalForItem(item) {
@@ -52,105 +64,104 @@ Pilorama.Timer {
     }
 
     onRemainingTimeChanged: {
-        window.checkClockMode();
-        time.updateTime();
-        canvas.requestPaint();
+        globalTimer.windowRef.checkClockMode();
+        globalTimer.timeRef.updateTime();
+        globalTimer.canvasRef.requestPaint();
 
-        if (!running && !splitMode) {
-            segmentTotalDuration = remainingTime;
+        if (!globalTimer.running && !globalTimer.splitMode) {
+            globalTimer.segmentTotalDuration = globalTimer.remainingTime;
         }
 
-        if (running && remainingTime <= 0) {
-            notifications.sendWithSound();
+        if (globalTimer.running && globalTimer.remainingTime <= 0) {
+            globalTimer.notificationsRef.sendWithSound();
             stopAndClear();
         }
     }
     onRunningChanged: {
-        canvas.requestPaint();
-        if (running) {
-            MacOSController.beginAppNapActivity();
-            _lastTickMs = Date.now();
-            durationBound = remainingTime;
-            if (splitMode) {
-                const currentSegment = pomodoroQueue.first();
+        globalTimer.canvasRef.requestPaint();
+        if (globalTimer.running) {
+            globalTimer.macOSControllerRef.beginAppNapActivity();
+            globalTimer._lastTickMs = Date.now();
+            globalTimer.durationBound = globalTimer.remainingTime;
+            if (globalTimer.splitMode) {
+                const currentSegment = globalTimer.queueRef.first();
                 if (currentSegment) {
-                    _activeSegmentKey = segmentKeyForItem(currentSegment);
-                    segmentRemainingTime = currentSegment.duration;
-                    segmentTotalDuration = segmentTotalForItem(currentSegment);
+                    globalTimer._activeSegmentKey = segmentKeyForItem(currentSegment);
+                    globalTimer.segmentRemainingTime = currentSegment.duration;
+                    globalTimer.segmentTotalDuration = segmentTotalForItem(currentSegment);
                 } else {
-                    _activeSegmentKey = -1;
-                    segmentRemainingTime = 0;
-                    segmentTotalDuration = 0;
+                    globalTimer._activeSegmentKey = -1;
+                    globalTimer.segmentRemainingTime = 0;
+                    globalTimer.segmentTotalDuration = 0;
                 }
             } else {
-                segmentRemainingTime = remainingTime;
-                segmentTotalDuration = remainingTime;
+                globalTimer.segmentRemainingTime = globalTimer.remainingTime;
+                globalTimer.segmentTotalDuration = globalTimer.remainingTime;
             }
-            notifications.scheduleNextSegment();
+            globalTimer.notificationsRef.scheduleNextSegment();
         } else {
-            MacOSController.endAppNapActivity();
-            _lastTickMs = 0;
-            notifications.clearScheduled();
+            globalTimer.macOSControllerRef.endAppNapActivity();
+            globalTimer._lastTickMs = 0;
+            globalTimer.notificationsRef.clearScheduled();
         }
     }
     onTriggered: elapsedSecs => {
         const nowMs = Date.now();
         let actualElapsed = elapsedSecs;
-        if (_lastTickMs > 0) {
-            actualElapsed = (nowMs - _lastTickMs) / 1000.0;
+        if (globalTimer._lastTickMs > 0) {
+            actualElapsed = (nowMs - globalTimer._lastTickMs) / 1000.0;
         }
-        _lastTickMs = nowMs;
+        globalTimer._lastTickMs = nowMs;
         if (actualElapsed < 0)
             actualElapsed = 0;
-        if (actualElapsed > timerLimit)
-            actualElapsed = timerLimit;
         if (actualElapsed === 0) {
-            canvas.requestPaint();
+            globalTimer.canvasRef.requestPaint();
             return;
         }
 
-        if (!pomodoroQueue.infiniteMode) {
+        if (!globalTimer.queueRef.infiniteMode) {
             // Keep remainingTime authoritative for finite timers, including split mode.
             // In infinite mode, remainingTime is ignored.
-            remainingTime -= actualElapsed;
+            globalTimer.remainingTime -= actualElapsed;
         }
 
-        if (splitMode) {
-            const activeItem = pomodoroQueue.first();
+        if (globalTimer.splitMode) {
+            const activeItem = globalTimer.queueRef.first();
             if (activeItem) {
-                sequence.setCurrentItem(activeItem.id);
+                globalTimer.sequenceRef.setCurrentItem(activeItem.id);
             } else {
-                sequence.setCurrentItem();
+                globalTimer.sequenceRef.setCurrentItem();
             }
         } else {
-            sequence.setCurrentItem();
+            globalTimer.sequenceRef.setCurrentItem();
         }
 
-        pomodoroQueue.drainTime(actualElapsed);
+        globalTimer.queueRef.drainTime(actualElapsed);
 
-        const currentSegment = pomodoroQueue.first();
+        const currentSegment = globalTimer.queueRef.first();
 
         if (currentSegment) {
             const segmentKey = segmentKeyForItem(currentSegment);
-            const segmentChanged = splitMode && _activeSegmentKey !== segmentKey;
-            segmentRemainingTime = currentSegment.duration;
+            const segmentChanged = globalTimer.splitMode
+                                   && globalTimer._activeSegmentKey !== segmentKey;
+            globalTimer.segmentRemainingTime = currentSegment.duration;
 
-            if (splitMode) {
+            if (globalTimer.splitMode) {
                 if (segmentChanged) {
-                    _activeSegmentKey = segmentKey;
-                    segmentTotalDuration = segmentTotalForItem(currentSegment);
-                    notifications.sendFromItem(currentSegment);
-                    notifications.scheduleNextSegment();
+                    globalTimer._activeSegmentKey = segmentKey;
+                    globalTimer.segmentTotalDuration = segmentTotalForItem(currentSegment);
+                    globalTimer.notificationsRef.sendFromItem(currentSegment);
+                    globalTimer.notificationsRef.scheduleNextSegment();
                 }
             }
         } else {
-            segmentRemainingTime = 0;
-            if (splitMode) {
-                _activeSegmentKey = -1;
-                segmentTotalDuration = 0;
+            globalTimer.segmentRemainingTime = 0;
+            if (globalTimer.splitMode) {
+                globalTimer._activeSegmentKey = -1;
+                globalTimer.segmentTotalDuration = 0;
             }
         }
 
-        canvas.requestPaint();
+        globalTimer.canvasRef.requestPaint();
     }
 }

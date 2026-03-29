@@ -212,6 +212,15 @@ ApplicationWindow {
 
     PiloramaTimer {
         id: globalTimer
+        notificationsRef: notifications
+        queueRef: pomodoroQueue
+        preferencesRef: preferences
+        windowRef: window
+        mouseAreaRef: mouseArea
+        sequenceRef: sequence
+        canvasRef: canvas
+        timeRef: time
+        macOSControllerRef: window.macOSControllerRef
     }
 
     Clock {

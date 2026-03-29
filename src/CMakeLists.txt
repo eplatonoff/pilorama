@@ -112,7 +112,10 @@ if(BUILD_TESTING)
     )
 
     if(APPLE)
-        list(APPEND TEST_SOURCES mac/utility.mm)
+        list(APPEND TEST_SOURCES
+                mac/utility.mm
+                ../tests/pilorama_review_macos_tests.mm
+        )
     endif()
 
     qt_add_executable(PiloramaReviewTests ${TEST_SOURCES})

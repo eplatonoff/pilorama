@@ -1,3 +1,6 @@
+#include <QGuiApplication>
+#include <QWindow>
+
 #import <Foundation/Foundation.h>
 #import <Foundation/NSProcessInfo.h>
 #import <AppKit/AppKit.h>
@@ -6,6 +9,24 @@
 static NSString *const kPiloramaScheduledNotificationId = @"pilorama.scheduled";
 static id appNapActivity = nil;
 static id notificationDelegate = nil;
+
+static void pilorama_reopen_window(void)
+{
+    const auto windows = QGuiApplication::topLevelWindows();
+    for (QWindow *window : windows) {
+        if (!window)
+            continue;
+        window->show();
+        window->raise();
+        window->requestActivate();
+        return;
+    }
+
+    for (NSWindow *window in [NSApp windows]) {
+        [window makeKeyAndOrderFront:nil];
+        break;
+    }
+}
 
 @interface PiloramaNotificationDelegate : NSObject <UNUserNotificationCenterDelegate>
 @end
@@ -18,12 +39,7 @@ static id notificationDelegate = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSApp unhide:nil];
         [NSApp activateIgnoringOtherApps:YES];
-        for (NSWindow *window in [NSApp windows]) {
-            if ([window isVisible]) {
-                [window makeKeyAndOrderFront:nil];
-                break;
-            }
-        }
+        pilorama_reopen_window();
     });
 
     if (completionHandler)
