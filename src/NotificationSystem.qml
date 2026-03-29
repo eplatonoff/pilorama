@@ -92,6 +92,10 @@ QtObject {
 
     function sendFromItem(item) {
         sendWithSound(masterModelRef.get(item.id).name)
+        popUpForSegmentStart()
+    }
+
+    function popUpForSegmentStart() {
         if (settings.showOnSegmentStart)
             trayRef.popUp()
     }
@@ -178,8 +182,6 @@ QtObject {
     }
 
     function shouldSuppressCatchUpBoundary(kind, key, nowMs, isCatchUp = true) {
-        if (!isCatchUp)
-            return false
         if (Qt.platform.os !== "osx")
             return false
         if (scheduledBoundaryKind !== kind)

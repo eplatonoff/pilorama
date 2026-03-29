@@ -772,7 +772,7 @@ Clock {
         QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
     }
 
-    void macOsOrdinaryOnTimeCompletionStillUsesLocalFallbackAlert()
+    void macOsOrdinaryOnTimeCompletionDoesNotDuplicateScheduledNotification()
     {
         IntegratedNotificationTimerFixture fixture;
         fixture.timer = createTimer(fixture);
@@ -792,8 +792,7 @@ Clock {
         fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 1000.0);
         QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 1)));
 
-        QCOMPARE(fixture.tray.sendCalls, 1);
-        QCOMPARE(fixture.tray.lastName, QString());
+        QCOMPARE(fixture.tray.sendCalls, 0);
         QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
     }
 
@@ -972,7 +971,7 @@ Clock {
         QCOMPARE(fixture.macOSController.scheduledSeconds, 30.0);
     }
 
-    void macOsOrdinaryOnTimeSegmentBoundaryKeepsPopupSideEffect()
+    void macOsOrdinaryOnTimeSegmentBoundaryKeepsPopupWithoutDuplicateNotification()
     {
         IntegratedNotificationTimerFixture fixture;
         fixture.preferences.splitToSequence = true;
@@ -1004,8 +1003,7 @@ Clock {
         fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 1000.0);
         QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 1)));
 
-        QCOMPARE(fixture.tray.sendCalls, 1);
-        QCOMPARE(fixture.tray.lastName, QStringLiteral("Break"));
+        QCOMPARE(fixture.tray.sendCalls, 0);
         QCOMPARE(fixture.tray.popUpCalls, 1);
         QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
     }

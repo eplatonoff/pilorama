@@ -175,6 +175,8 @@ Pilorama.Timer {
                                 nowMs,
                                 globalTimer._currentTickIsCatchUp)) {
                         globalTimer.notificationsRef.sendFromItem(currentSegment);
+                    } else {
+                        globalTimer.notificationsRef.popUpForSegmentStart();
                     }
                     globalTimer.notificationsRef.scheduleNextSegment();
                     didScheduleBoundary = true;
