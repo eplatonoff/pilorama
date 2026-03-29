@@ -13,7 +13,6 @@ QtObject {
     property var clockRef
     property var macOSControllerRef
     readonly property bool soundMuted: settings ? settings.soundMuted : false
-    readonly property real scheduledNotificationGraceMs: 1500
     property real scheduledNotificationAtMs: -1
     property string scheduledBoundaryKind: ""
     property int scheduledBoundaryKey: -1
@@ -185,7 +184,7 @@ QtObject {
             return false
         if (scheduledNotificationAtMs < 0 || nowMs <= 0)
             return false
-        return nowMs - scheduledNotificationAtMs >= scheduledNotificationGraceMs
+        return nowMs >= scheduledNotificationAtMs
     }
 
     function scheduledCompletionDuration(item) {

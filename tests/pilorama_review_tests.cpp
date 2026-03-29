@@ -740,6 +740,31 @@ Clock {
         QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
     }
 
+    void macOsOnTimeCompletionDoesNotDuplicateScheduledNotification()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 120.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+        fixture.notificationSystem->setProperty("scheduledNotificationAtMs",
+                                                QDateTime::currentMSecsSinceEpoch() - 100.0);
+        fixture.timer->setProperty("_lastTickMs",
+                                   QDateTime::currentMSecsSinceEpoch() - 120000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 120)));
+
+        QCOMPARE(fixture.tray.sendCalls, 0);
+        QVERIFY(fixture.macOSController.clearScheduledCalls >= 1);
+    }
+
     void macOsCatchUpCompletionFallsBackWhenSchedulingFails()
     {
         IntegratedNotificationTimerFixture fixture;
@@ -872,6 +897,43 @@ Clock {
         QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
         QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
         QCOMPARE(fixture.macOSController.scheduledSeconds, 25.0);
+    }
+
+    void macOsOnTimeSegmentBoundaryDoesNotDuplicateScheduledNotification()
+    {
+        IntegratedNotificationTimerFixture fixture;
+        fixture.preferences.splitToSequence = true;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 60.0),
+            masterItem(1, QStringLiteral("Break"), 30.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 60.0, 60.0, 10},
+            Segment{1, 30.0, 30.0, 11},
+        });
+
+        fixture.timer = createTimer(fixture);
+        fixture.notificationSystem = createNotificationSystem(fixture);
+        fixture.timer->setProperty("notificationsRef",
+                                   QVariant::fromValue(fixture.notificationSystem.get()));
+        fixture.timer->setProperty("remainingTime", 90.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+        fixture.notificationSystem->setProperty("scheduledNotificationAtMs",
+                                                QDateTime::currentMSecsSinceEpoch() - 100.0);
+        fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 60000.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 60)));
+
+        QCOMPARE(fixture.tray.sendCalls, 0);
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Time ran out"));
+        QCOMPARE(fixture.macOSController.scheduledSeconds, 30.0);
     }
 
     void macOsTriggeredOnStartSchedulesSplitBoundaryAfterInitialTick()
