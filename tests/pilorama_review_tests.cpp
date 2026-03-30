@@ -353,6 +353,14 @@ public:
     {
         return QStringLiteral("icon://notification");
     }
+
+    Q_INVOKABLE QString notificationIconURL(const QVariant &item) const
+    {
+        const QVariantMap itemMap = item.toMap();
+        if (!itemMap.isEmpty())
+            return QStringLiteral("icon://notification/%1").arg(itemMap.value(QStringLiteral("id")).toInt());
+        return notificationIconURL();
+    }
 };
 
 class MockMasterModel final : public QObject
@@ -1211,7 +1219,7 @@ Clock {
         QCOMPARE(fixture.macOSController.scheduledTitle, QStringLiteral("Break started"));
         QCOMPARE(fixture.macOSController.scheduledMessage,
                  QStringLiteral("Duration: 2 min.  Ends at t+420"));
-        QCOMPARE(fixture.macOSController.scheduledIconPath, QStringLiteral("icon://notification"));
+        QCOMPARE(fixture.macOSController.scheduledIconPath, QStringLiteral("icon://notification/1"));
         QCOMPARE(fixture.macOSController.scheduledSeconds, 300.0);
         QCOMPARE(fixture.clock.lastTimeAfterSecs, 420.0);
     }

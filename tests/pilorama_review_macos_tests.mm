@@ -5,6 +5,7 @@
 #include <QScreen>
 #include <QWindow>
 
+#import <AppKit/AppKit.h>
 #import <objc/runtime.h>
 #import <UserNotifications/UserNotifications.h>
 
@@ -15,6 +16,7 @@ bool mac_schedule_notification(const char *title, const char *message,
                                const char *icon, double seconds,
                                void (*completionCallback)(void *context, bool success),
                                void *context, bool playSound = false);
+void mac_set_show_in_dock_preference(bool showInDock);
 void mac_clear_scheduled_notifications(void);
 void mac_clear_stale_scheduled_notifications(void);
 
@@ -550,6 +552,46 @@ private slots:
 
         QVERIFY(completionCalled);
         QTRY_VERIFY(window.isVisible());
+    }
+
+    void notificationClickRestoresDockActivationPolicyWhenPreferenceEnabled()
+    {
+        const QString platformName = QGuiApplication::platformName();
+        if (QGuiApplication::screens().isEmpty()
+            || platformName == QStringLiteral("offscreen")
+            || platformName == QStringLiteral("minimal")) {
+            QSKIP("Requires a window-capable GUI environment");
+        }
+
+        const NSApplicationActivationPolicy previousPolicy = NSApp.activationPolicy;
+        mac_set_show_in_dock_preference(true);
+        [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+
+        QWindow window;
+        window.setTitle(QStringLiteral("Pilorama notification Dock test"));
+        window.show();
+        QTRY_VERIFY(window.isVisible());
+
+        window.hide();
+        QTRY_VERIFY(!window.isVisible());
+
+        auto *delegate = [PiloramaNotificationDelegate new];
+        __block bool completionCalled = false;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+        [delegate userNotificationCenter:nil
+             didReceiveNotificationResponse:nil
+                      withCompletionHandler:^{
+                          completionCalled = true;
+                      }];
+#pragma clang diagnostic pop
+
+        QVERIFY(completionCalled);
+        QTRY_COMPARE(NSApp.activationPolicy, NSApplicationActivationPolicyRegular);
+        QTRY_VERIFY(window.isVisible());
+
+        [NSApp setActivationPolicy:previousPolicy];
+        mac_set_show_in_dock_preference(false);
     }
 };
 

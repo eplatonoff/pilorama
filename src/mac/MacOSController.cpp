@@ -48,6 +48,7 @@ static QString prepareIconFile(const QString &iconPath, const QQmlEngine *engine
 #if TARGET_OS_MAC
 extern void mac_show_in_dock();
 extern void mac_hide_from_dock();
+extern void mac_set_show_in_dock_preference(bool showInDock);
 extern void mac_begin_app_nap_activity();
 extern void mac_end_app_nap_activity();
 extern void mac_request_notification_permission();
@@ -113,6 +114,19 @@ void MacOSController::hideFromDock()
 #if TARGET_OS_MAC
     mac_hide_from_dock();
 #endif /* TARGET_OS_MAC */
+#endif /* __APPLE__ */
+}
+
+void MacOSController::setShowInDockPreference(bool showInDock)
+{
+#ifdef __APPLE__
+#if TARGET_OS_MAC
+    mac_set_show_in_dock_preference(showInDock);
+#else
+    Q_UNUSED(showInDock)
+#endif /* TARGET_OS_MAC */
+#else
+    Q_UNUSED(showInDock)
 #endif /* __APPLE__ */
 }
 

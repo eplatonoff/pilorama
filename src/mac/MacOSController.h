@@ -19,6 +19,7 @@ public slots:
     static void endAppNapActivity();
     static void showInDock();
     static void hideFromDock();
+    static void setShowInDockPreference(bool showInDock);
     static void requestNotificationPermission();
 
     static void clearScheduledNotifications();

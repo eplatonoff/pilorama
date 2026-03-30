@@ -17,7 +17,10 @@ static std::atomic<int> piloramaNotificationAuthorizationStatus{
 };
 static std::atomic<unsigned long long> piloramaNextScheduledNotificationToken{0};
 static std::atomic<unsigned long long> piloramaCurrentScheduledNotificationToken{0};
+static std::atomic<bool> piloramaShowInDockPreference{false};
 using PiloramaScheduleNotificationCallback = void (*)(void *context, bool success);
+
+void mac_show_in_dock(void);
 
 static NSString *pilorama_scheduled_notification_identifier(unsigned long long token)
 {
@@ -120,6 +123,8 @@ static void pilorama_reopen_window(void)
           withCompletionHandler:(void (^)(void))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (piloramaShowInDockPreference.load(std::memory_order_relaxed))
+            mac_show_in_dock();
         [NSApp unhide:nil];
         [NSApp activateIgnoringOtherApps:YES];
         pilorama_reopen_window();
@@ -219,6 +224,11 @@ void mac_hide_from_dock(void) {
 
 void mac_show_in_dock(void) {
     [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+}
+
+void mac_set_show_in_dock_preference(bool showInDock)
+{
+    piloramaShowInDockPreference.store(showInDock, std::memory_order_relaxed);
 }
 
 void mac_request_notification_permission(void)

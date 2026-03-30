@@ -45,6 +45,7 @@ ApplicationWindow {
     }
 
     function updateDockVisibility() {
+        macOSControllerRef.setShowInDockPreference(appSettings.showInDock)
         if (appSettings.showInDock) {
             macOSControllerRef.showInDock()
         }

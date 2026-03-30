@@ -166,10 +166,10 @@ QtObject {
         clearPendingBoundary()
     }
 
-    function scheduleMacBoundary(kind, seconds, title, message, key = -1) {
+    function scheduleMacBoundary(kind, seconds, title, message, iconPath, key = -1) {
         const requestId = macOSControllerRef.scheduleNotification(title,
                                                                   message,
-                                                                  trayRef.notificationIconURL(),
+                                                                  iconPath,
                                                                   seconds,
                                                                   !soundMuted)
         if (requestId > 0)
@@ -252,7 +252,8 @@ QtObject {
             scheduleMacBoundary("completion",
                                 remainingSecs,
                                 "Time ran out",
-                                "Duration: " + completionDuration / 60 + " min")
+                                "Duration: " + completionDuration / 60 + " min",
+                                trayRef.notificationIconURL())
             return
         }
 
@@ -267,7 +268,8 @@ QtObject {
             scheduleMacBoundary("completion",
                                 completionSecs,
                                 "Time ran out",
-                                "Duration: " + completionDuration / 60 + " min")
+                                "Duration: " + completionDuration / 60 + " min",
+                                trayRef.notificationIconURL())
             return
         }
 
@@ -279,6 +281,7 @@ QtObject {
                             secs,
                             nextItem.name + " started",
                             message,
+                            trayRef.notificationIconURL(next),
                             next.key !== undefined ? next.key : -1)
     }
 }
