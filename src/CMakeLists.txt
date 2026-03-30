@@ -12,6 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt6 REQUIRED COMPONENTS
         Core
         Quick
+        Qml
         Widgets
         Svg
         Xml
@@ -96,5 +97,47 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         Qt::Svg
         Qt::Xml
         PRIVATE Qt6::Core
+        PRIVATE Qt6::Qml
         PRIVATE Qt6::Multimedia
 )
+
+include(CTest)
+
+if(BUILD_TESTING)
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+
+    set(TEST_SOURCES
+            ../tests/pilorama_review_tests.cpp
+            piloramatimer.cpp
+            mac/MacOSController.cpp
+    )
+
+    if(APPLE)
+        list(APPEND TEST_SOURCES
+                mac/utility.mm
+                ../tests/pilorama_review_macos_tests.mm
+        )
+    endif()
+
+    qt_add_executable(PiloramaReviewTests ${TEST_SOURCES})
+
+    target_compile_definitions(PiloramaReviewTests PRIVATE PILORAMA_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
+    target_include_directories(PiloramaReviewTests PRIVATE ${PROJECT_SOURCE_DIR})
+
+    target_link_libraries(PiloramaReviewTests PRIVATE
+            Qt6::Core
+            Qt6::Qml
+            Qt6::Quick
+            Qt6::Test
+    )
+
+    if(APPLE)
+        target_link_options(PiloramaReviewTests PRIVATE
+                "SHELL:-framework Foundation"
+                "SHELL:-framework AppKit"
+                "SHELL:-framework UserNotifications"
+        )
+    endif()
+
+    add_test(NAME PiloramaReviewTests COMMAND PiloramaReviewTests)
+endif()

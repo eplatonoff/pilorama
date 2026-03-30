@@ -3,22 +3,23 @@ import QtQuick
 Item {
     id: clock
 
+    property var timerRef
     property string currentTime: ''
     property string notificationTime: ''
 
-    property real duration: globalTimer.remainingTime
-    property real splitDuration: globalTimer.segmentRemainingTime
+    property real duration: timerRef ? timerRef.remainingTime : 0
+    property real splitDuration: timerRef ? timerRef.segmentRemainingTime : 0
 
-    onDurationChanged: resetClock()
-    onSplitDurationChanged: resetClock()
+    onDurationChanged: clock.resetClock()
+    onSplitDurationChanged: clock.resetClock()
 
     Timer {
         id: pauseClockUpdater
         interval: 60000
         repeat: true
         triggeredOnStart: true
-        onTriggered: resetClock()
-        running: !globalTimer.running && getDuration()
+        onTriggered: clock.resetClock()
+        running: clock.timerRef && !clock.timerRef.running && clock.getDuration()
     }
 
     function pad(value){
@@ -27,10 +28,10 @@ Item {
     }
 
     function getDuration(){
-        if (!globalTimer.splitMode) {
+        if (!timerRef || !timerRef.splitMode) {
             return duration
         }
-        if (globalTimer.running && splitDuration > 0) {
+        if (timerRef.running && splitDuration > 0) {
             return splitDuration
         }
         return duration
@@ -49,14 +50,30 @@ Item {
     }
 
     function getNotificationTime() {
-
-        let _t = getTime().h * 3600 + getTime().min * 60 + getTime().sec
+        const now = getTime()
+        let _t = now.h * 3600 + now.min * 60 + now.sec
         let t = _t + getDuration()
 
         t = t >= 86400 ? t % 86400 : t
 
         let h = Math.floor( t / 3600 )
         let m = Math.floor( t / 60 ) - h * 60
+        let s = t - (h * 3600 + m * 60)
+
+        let resulting = pad(h) + ":" + pad(m)
+
+        return {'h': h, 'min': m, 'sec': s, 'clock': resulting}
+    }
+
+    function getTimeAfter(secs) {
+        const now = getTime()
+        let _t = now.h * 3600 + now.min * 60 + now.sec
+        let t = _t + secs
+
+        t = t >= 86400 ? t % 86400 : t
+
+        let h = Math.floor(t / 3600)
+        let m = Math.floor(t / 60) - h * 60
         let s = t - (h * 3600 + m * 60)
 
         let resulting = pad(h) + ":" + pad(m)

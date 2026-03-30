@@ -49,3 +49,6 @@ build
 Pilorama
 Pilorama.app
 Pilorama.zip
+
+# ralphex progress logs
+.ralphex/progress/

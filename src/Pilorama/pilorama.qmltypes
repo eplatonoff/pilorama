@@ -1,0 +1,52 @@
+import QtQuick.tooling 1.2
+
+// Tooling metadata for the runtime-registered Pilorama.Timer type.
+Module {
+    Component {
+        file: "../piloramatimer.h"
+        lineNumber: 6
+        name: "Timer"
+        accessSemantics: "reference"
+        prototype: "QObject"
+        exports: ["Pilorama/Timer 1.0"]
+        exportMetaObjectRevisions: [256]
+
+        Property {
+            name: "interval"
+            type: "int"
+        }
+
+        Property {
+            name: "running"
+            type: "bool"
+            isReadonly: true
+        }
+
+        Property {
+            name: "triggeredOnStart"
+            type: "bool"
+        }
+
+        Method {
+            name: "start"
+        }
+
+        Method {
+            name: "stop"
+        }
+
+        Signal {
+            name: "runningChanged"
+            Parameter { name: "running"; type: "bool" }
+        }
+
+        Signal {
+            name: "triggered"
+            Parameter { name: "elapsedSecs"; type: "int" }
+        }
+
+        Signal {
+            name: "triggeredOnStartChanged"
+        }
+    }
+}

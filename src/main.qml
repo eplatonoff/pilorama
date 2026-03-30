@@ -4,12 +4,12 @@ import QtQuick.Controls
 import QtCore
 
 import "Components"
-import "Components/Sequence"
 import "Components/mac"
 
 ApplicationWindow {
     id: window
     visible: true
+    required property var macOSControllerRef
 
     x: 100
     y: 100
@@ -45,11 +45,12 @@ ApplicationWindow {
     }
 
     function updateDockVisibility() {
+        macOSControllerRef.setShowInDockPreference(appSettings.showInDock)
         if (appSettings.showInDock) {
-            MacOSController.showInDock()
+            macOSControllerRef.showInDock()
         }
         else {
-            MacOSController.hideFromDock()
+            macOSControllerRef.hideFromDock()
             window.raise()
             window.show()
         }
@@ -84,7 +85,7 @@ ApplicationWindow {
             if (Qt.platform.os === "osx") {
                 window.hide();
                 if (appSettings.showInDock) {
-                    MacOSController.hideFromDock()
+                    macOSControllerRef.hideFromDock()
                 }
             }
             else {
@@ -143,7 +144,7 @@ ApplicationWindow {
 
         onDarkModeChanged: { canvas.requestPaint(); }
         onSplitToSequenceChanged: { canvas.requestPaint(); }
-        onShowInDockChanged: { updateDockVisibility(); }
+        onShowInDockChanged: { window.updateDockVisibility(); }
     }
 
     SoundSettings {
@@ -202,14 +203,30 @@ ApplicationWindow {
         id: notifications
         settings: appSettings
         soundSettings: soundSettings
+        trayRef: tray
+        masterModelRef: masterModel
+        timerRef: globalTimer
+        queueRef: pomodoroQueue
+        clockRef: clock
+        macOSControllerRef: window.macOSControllerRef
     }
 
     PiloramaTimer {
         id: globalTimer
+        notificationsRef: notifications
+        queueRef: pomodoroQueue
+        preferencesRef: preferences
+        windowRef: window
+        mouseAreaRef: mouseArea
+        sequenceRef: sequence
+        canvasRef: canvas
+        timeRef: time
+        macOSControllerRef: window.macOSControllerRef
     }
 
     Clock {
         id: clock
+        timerRef: globalTimer
     }
 
     FileDialogue {
@@ -330,6 +347,14 @@ ApplicationWindow {
 
             TimerScreen {
                 id: digitalClock
+                windowRef: window
+                timerRef: globalTimer
+                clockRef: clock
+                colorsRef: colors
+                fontRef: localFont
+                queueRef: pomodoroQueue
+                notificationsRef: notifications
+                settingsRef: appSettings
             }
 
             Icon {

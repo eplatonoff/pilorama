@@ -87,9 +87,17 @@ SystemTrayIcon {
         return "image://tray_icon_provider/" + color + "_" + placeholderColor + "_" + renderSecs;
     }
 
-    function notificationIconURL() {
-        const color = ((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0)
-            ? colors.getThemeColor(masterModel.get(pomodoroQueue.first().id).color)
+    function notificationIconURL(item = undefined) {
+        const iconItem = (item && item.id !== undefined)
+            ? item
+            : (((pomodoroQueue.infiniteMode || preferences.splitToSequence) && pomodoroQueue.count > 0)
+                ? pomodoroQueue.first()
+                : undefined)
+        const iconModelItem = (iconItem && iconItem.id !== undefined)
+            ? masterModel.get(iconItem.id)
+            : null
+        const color = (iconModelItem && iconModelItem.color)
+            ? colors.getThemeColor(iconModelItem.color)
             : colors.getThemeColor("dark");
         return "image://notification_dot_provider/" + color;
     }

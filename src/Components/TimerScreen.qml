@@ -2,11 +2,20 @@ import QtQuick
 
 Item {
     id: timer
-    visible: window.clockMode === "pomodoro" || window.clockMode === "timer"
+    visible: windowRef.clockMode === "pomodoro" || windowRef.clockMode === "timer"
     width: 150
     height: 150
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
+
+    property var windowRef
+    property var timerRef
+    property var clockRef
+    property var colorsRef
+    property var fontRef
+    property var queueRef
+    property var notificationsRef
+    property var settingsRef
 
     function pad(value){
         if (value < 10) {return "0" + value
@@ -14,13 +23,13 @@ Item {
     }
 
     function getDuration(){
-        if (globalTimer.splitMode) {
-            if (globalTimer.running && globalTimer.segmentRemainingTime > 0) {
-                return globalTimer.segmentRemainingTime
+        if (timerRef.splitMode) {
+            if (timerRef.running && timerRef.segmentRemainingTime > 0) {
+                return timerRef.segmentRemainingTime
             }
-            return globalTimer.remainingTime
+            return timerRef.remainingTime
         }
-        return globalTimer.remainingTime
+        return timerRef.remainingTime
     }
 
     function count(duration){
@@ -80,17 +89,17 @@ Item {
             id: digitalTime
             width: 45
             height: 15
-            text: clock.notificationTime
+            text: timer.clockRef.notificationTime
             anchors.left: bellIcon.right
             anchors.leftMargin: 2
             anchors.verticalCenter: parent.verticalCenter
 
-            font.family: localFont.name
+            font.family: timer.fontRef.name
             font.pixelSize: 14
 
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            color: colors.getColor("mid")
+            color: timer.colorsRef.getColor("mid")
 
             renderType: Text.NativeRendering
         }
@@ -109,8 +118,8 @@ Item {
         Text {
             id: digitalSec
             width: 36
-            text: globalTimer.running || getDuration() > 0
-                  ? pad(count(getDuration())[2])
+            text: timer.timerRef.running || timer.getDuration() > 0
+                  ? timer.pad(timer.count(timer.getDuration())[2])
                   : "min";
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
@@ -119,7 +128,7 @@ Item {
             anchors.left: digitalMin.right
             anchors.leftMargin: 5
             font.pixelSize: 22
-            color: colors.getColor("dark")
+            color: timer.colorsRef.getColor("dark")
 
             renderType: Text.NativeRendering
 
@@ -128,14 +137,14 @@ Item {
         Text {
             id: digitalMin
             width: 50
-            text: pad(count(getDuration())[1])
+            text: timer.pad(timer.count(timer.getDuration())[1])
             anchors.verticalCenter: parent.verticalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
             anchors.left: digitalSeparator.right
             anchors.leftMargin: 0
             font.pixelSize: 44
-            color: colors.getColor("dark")
+            color: timer.colorsRef.getColor("dark")
 
             renderType: Text.NativeRendering
 
@@ -153,7 +162,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
-            color: colors.getColor("dark")
+            color: timer.colorsRef.getColor("dark")
 
             renderType: Text.NativeRendering
 
@@ -162,16 +171,16 @@ Item {
 
         Text {
             id: digitalHour
-            width: count(getDuration())[0] > 0 ? 35 : 0
-            text: count(getDuration())[0]
+            width: timer.count(timer.getDuration())[0] > 0 ? 35 : 0
+            text: timer.count(timer.getDuration())[0]
             anchors.left: parent.left
             anchors.leftMargin: 0
             anchors.verticalCenter: parent.verticalCenter
-            visible: count(getDuration())[0] > 0 ? true : false
+            visible: timer.count(timer.getDuration())[0] > 0
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignTop
             font.pixelSize: 44
-            color: colors.getColor("dark")
+            color: timer.colorsRef.getColor("dark")
 
             renderType: Text.NativeRendering
 
@@ -185,29 +194,29 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
-        splitMode: appSettings.showPauseUI
+        splitMode: timer.settingsRef.showPauseUI
         iconSize: 22
-        running: globalTimer.running
-        togglePulsing: !globalTimer.running
+        running: timer.timerRef.running
+        togglePulsing: !timer.timerRef.running
 
         onStartResetClicked: {
            reset();
         }
 
         onToggleClicked: {
-            if (globalTimer.running) {
-                globalTimer.stop()
+            if (timer.timerRef.running) {
+                timer.timerRef.stop()
             } else {
-                globalTimer.triggeredOnStart = false
-                globalTimer.start()
-                globalTimer.triggeredOnStart = true
+                timer.timerRef.triggeredOnStart = false
+                timer.timerRef.start()
+                timer.timerRef.triggeredOnStart = true
             }
         }
 
         function reset() {
-            pomodoroQueue.infiniteMode = false;
-            globalTimer.stopAndClear()
-            notifications.stopSound();
+            timer.queueRef.infiniteMode = false;
+            timer.timerRef.stopAndClear()
+            timer.notificationsRef.stopSound();
         }
 
     }

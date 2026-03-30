@@ -8,13 +8,13 @@
 #include <QTimer>
 #include <QDebug>
 #include <QQmlContext>
+#include <QCoreApplication>
 
 
 int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_CONTROLS_STYLE", "Basic");
     MacOSController macOSController;
-    macOSController.disableAppNap();
 
     QApplication app(argc, argv);
 
@@ -28,6 +28,11 @@ int main(int argc, char *argv[])
     engine.addImageProvider("tray_icon_provider", new TrayImageProvider());
     engine.addImageProvider("notification_dot_provider", new NotificationDotProvider());
     macOSController.setEngine(&engine);
+    MacOSController::clearStaleScheduledNotifications();
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, []() {
+        MacOSController::endAppNapActivity();
+        MacOSController::clearScheduledNotifications();
+    });
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
@@ -41,6 +46,10 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PiloramaTimer>("Pilorama", 1, 0, "Timer");
 
+    engine.setInitialProperties({
+        {QStringLiteral("macOSControllerRef"),
+         QVariant::fromValue(static_cast<QObject *>(&macOSController))},
+    });
     engine.rootContext()->setContextProperty("MacOSController", &macOSController);
 
 	qputenv("QML_XHR_ALLOW_FILE_WRITE", QByteArray("1"));
