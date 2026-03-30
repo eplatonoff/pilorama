@@ -189,10 +189,22 @@ static UNAuthorizationStatus pilorama_cached_notification_authorization_status(v
         piloramaNotificationAuthorizationStatus.load(std::memory_order_relaxed));
 }
 
+static bool pilorama_notification_authorization_is_granted(UNAuthorizationStatus status)
+{
+    return status != UNAuthorizationStatusDenied
+        && status != UNAuthorizationStatusNotDetermined;
+}
+
 static void pilorama_store_notification_authorization_status(UNAuthorizationStatus status)
 {
     piloramaNotificationAuthorizationStatus.store(static_cast<int>(status),
                                                   std::memory_order_relaxed);
+}
+
+void mac_set_notification_authorization_status_for_tests(int status)
+{
+    pilorama_store_notification_authorization_status(
+        static_cast<UNAuthorizationStatus>(status));
 }
 
 static void pilorama_refresh_notification_authorization_status(void)
@@ -281,8 +293,8 @@ bool mac_schedule_notification(const char *title, const char *message,
                                void *context, bool playSound)
 {
     const UNAuthorizationStatus cachedStatus = pilorama_cached_notification_authorization_status();
-    if (cachedStatus == UNAuthorizationStatusDenied) {
-        qWarning() << "macOS notifications are not authorized; skipping scheduled notification";
+    if (!pilorama_notification_authorization_is_granted(cachedStatus)) {
+        qWarning() << "macOS notifications are not authorized yet; skipping scheduled notification";
         pilorama_refresh_notification_authorization_status();
         return false;
     }

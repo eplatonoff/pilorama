@@ -145,14 +145,19 @@ Pilorama.Timer {
         globalTimer._currentTickNowMs = nowMs;
         let didScheduleBoundary = false;
         let actualElapsed = elapsedSecs;
+        const intervalSecs = globalTimer.interval / 1000.0;
+        let wallClockGapLooksLikeCatchUp = false;
         if (globalTimer._lastTickMs > 0) {
             const wallClockElapsed = (nowMs - globalTimer._lastTickMs) / 1000.0;
-            actualElapsed = Math.max(actualElapsed, wallClockElapsed);
+            wallClockGapLooksLikeCatchUp = wallClockElapsed > intervalSecs + 0.25;
+            if (elapsedSecs > intervalSecs || wallClockGapLooksLikeCatchUp)
+                actualElapsed = Math.max(actualElapsed, wallClockElapsed);
         }
         globalTimer._lastTickMs = nowMs;
         if (actualElapsed < 0)
             actualElapsed = 0;
-        globalTimer._currentTickIsCatchUp = elapsedSecs > globalTimer.interval / 1000;
+        globalTimer._currentTickIsCatchUp = elapsedSecs > intervalSecs
+                                            || wallClockGapLooksLikeCatchUp;
         if (actualElapsed === 0) {
             globalTimer.canvasRef.requestPaint();
             globalTimer._currentTickIsCatchUp = false;

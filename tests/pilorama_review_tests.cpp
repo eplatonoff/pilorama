@@ -778,6 +778,24 @@ Clock {
         QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
     }
 
+    void ordinaryMillisecondDriftDoesNotConsumeExtraSecond()
+    {
+        TimerFixture fixture;
+        fixture.timer = createTimer(fixture);
+        fixture.timer->setProperty("remainingTime", 60.0);
+        fixture.timer->setProperty("triggeredOnStart", false);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "start"));
+        fixture.timer->setProperty("_lastTickMs", QDateTime::currentMSecsSinceEpoch() - 1001.0);
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "triggered", Q_ARG(int, 1)));
+
+        const double remainingTime = fixture.timer->property("remainingTime").toDouble();
+        QVERIFY2(qAbs(remainingTime - 59.0) < 0.0001,
+                 "ordinary millisecond timer drift should not consume more than one second");
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.timer.get(), "stop"));
+    }
+
     void macOsCatchUpCompletionDoesNotRepeatScheduledNotification()
     {
         IntegratedNotificationTimerFixture fixture;

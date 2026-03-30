@@ -16,6 +16,7 @@ bool mac_schedule_notification(const char *title, const char *message,
                                const char *icon, double seconds,
                                void (*completionCallback)(void *context, bool success),
                                void *context, bool playSound = false);
+void mac_set_notification_authorization_status_for_tests(int status);
 void mac_set_show_in_dock_preference(bool showInDock);
 void mac_clear_scheduled_notifications(void);
 void mac_clear_stale_scheduled_notifications(void);
@@ -249,6 +250,34 @@ class PiloramaReviewMacOSTests final : public QObject
     Q_OBJECT
 
 private slots:
+    void init()
+    {
+        mac_set_notification_authorization_status_for_tests(UNAuthorizationStatusAuthorized);
+    }
+
+    void notDeterminedAuthorizationSkipsScheduledNotification()
+    {
+        Method currentMethod = class_getClassMethod([UNUserNotificationCenter class],
+                                                    @selector(currentNotificationCenter));
+        Method stubMethod = class_getClassMethod([PiloramaTestNotificationCenter class],
+                                                 @selector(stubCurrentNotificationCenter));
+        QVERIFY(currentMethod != nullptr);
+        QVERIFY(stubMethod != nullptr);
+
+        PiloramaTestNotificationCenter *center = [PiloramaTestNotificationCenter sharedCenter];
+        [center reset];
+
+        const ScopedMethodExchange exchange(currentMethod, stubMethod);
+        mac_set_notification_authorization_status_for_tests(UNAuthorizationStatusNotDetermined);
+        const bool scheduled = mac_schedule_notification("Title", "Body", "", 60.0, nullptr,
+                                                         nullptr);
+
+        QVERIFY2(!scheduled,
+                 "scheduleNotification should not suppress fallback while authorization is undecided");
+        QCOMPARE(center.addRequestCalls, 0);
+        QCOMPARE(center.settingsCalls, 1);
+    }
+
     void scheduleNotificationReturnsBeforeAsyncCallbacksFinish()
     {
         Method currentMethod = class_getClassMethod([UNUserNotificationCenter class],
