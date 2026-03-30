@@ -235,8 +235,6 @@ QtObject {
     }
 
     function scheduleNextSegment() {
-        clearScheduled()
-
         if (Qt.platform.os !== "osx")
             return
 
@@ -246,8 +244,10 @@ QtObject {
         const first = queueRef.first()
         if (!first) {
             const remainingSecs = Math.max(0, timerRef.remainingTime)
-            if (remainingSecs <= 0)
+            if (remainingSecs <= 0) {
+                clearScheduled()
                 return
+            }
             const completionDuration = scheduledCompletionDuration(null)
             scheduleMacBoundary("completion",
                                 remainingSecs,
@@ -258,8 +258,10 @@ QtObject {
         }
 
         const secs = Math.max(0, first.duration)
-        if (secs <= 0)
+        if (secs <= 0) {
+            clearScheduled()
             return
+        }
 
         const next = nextScheduledItem()
         if (!next) {

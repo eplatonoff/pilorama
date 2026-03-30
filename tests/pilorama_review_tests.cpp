@@ -1454,6 +1454,90 @@ Clock {
         QVERIFY(fixture.macOSController.scheduledPlaySound);
     }
 
+    void failedMacRescheduleKeepsExistingCompletionBoundary()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+        });
+        fixture.settings.setSoundMuted(false);
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 300.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+
+        QVariant suppressed = false;
+        const double futureNowMs = QDateTime::currentMSecsSinceEpoch() + 302000.0;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
+        QVERIFY(suppressed.toBool());
+
+        fixture.macOSController.scheduleNotificationResult = false;
+        fixture.settings.setSoundMuted(true);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        suppressed = false;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
+        QVERIFY(suppressed.toBool());
+    }
+
+    void failedAsyncMacRescheduleKeepsExistingCompletionBoundary()
+    {
+        NotificationFixture fixture;
+        fixture.masterModel.setItems({
+            masterItem(0, QStringLiteral("Focus"), 300.0),
+        });
+        fixture.queue.setItems({
+            Segment{0, 300.0, 300.0, 10},
+        });
+        fixture.settings.setSoundMuted(false);
+        fixture.timer.running = true;
+        fixture.timer.remainingTime = 300.0;
+        fixture.timer.segmentTotalDuration = 300.0;
+        fixture.timer.durationBound = 300.0;
+        fixture.notificationSystem = createNotificationSystem(fixture);
+
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(), "scheduleNextSegment"));
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 1);
+
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, true);
+        QCoreApplication::processEvents();
+
+        const double futureNowMs = QDateTime::currentMSecsSinceEpoch() + 302000.0;
+        fixture.settings.setSoundMuted(true);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(fixture.macOSController.scheduleNotificationCalls, 2);
+        fixture.macOSController.resolveNotification(fixture.macOSController.lastRequestId, false);
+        QCoreApplication::processEvents();
+
+        QVariant suppressed = false;
+        QVERIFY(QMetaObject::invokeMethod(fixture.notificationSystem.get(),
+                                          "shouldSuppressCatchUpCompletion",
+                                          Q_RETURN_ARG(QVariant, suppressed),
+                                          Q_ARG(QVariant, QVariant(futureNowMs)),
+                                          Q_ARG(QVariant, QVariant(true))));
+        QVERIFY(suppressed.toBool());
+    }
+
     void scheduleNextSegmentRespectsMutedSoundPreference()
     {
         NotificationFixture fixture;
