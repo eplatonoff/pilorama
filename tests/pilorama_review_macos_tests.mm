@@ -490,6 +490,51 @@ private slots:
         QCOMPARE(center.removePendingCalls, 2);
     }
 
+    void confirmedReplacementCancelsSupersededRequest()
+    {
+        Method currentMethod = class_getClassMethod([UNUserNotificationCenter class],
+                                                    @selector(currentNotificationCenter));
+        Method stubMethod = class_getClassMethod([PiloramaTestNotificationCenter class],
+                                                 @selector(stubCurrentNotificationCenter));
+        QVERIFY(currentMethod != nullptr);
+        QVERIFY(stubMethod != nullptr);
+
+        PiloramaTestNotificationCenter *center = [PiloramaTestNotificationCenter sharedCenter];
+        [center reset];
+
+        const ScopedMethodExchange exchange(currentMethod, stubMethod);
+        mac_clear_scheduled_notifications();
+        [center reset];
+
+        ScheduleCallbackResult firstResult;
+        ScheduleCallbackResult secondResult;
+        QVERIFY(mac_schedule_notification("First", "Body", "", 60.0,
+                                          storeScheduleCallbackResult, &firstResult));
+        NSString *firstIdentifier = [center addedIdentifierAtIndex:0];
+        QVERIFY(firstIdentifier != nil);
+
+        [center completeRequestAtIndex:0 error:nil];
+
+        QVERIFY(firstResult.called);
+        QVERIFY(firstResult.success);
+        QVERIFY([center.pendingIdentifiers containsObject:firstIdentifier]);
+        const NSInteger removeCallsBeforeReplacement = center.removePendingCalls;
+
+        QVERIFY(mac_schedule_notification("Second", "Body", "", 120.0,
+                                          storeScheduleCallbackResult, &secondResult));
+        NSString *secondIdentifier = [center addedIdentifierAtIndex:1];
+        QVERIFY(secondIdentifier != nil);
+
+        [center completeRequestAtIndex:1 error:nil];
+
+        QVERIFY(secondResult.called);
+        QVERIFY(secondResult.success);
+        QCOMPARE(center.removePendingCalls, removeCallsBeforeReplacement + 1);
+        QVERIFY([center.lastPendingIdentifiers isEqualToArray:@[ firstIdentifier ]]);
+        QVERIFY(![center.pendingIdentifiers containsObject:firstIdentifier]);
+        QVERIFY([center.pendingIdentifiers containsObject:secondIdentifier]);
+    }
+
     void delayedPendingSweepDoesNotRemoveReplacementSchedule()
     {
         Method currentMethod = class_getClassMethod([UNUserNotificationCenter class],

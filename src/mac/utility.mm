@@ -17,6 +17,7 @@ static std::atomic<int> piloramaNotificationAuthorizationStatus{
 };
 static std::atomic<unsigned long long> piloramaNextScheduledNotificationToken{0};
 static std::atomic<unsigned long long> piloramaCurrentScheduledNotificationToken{0};
+static std::atomic<unsigned long long> piloramaConfirmedScheduledNotificationToken{0};
 static std::atomic<bool> piloramaShowInDockPreference{false};
 using PiloramaScheduleNotificationCallback = void (*)(void *context, bool success);
 
@@ -39,6 +40,11 @@ static void pilorama_remove_pending_notification(NSString *identifier)
         removePendingNotificationRequestsWithIdentifiers:@[ identifier ]];
 }
 
+static void pilorama_remove_pending_notification_for_token(unsigned long long token)
+{
+    pilorama_remove_pending_notification(pilorama_scheduled_notification_identifier(token));
+}
+
 static bool pilorama_is_scheduled_notification_identifier(NSString *identifier)
 {
     return identifier && [identifier hasPrefix:kPiloramaScheduledNotificationIdPrefix];
@@ -51,11 +57,15 @@ static void pilorama_remove_all_pending_scheduled_notifications(void)
          NSArray<UNNotificationRequest *> *requests) {
         NSString *currentIdentifier = pilorama_scheduled_notification_identifier(
             piloramaCurrentScheduledNotificationToken.load(std::memory_order_relaxed));
+        NSString *confirmedIdentifier = pilorama_scheduled_notification_identifier(
+            piloramaConfirmedScheduledNotificationToken.load(std::memory_order_relaxed));
         NSMutableArray<NSString *> *identifiers = [NSMutableArray array];
         for (UNNotificationRequest *request in requests) {
             if (!pilorama_is_scheduled_notification_identifier(request.identifier))
                 continue;
             if (currentIdentifier && [request.identifier isEqualToString:currentIdentifier])
+                continue;
+            if (confirmedIdentifier && [request.identifier isEqualToString:confirmedIdentifier])
                 continue;
             [identifiers addObject:request.identifier];
         }
@@ -301,11 +311,23 @@ bool mac_schedule_notification(const char *title, const char *message,
                  qWarning() << "Failed to schedule macOS notification:"
                             << error.localizedDescription.UTF8String;
                  pilorama_refresh_notification_authorization_status();
-                 unsigned long long expectedToken = token;
-                 piloramaCurrentScheduledNotificationToken.compare_exchange_strong(
-                     expectedToken, 0, std::memory_order_relaxed);
+                 if (isCurrentRequest) {
+                     const unsigned long long fallbackToken =
+                         piloramaConfirmedScheduledNotificationToken.load(
+                             std::memory_order_relaxed);
+                     unsigned long long expectedToken = token;
+                     piloramaCurrentScheduledNotificationToken.compare_exchange_strong(
+                         expectedToken, fallbackToken, std::memory_order_relaxed);
+                 }
              } else if (!isCurrentRequest) {
-                 pilorama_remove_pending_notification(identifier);
+                 pilorama_remove_pending_notification_for_token(token);
+             } else {
+                 const unsigned long long previousConfirmedToken =
+                     piloramaConfirmedScheduledNotificationToken.exchange(
+                         token, std::memory_order_relaxed);
+                 if (previousConfirmedToken != 0 && previousConfirmedToken != token) {
+                     pilorama_remove_pending_notification_for_token(previousConfirmedToken);
+                 }
              }
              if (completionCallback) {
                  completionCallback(context, error == nil && isCurrentRequest);
@@ -317,9 +339,13 @@ bool mac_schedule_notification(const char *title, const char *message,
 
 void mac_clear_scheduled_notifications(void)
 {
-    const unsigned long long token =
+    const unsigned long long currentToken =
         piloramaCurrentScheduledNotificationToken.exchange(0, std::memory_order_relaxed);
-    pilorama_remove_pending_notification(pilorama_scheduled_notification_identifier(token));
+    const unsigned long long confirmedToken =
+        piloramaConfirmedScheduledNotificationToken.exchange(0, std::memory_order_relaxed);
+    pilorama_remove_pending_notification_for_token(currentToken);
+    if (confirmedToken != 0 && confirmedToken != currentToken)
+        pilorama_remove_pending_notification_for_token(confirmedToken);
 }
 
 void mac_clear_stale_scheduled_notifications(void)
